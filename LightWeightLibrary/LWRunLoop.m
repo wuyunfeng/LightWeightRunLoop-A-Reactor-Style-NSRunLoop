@@ -21,7 +21,9 @@
 #include <pthread.h>
 #include <sys/errno.h>
 
-#include "NSThread+Looper.h"
+#import "NSThread+Looper.h"
+#import "LWMessageQueue.h"
+
 
 #define MAX_EVENT_COUNT 16
 
@@ -33,20 +35,14 @@ int _mWakeReadPipeFd;
 int _mWakeWritePipeFd;
 int _kq;
 
-SEL _action;
-id _target;
-
 @implementation LWRunLoop
 {
-//    int _mWakeReadPipeFd;
-//    int _mWakeWritePipeFd;
-//    int _kq;
     SEL _action;
     id _target;
+    LWMessageQueue *_queue;
 }
 
 
-#pragma mark - C TLS
 void initTLSKey(void)
 {
     pthread_key_create(&mTLSKey, destructor);
@@ -56,13 +52,14 @@ void destructor()
 {
     NSLog(@"destructor");
     instance = nil;
+    [LWMessageQueue destoryMessageQueue];
     close(_kq);
     close(_mWakeReadPipeFd);
     close(_mWakeWritePipeFd);
 }
 
 
-#pragma mark - Object-C
+#pragma mark - Public Method
 + (instancetype)currentLWRunLoop
 {
     
@@ -79,7 +76,28 @@ void destructor()
     return instance;
 }
 
+- (void)run
+{
+    [[NSThread currentThread] setLooper];
+    
+    struct kevent events[MAX_EVENT_COUNT];
+    while (true) {
+        
+        int ret = kevent(_kq, NULL, 0, events, MAX_EVENT_COUNT, NULL);
+        
+        for (int i = 0; i < ret; i++)
+        {
+            int eventFd = (int)events[i].ident;
+            if (eventFd == _mWakeReadPipeFd) {
+                [self handleReadWake];
+                [self registerFds];
+                break;
+            }
+        }
+    }
+}
 
+#pragma mark - Private
 - (instancetype)init
 {
     if (self = [super init]) {
@@ -117,30 +135,11 @@ void destructor()
 {
     struct kevent changes[1];
     EV_SET(changes, _mWakeReadPipeFd, EVFILT_READ, EV_ADD, 0, 0, NULL);
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-variable"
     int ret = kevent(_kq, changes, 1, NULL, 0, NULL);
     NSAssert(ret != -1, @"Failure in kevent().  errno=%d", errno);
-}
-
-
-- (void)run
-{
-    [[NSThread currentThread] setLooper];
-
-    struct kevent events[MAX_EVENT_COUNT];
-    while (true) {
-
-        int ret = kevent(_kq, NULL, 0, events, MAX_EVENT_COUNT, NULL);
-
-        for (int i = 0; i < ret; i++)
-        {
-            int eventFd = (int)events[i].ident;
-            if (eventFd == _mWakeReadPipeFd) {
-                [self handleReadWake];
-                [self registerFds];
-                break;
-            }
-        }
-    }
+#pragma clang diagnostic pop
 }
 
 - (void)handleReadWake
@@ -149,15 +148,22 @@ void destructor()
     ssize_t nRead;
     do {
         nRead = read(_mWakeReadPipeFd, buffer, sizeof(buffer));
-        if ([_target respondsToSelector:_action]) {
-            [_target performSelector:_action withObject:nil];
-        }
+//        if ([_target respondsToSelector:_action]) {
+//#pragma clang diagnostic push
+//#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+//            [_target performSelector:_action withObject:nil];
+//#pragma clang diagnostic pop
+//        }
+        
+        [[[LWMessageQueue defaultInstance] next] performSelectorForTarget];
     } while ((nRead == -1 && errno == EINTR) || nRead == sizeof(buffer));
 }
 
 - (void)handleWriteWake
 {
     ssize_t nWrite;
+    NSLog(@"[%@ %@]", [self class], NSStringFromSelector(_cmd));
+
     do {
         nWrite = write(_mWakeWritePipeFd, "W", 1);
     } while (nWrite == -1 && errno == EINTR);
@@ -171,8 +177,8 @@ void destructor()
 
 - (void)postTarget:(id)target withAction:(SEL)aSel
 {
-    _target = target;
-    _action = aSel;
+    LWMessage *message = [[LWMessage alloc] initWithTarget:target aSel:aSel withArgument:nil at:MSG_TIME_NOW];
+    [[LWMessageQueue defaultInstance] enqueueMessage:message];
     [self handleWriteWake];
 }
 

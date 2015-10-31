@@ -9,10 +9,15 @@
 #import "ViewController.h"
 #import "LightWeightRunLoop.h"
 #import "UIViewAdditions.h"
+#import "TestTarget1.h"
+#import "TestTarget2.h"
 @interface ViewController ()
 {
     UIButton *_button;
     NSThread *_thread;
+    
+    TestTarget1 *_target1;
+    TestTarget2 *_target2;
 }
 
 @end
@@ -48,7 +53,12 @@
 #pragma mark - button action
 - (void)executePost:(UIButton *)button
 {
+    
+    _target1 = [[TestTarget1 alloc] init];
+    _target2 = [[TestTarget2 alloc] init];
     [self postSelector:@selector(execute) onThread:_thread withObject:nil];
+    [_target1 postSelector:@selector(performTest) onThread:_thread withObject:nil];
+    [_target2 postSelector:@selector(performTest) onThread:_thread withObject:nil];
 }
 
 #pragma mark - Thread EntryPoint

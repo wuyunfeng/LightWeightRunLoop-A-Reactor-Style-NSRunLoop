@@ -32,6 +32,10 @@
 		5350D01A1BE31F2B004463EE /* UIView+TKCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = 5350D00B1BE31F2B004463EE /* UIView+TKCategory.m */; settings = {ASSET_TAGS = (); }; };
 		5350D01B1BE31F2B004463EE /* UIViewAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5350D00D1BE31F2B004463EE /* UIViewAdditions.m */; settings = {ASSET_TAGS = (); }; };
 		5350D01F1BE31F5D004463EE /* LWImageUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 5350D01E1BE31F5D004463EE /* LWImageUtil.m */; settings = {ASSET_TAGS = (); }; };
+		5376CF841BE4E0770092DF5F /* LWMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 5376CF831BE4E0770092DF5F /* LWMessage.m */; settings = {ASSET_TAGS = (); }; };
+		5376CF871BE4E6940092DF5F /* LWMessageQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 5376CF861BE4E6940092DF5F /* LWMessageQueue.m */; settings = {ASSET_TAGS = (); }; };
+		5376CF8B1BE4EF030092DF5F /* TestTarget1.m in Sources */ = {isa = PBXBuildFile; fileRef = 5376CF8A1BE4EF030092DF5F /* TestTarget1.m */; settings = {ASSET_TAGS = (); }; };
+		5376CF8E1BE4EF410092DF5F /* TestTarget2.m in Sources */ = {isa = PBXBuildFile; fileRef = 5376CF8D1BE4EF410092DF5F /* TestTarget2.m */; settings = {ASSET_TAGS = (); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -109,6 +113,14 @@
 		5350D00D1BE31F2B004463EE /* UIViewAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIViewAdditions.m; sourceTree = "<group>"; };
 		5350D01D1BE31F5D004463EE /* LWImageUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LWImageUtil.h; sourceTree = "<group>"; };
 		5350D01E1BE31F5D004463EE /* LWImageUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LWImageUtil.m; sourceTree = "<group>"; };
+		5376CF821BE4E0770092DF5F /* LWMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LWMessage.h; sourceTree = "<group>"; };
+		5376CF831BE4E0770092DF5F /* LWMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LWMessage.m; sourceTree = "<group>"; };
+		5376CF851BE4E6940092DF5F /* LWMessageQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LWMessageQueue.h; sourceTree = "<group>"; };
+		5376CF861BE4E6940092DF5F /* LWMessageQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LWMessageQueue.m; sourceTree = "<group>"; };
+		5376CF891BE4EF030092DF5F /* TestTarget1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestTarget1.h; sourceTree = "<group>"; };
+		5376CF8A1BE4EF030092DF5F /* TestTarget1.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestTarget1.m; sourceTree = "<group>"; };
+		5376CF8C1BE4EF410092DF5F /* TestTarget2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestTarget2.h; sourceTree = "<group>"; };
+		5376CF8D1BE4EF410092DF5F /* TestTarget2.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestTarget2.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -160,6 +172,7 @@
 		5350CFAA1BE30EB5004463EE /* LightWeightRunLoop */ = {
 			isa = PBXGroup;
 			children = (
+				5376CF881BE4EEEC0092DF5F /* targets */,
 				5350D01C1BE31F5D004463EE /* utils */,
 				5350CFE91BE31F2B004463EE /* libs */,
 				5350CFAE1BE30EB5004463EE /* AppDelegate.h */,
@@ -210,6 +223,10 @@
 				5350CFE31BE30FB9004463EE /* NSThread+Looper.h */,
 				5350CFE41BE30FB9004463EE /* NSThread+Looper.m */,
 				5350CFE81BE31066004463EE /* LightWeightRunLoop.h */,
+				5376CF821BE4E0770092DF5F /* LWMessage.h */,
+				5376CF831BE4E0770092DF5F /* LWMessage.m */,
+				5376CF851BE4E6940092DF5F /* LWMessageQueue.h */,
+				5376CF861BE4E6940092DF5F /* LWMessageQueue.m */,
 			);
 			path = LightWeightLibrary;
 			sourceTree = "<group>";
@@ -285,6 +302,17 @@
 				5350D01E1BE31F5D004463EE /* LWImageUtil.m */,
 			);
 			path = utils;
+			sourceTree = "<group>";
+		};
+		5376CF881BE4EEEC0092DF5F /* targets */ = {
+			isa = PBXGroup;
+			children = (
+				5376CF891BE4EF030092DF5F /* TestTarget1.h */,
+				5376CF8A1BE4EF030092DF5F /* TestTarget1.m */,
+				5376CF8C1BE4EF410092DF5F /* TestTarget2.h */,
+				5376CF8D1BE4EF410092DF5F /* TestTarget2.m */,
+			);
+			path = targets;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -427,16 +455,20 @@
 				5350D0141BE31F2B004463EE /* NSArray+MASAdditions.m in Sources */,
 				5350CFE51BE30FB9004463EE /* LWRunLoop.m in Sources */,
 				5350D0131BE31F2B004463EE /* MASViewConstraint.m in Sources */,
+				5376CF8B1BE4EF030092DF5F /* TestTarget1.m in Sources */,
 				5350D0111BE31F2B004463EE /* MASLayoutConstraint.m in Sources */,
 				5350D0191BE31F2B004463EE /* UIView+Sizes.m in Sources */,
 				5350D0181BE31F2B004463EE /* MBProgressHUD.m in Sources */,
 				5350CFE71BE30FB9004463EE /* NSThread+Looper.m in Sources */,
 				5350CFB31BE30EB5004463EE /* ViewController.m in Sources */,
+				5376CF8E1BE4EF410092DF5F /* TestTarget2.m in Sources */,
 				5350D0161BE31F2B004463EE /* View+MASAdditions.m in Sources */,
 				5350D00E1BE31F2B004463EE /* MASCompositeConstraint.m in Sources */,
 				5350D0151BE31F2B004463EE /* NSLayoutConstraint+MASDebugAdditions.m in Sources */,
+				5376CF841BE4E0770092DF5F /* LWMessage.m in Sources */,
 				5350D0101BE31F2B004463EE /* MASConstraintMaker.m in Sources */,
 				5350D01B1BE31F2B004463EE /* UIViewAdditions.m in Sources */,
+				5376CF871BE4E6940092DF5F /* LWMessageQueue.m in Sources */,
 				5350CFB01BE30EB5004463EE /* AppDelegate.m in Sources */,
 				5350CFAD1BE30EB5004463EE /* main.m in Sources */,
 				5350CFE61BE30FB9004463EE /* NSObject+post.m in Sources */,
@@ -570,6 +602,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = LightWeightRunLoop/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wuyunfeng.open.LightWeightRunLoop;
@@ -581,6 +614,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				INFOPLIST_FILE = LightWeightRunLoop/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wuyunfeng.open.LightWeightRunLoop;
@@ -655,6 +689,7 @@
 				5350CFD71BE30EB6004463EE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		5350CFD81BE30EB6004463EE /* Build configuration list for PBXNativeTarget "LightWeightRunLoopTests" */ = {
 			isa = XCConfigurationList;
@@ -663,6 +698,7 @@
 				5350CFDA1BE30EB6004463EE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		5350CFDB1BE30EB6004463EE /* Build configuration list for PBXNativeTarget "LightWeightRunLoopUITests" */ = {
 			isa = XCConfigurationList;
@@ -671,6 +707,7 @@
 				5350CFDD1BE30EB6004463EE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
