@@ -37,8 +37,8 @@ int _kq;
 
 @implementation LWRunLoop
 {
-    SEL _action;
-    id _target;
+//    SEL _action;
+//    id _target;
     LWMessageQueue *_queue;
 }
 
