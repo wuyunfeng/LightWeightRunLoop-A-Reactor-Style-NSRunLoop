@@ -10,6 +10,8 @@
 @implementation LWMessageQueue
 {
     LWMessage *_head;
+//    NSLock *_lock;
+    NSRecursiveLock *_lock;
 }
 
 
@@ -34,6 +36,8 @@ static LWMessageQueue *queue = nil;
 {
     if (self = [super init]) {
         //nop
+        _lock = [[NSRecursiveLock alloc] init];
+        _lock.name = @"MessageQueueLock";
     }
     return self;
 }
@@ -41,6 +45,7 @@ static LWMessageQueue *queue = nil;
 //store lwmessage at a link
 - (void)enqueueMessage:(LWMessage *)message
 {
+    [_lock tryLock];
     if (!_head) {
         _head = message;
     } else {
@@ -51,6 +56,7 @@ static LWMessageQueue *queue = nil;
         }
         pointer.next = message;
     }
+    [_lock unlock];
 }
 
 
@@ -64,6 +70,7 @@ static LWMessageQueue *queue = nil;
     
     result = _head;
     _head = _head.next;
+    
     return result;
 }
 
