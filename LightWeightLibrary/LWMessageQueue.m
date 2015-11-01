@@ -42,7 +42,6 @@ static LWMessageQueue *queue = nil;
     return self;
 }
 
-//store lwmessage at a link
 - (void)enqueueMessage:(LWMessage *)message
 {
     [_lock tryLock];
@@ -83,6 +82,20 @@ static LWMessageQueue *queue = nil;
         count++;
     }
     return count;
+}
+
+
+- (void)performActionsForThisLoop
+{
+    while (YES) {
+//        NSLog(@"[ %@ %@]", [self class], NSStringFromSelector(_cmd));
+        LWMessage *msg = [[LWMessageQueue defaultInstance] next];
+        if (msg) {
+            [msg performSelectorForTarget];
+        } else {
+            break;
+        }
+    }
 }
 
 

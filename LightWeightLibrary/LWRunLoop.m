@@ -155,15 +155,15 @@ void destructor()
 //#pragma clang diagnostic pop
 //        }
         
-        [[[LWMessageQueue defaultInstance] next] performSelectorForTarget];
+        [[LWMessageQueue defaultInstance] performActionsForThisLoop];
+        
+//        [[[LWMessageQueue defaultInstance] next] performSelectorForTarget];
     } while ((nRead == -1 && errno == EINTR) || nRead == sizeof(buffer));
 }
 
 - (void)handleWriteWake
 {
     ssize_t nWrite;
-    NSLog(@"[%@ %@]", [self class], NSStringFromSelector(_cmd));
-
     do {
         nWrite = write(_mWakeWritePipeFd, "W", 1);
     } while (nWrite == -1 && errno == EINTR);

@@ -17,7 +17,7 @@
 
 - (void)dealloc
 {
-    NSLog(@"[%@ %@]", [self class], NSStringFromSelector(_cmd));
+//    NSLog(@"[%@ %@]", [self class], NSStringFromSelector(_cmd));
 }
 
 @end
