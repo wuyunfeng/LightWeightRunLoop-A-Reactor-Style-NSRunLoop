@@ -50,7 +50,7 @@
     [self.view addSubview:_button];
 }
 
-#pragma mark - button action
+#pragma mark - test LWRunLoop
 - (void)executePost:(UIButton *)button
 {
     
@@ -59,6 +59,19 @@
     [self postSelector:@selector(execute) onThread:_thread withObject:nil];
     [_target1 postSelector:@selector(performTest) onThread:_thread withObject:nil];
     [_target2 postSelector:@selector(performTest) onThread:_thread withObject:nil];
+    [NSThread detachNewThreadSelector:@selector(asyncExecuteMethodOnThread:) toTarget:self withObject:nil];
+    [NSThread detachNewThreadSelector:@selector(asyncExecuteMethodOnThread:) toTarget:self withObject:nil];
+}
+
+#pragma mark - post method from new-thread to _thread
+- (void)asyncExecuteMethodOnThread:(id)args
+{
+    sleep(2);
+    [_target1 postSelector:@selector(performTest) onThread:_thread withObject:nil];
+    sleep(1);
+    [_target2 postSelector:@selector(performTest) onThread:_thread withObject:nil];
+    sleep(1);
+    [self postSelector:@selector(execute) onThread:_thread withObject:nil];
 }
 
 #pragma mark - Thread EntryPoint
@@ -67,7 +80,7 @@
     [[LWRunLoop currentLWRunLoop] run];
 }
 
-#pragma mark - Execute Selector, must declared in ***.h
+#pragma mark - post method from main-thread to _thread
 - (void)execute
 {
     

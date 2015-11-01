@@ -42,6 +42,7 @@ static LWMessageQueue *queue = nil;
     return self;
 }
 
+#pragma mark  - bug point?  lock is necessary or not?
 - (void)enqueueMessage:(LWMessage *)message
 {
     [_lock tryLock];
