@@ -88,7 +88,8 @@
 
 - (void)lightWeightRunloopThreadEntryPoint2:(id)data
 {
-    [[LWRunLoop currentLWRunLoop] run];
+    LWRunLoop *looper = [LWRunLoop currentLWRunLoop];
+    [looper run];
 
 }
 #pragma mark - post method from main-thread to _thread

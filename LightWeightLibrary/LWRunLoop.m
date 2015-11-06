@@ -48,9 +48,18 @@ void initTLSKey(void)
     pthread_key_create(&mTLSKey, destructor);
 }
 
-void destructor()
+void destructor(void * data)
 {
-    NSLog(@"LWRunLoop destructor");
+    LWRunLoop *pSelf = (__bridge LWRunLoop *)data;
+    [pSelf destoryFds];
+}
+
+- (void)destoryFds
+{
+    _queue = nil;
+    close(_kq);
+    close(_mWakeReadPipeFd);
+    close(_mWakeWritePipeFd);
 }
 
 
@@ -59,21 +68,17 @@ void destructor()
 {
     int result = pthread_once(& mTLSKeyOnceToken, initTLSKey);
     NSAssert(result == 0, @"pthread_once failure");
-    
     LWRunLoop *instance = (__bridge LWRunLoop *)pthread_getspecific(mTLSKey);
-    
     if (instance == nil) {
         instance = [[[self class] alloc] init];
         [[NSThread currentThread] setLooper:instance];
         pthread_setspecific(mTLSKey, (__bridge const void *)(instance));
     }
-    
     return instance;
 }
 
 - (void)run
 {
-    //    [[NSThread currentThread] setLooper:(__bridge LWRunLoop *)pthread_getspecific(mTLSKey)];
     struct kevent events[MAX_EVENT_COUNT];
     while (true) {
         
@@ -179,9 +184,9 @@ void destructor()
 
 - (void)dealloc
 {
-    close(_kq);
-    close(_mWakeReadPipeFd);
-    close(_mWakeWritePipeFd);
+//    close(_kq);
+//    close(_mWakeReadPipeFd);
+//    close(_mWakeWritePipeFd);
 }
 
 @end
