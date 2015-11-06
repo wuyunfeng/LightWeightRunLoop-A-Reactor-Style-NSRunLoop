@@ -95,9 +95,7 @@
 #pragma mark - post method from main-thread to _thread
 - (void)execute
 {
-    
     NSLog(@"* [ Object: %@ performSelector: ( %@ ) on Thread : %@ ] *", [self class], NSStringFromSelector(_cmd), [NSThread currentThread].name);
-    
 }
 
 #pragma mark - MemoryWaring
