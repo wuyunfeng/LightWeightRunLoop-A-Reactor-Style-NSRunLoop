@@ -29,17 +29,19 @@
 
 static pthread_once_t mTLSKeyOnceToken = PTHREAD_ONCE_INIT;
 static pthread_key_t mTLSKey;
-static LWRunLoop *instance;
 
-int _mWakeReadPipeFd;
-int _mWakeWritePipeFd;
-int _kq;
+
 
 @implementation LWRunLoop
 {
-//    SEL _action;
-//    id _target;
+    //    SEL _action;
+    //    id _target;
     LWMessageQueue *_queue;
+    int _mWakeReadPipeFd;
+    int _mWakeWritePipeFd;
+    int _kq;
+    int k;
+    
 }
 
 
@@ -51,25 +53,20 @@ void initTLSKey(void)
 void destructor()
 {
     NSLog(@"destructor");
-    instance = nil;
-    [LWMessageQueue destoryMessageQueue];
-    close(_kq);
-    close(_mWakeReadPipeFd);
-    close(_mWakeWritePipeFd);
 }
 
 
 #pragma mark - Public Method
 + (instancetype)currentLWRunLoop
 {
-    
     int result = pthread_once(& mTLSKeyOnceToken, initTLSKey);
     NSAssert(result == 0, @"pthread_once failure");
-
-    instance = (__bridge LWRunLoop *)pthread_getspecific(mTLSKey);
-
+    
+    LWRunLoop *instance = (__bridge LWRunLoop *)pthread_getspecific(mTLSKey);
+    
     if (instance == nil) {
         instance = [[[self class] alloc] init];
+        [[NSThread currentThread] setLooper:instance];
         pthread_setspecific(mTLSKey, (__bridge const void *)(instance));
     }
     
@@ -78,8 +75,7 @@ void destructor()
 
 - (void)run
 {
-    [[NSThread currentThread] setLooper];
-    
+    //    [[NSThread currentThread] setLooper:(__bridge LWRunLoop *)pthread_getspecific(mTLSKey)];
     struct kevent events[MAX_EVENT_COUNT];
     while (true) {
         
@@ -126,9 +122,9 @@ void destructor()
     
     _kq = kqueue();
     NSAssert(_kq != -1, @"Failure in kqueue().  errno=%d", errno);
-
+    
     [self registerFds];
-
+    
 }
 
 - (void)registerFds
@@ -148,12 +144,12 @@ void destructor()
     ssize_t nRead;
     do {
         nRead = read(_mWakeReadPipeFd, buffer, sizeof(buffer));
-//        if ([_target respondsToSelector:_action]) {
-//#pragma clang diagnostic push
-//#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
-//            [_target performSelector:_action withObject:nil];
-//#pragma clang diagnostic pop
-//        }
+        //        if ([_target respondsToSelector:_action]) {
+        //#pragma clang diagnostic push
+        //#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+        //            [_target performSelector:_action withObject:nil];
+        //#pragma clang diagnostic pop
+        //        }
         
         [[LWMessageQueue defaultInstance] performActionsForThisLoop];
         
@@ -184,7 +180,10 @@ void destructor()
 
 - (void)dealloc
 {
-    NSLog(@"dealloc");
+    [LWMessageQueue destoryMessageQueue];
+    close(_kq);
+    close(_mWakeReadPipeFd);
+    close(_mWakeWritePipeFd);
 }
 
 @end

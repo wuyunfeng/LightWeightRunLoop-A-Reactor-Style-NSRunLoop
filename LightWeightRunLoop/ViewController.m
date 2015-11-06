@@ -15,6 +15,7 @@
 {
     UIButton *_button;
     NSThread *_thread;
+    NSThread *_thread2;
     
     TestTarget1 *_target1;
     TestTarget2 *_target2;
@@ -28,8 +29,12 @@
     [super viewDidLoad];
     [self setContentView];
     _thread = [[NSThread alloc] initWithTarget:self selector:@selector(lightWeightRunloopThreadEntryPoint:) object:nil];
-    _thread.name = @"com.wyf.opensource.thread";
+    _thread2 = [[NSThread alloc] initWithTarget:self selector:@selector(lightWeightRunloopThreadEntryPoint2:) object:nil];
+    _thread.name = @"Thead 1";
+    _thread2.name = @"Thread 2";
+
     [_thread start];
+    [_thread2 start];
 }
 
 #pragma mark - layout all subviews
@@ -56,7 +61,7 @@
     
     _target1 = [[TestTarget1 alloc] init];
     _target2 = [[TestTarget2 alloc] init];
-    [self postSelector:@selector(execute) onThread:_thread withObject:nil];
+    [self postSelector:@selector(execute) onThread:_thread2 withObject:nil];
     [_target1 postSelector:@selector(performTest) onThread:_thread withObject:nil];
     [_target2 postSelector:@selector(performTest) onThread:_thread withObject:nil];
     [NSThread detachNewThreadSelector:@selector(asyncExecuteMethodOnThread:) toTarget:self withObject:nil];
@@ -67,19 +72,27 @@
 - (void)asyncExecuteMethodOnThread:(id)args
 {
     sleep(2);
-    [_target1 postSelector:@selector(performTest) onThread:_thread withObject:nil];
+    [_target1 postSelector:@selector(performTest) onThread:_thread2 withObject:nil];
     sleep(1);
-    [_target2 postSelector:@selector(performTest) onThread:_thread withObject:nil];
+    [_target2 postSelector:@selector(performTest) onThread:_thread2 withObject:nil];
     sleep(1);
-    [self postSelector:@selector(execute) onThread:_thread withObject:nil];
+    [self postSelector:@selector(execute) onThread:_thread2 withObject:nil];
 }
 
 #pragma mark - Thread EntryPoint
 - (void)lightWeightRunloopThreadEntryPoint:(id)data
 {
-    [[LWRunLoop currentLWRunLoop] run];
+//    LWRunLoop *loop = [LWRunLoop currentLWRunLoop];
+//    loop = nil;
+//    [[LWRunLoop currentLWRunLoop] run];
 }
 
+
+- (void)lightWeightRunloopThreadEntryPoint2:(id)data
+{
+    [[LWRunLoop currentLWRunLoop] run];
+
+}
 #pragma mark - post method from main-thread to _thread
 - (void)execute
 {

@@ -14,11 +14,11 @@
 
 static char kLooperKey;
 
-- (void)setLooper
+- (void)setLooper:(LWRunLoop *)looper
 {
     LWRunLoop *loop = objc_getAssociatedObject(self, &kLooperKey);
     if (!loop) {
-        loop = [LWRunLoop currentLWRunLoop];
+        loop = looper;
         objc_setAssociatedObject(self, &kLooperKey, loop, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     }
 }

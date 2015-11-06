@@ -11,7 +11,7 @@
 
 @interface NSThread (Looper)
 
-- (void)setLooper;
+- (void)setLooper:(LWRunLoop *)looper;
 - (LWRunLoop *)looper;
 
 
