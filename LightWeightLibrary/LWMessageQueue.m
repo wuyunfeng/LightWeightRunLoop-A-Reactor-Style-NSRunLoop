@@ -7,29 +7,39 @@
 //
 
 #import "LWMessageQueue.h"
+#include <pthread.h>
+
+
+static pthread_key_t mTLSKey;
+
 @implementation LWMessageQueue
 {
     LWMessage *_head;
-//    NSLock *_lock;
     NSRecursiveLock *_lock;
 }
 
 
-static LWMessageQueue *queue = nil;
+
+void threadDestructor()
+{
+    NSLog(@"********** LWMessageQueue destructor *******");
+}
 
 + (instancetype)defaultInstance
 {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        queue = [[[self class] alloc] init];
+        pthread_key_create(&mTLSKey, threadDestructor);
     });
+    
+    LWMessageQueue *queue = (__bridge LWMessageQueue *)(pthread_getspecific(mTLSKey));
+    if (queue == nil) {
+        queue = [[LWMessageQueue alloc] init];
+        pthread_setspecific(mTLSKey, (__bridge const void *)(queue));
+    }
     return queue;
 }
 
-+ (void)destoryMessageQueue
-{
-    queue = nil;
-}
 
 
 - (instancetype)init
@@ -45,7 +55,7 @@ static LWMessageQueue *queue = nil;
 #pragma mark  - bug point?  lock is necessary or not?
 - (void)enqueueMessage:(LWMessage *)message
 {
-    [_lock tryLock];
+    [_lock lock];
     if (!_head) {
         _head = message;
     } else {
@@ -97,6 +107,10 @@ static LWMessageQueue *queue = nil;
             break;
         }
     }
+    
+//    LWMessage *msg = [[LWMessageQueue defaultInstance] next];
+//    [msg performSelectorForTarget];
+
 }
 
 

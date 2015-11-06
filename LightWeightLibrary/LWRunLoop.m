@@ -34,8 +34,6 @@ static pthread_key_t mTLSKey;
 
 @implementation LWRunLoop
 {
-    //    SEL _action;
-    //    id _target;
     LWMessageQueue *_queue;
     int _mWakeReadPipeFd;
     int _mWakeWritePipeFd;
@@ -52,7 +50,7 @@ void initTLSKey(void)
 
 void destructor()
 {
-    NSLog(@"destructor");
+    NSLog(@"LWRunLoop destructor");
 }
 
 
@@ -97,6 +95,7 @@ void destructor()
 - (instancetype)init
 {
     if (self = [super init]) {
+        _queue = [LWMessageQueue defaultInstance];
         [self innerInit];
     }
     
@@ -151,7 +150,7 @@ void destructor()
         //#pragma clang diagnostic pop
         //        }
         
-        [[LWMessageQueue defaultInstance] performActionsForThisLoop];
+        [_queue performActionsForThisLoop];
         
 //        [[[LWMessageQueue defaultInstance] next] performSelectorForTarget];
     } while ((nRead == -1 && errno == EINTR) || nRead == sizeof(buffer));
@@ -174,13 +173,12 @@ void destructor()
 - (void)postTarget:(id)target withAction:(SEL)aSel
 {
     LWMessage *message = [[LWMessage alloc] initWithTarget:target aSel:aSel withArgument:nil at:MSG_TIME_NOW];
-    [[LWMessageQueue defaultInstance] enqueueMessage:message];
+    [_queue enqueueMessage:message];
     [self handleWriteWake];
 }
 
 - (void)dealloc
 {
-    [LWMessageQueue destoryMessageQueue];
     close(_kq);
     close(_mWakeReadPipeFd);
     close(_mWakeWritePipeFd);

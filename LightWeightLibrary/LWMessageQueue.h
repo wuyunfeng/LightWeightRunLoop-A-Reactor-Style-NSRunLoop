@@ -13,13 +13,9 @@
 
 + (instancetype)defaultInstance;
 
-+ (void)destoryMessageQueue;
-
 - (void)enqueueMessage:(LWMessage *)message;
 
 - (void)performActionsForThisLoop;
-
-- (LWMessage *)next;
 
 - (NSInteger)count;
 

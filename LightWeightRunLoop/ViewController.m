@@ -61,9 +61,9 @@
     
     _target1 = [[TestTarget1 alloc] init];
     _target2 = [[TestTarget2 alloc] init];
-    [self postSelector:@selector(execute) onThread:_thread2 withObject:nil];
-    [_target1 postSelector:@selector(performTest) onThread:_thread withObject:nil];
-    [_target2 postSelector:@selector(performTest) onThread:_thread withObject:nil];
+//    [self postSelector:@selector(execute) onThread:_thread2 withObject:nil];
+//    [_target1 postSelector:@selector(performTest) onThread:_thread2 withObject:nil];
+//    [_target2 postSelector:@selector(performTest) onThread:_thread2 withObject:nil];
     [NSThread detachNewThreadSelector:@selector(asyncExecuteMethodOnThread:) toTarget:self withObject:nil];
     [NSThread detachNewThreadSelector:@selector(asyncExecuteMethodOnThread:) toTarget:self withObject:nil];
 }
@@ -82,9 +82,7 @@
 #pragma mark - Thread EntryPoint
 - (void)lightWeightRunloopThreadEntryPoint:(id)data
 {
-//    LWRunLoop *loop = [LWRunLoop currentLWRunLoop];
-//    loop = nil;
-//    [[LWRunLoop currentLWRunLoop] run];
+    [[LWRunLoop currentLWRunLoop] run];
 }
 
 
