@@ -12,4 +12,6 @@
 
 - (void)postSelector:(SEL)aSelectore onThread:(NSThread *)thread withObject:(id)arg;
 
+- (void)postSelector:(SEL)aSelectore onThread:(NSThread *)thread withObject:(id)arg afterDelay:(NSTimeInterval)delay;
+
 @end

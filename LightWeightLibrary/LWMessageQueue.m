@@ -8,6 +8,7 @@
 
 #import "LWMessageQueue.h"
 #include <pthread.h>
+#import "LWNativeLoop.h"
 
 
 static pthread_key_t mTLSKey;
@@ -16,6 +17,7 @@ static pthread_key_t mTLSKey;
 {
     LWMessage *_head;
     NSRecursiveLock *_lock;
+    LWNativeLoop *_nativeRunLoop;
 }
 
 
@@ -48,6 +50,7 @@ void threadDestructor()
         //nop
         _lock = [[NSRecursiveLock alloc] init];
         _lock.name = @"MessageQueueLock";
+        _nativeRunLoop = [[LWNativeLoop alloc] init];
     }
     return self;
 }

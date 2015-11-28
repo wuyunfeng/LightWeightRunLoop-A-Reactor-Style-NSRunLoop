@@ -19,4 +19,13 @@
     [loop postTarget:weakSelf withAction:aSelectore];
 }
 
+- (void)postSelector:(SEL)aSelectore onThread:(NSThread *)thread
+          withObject:(id)arg afterDelay:(NSTimeInterval)delay
+{
+    __weak __typeof(self) weakSelf = self;
+    LWRunLoop *loop = [thread looper];
+    NSAssert(loop != nil, @"be sure LWLoop is initialized for thread");
+    [loop postTarget:weakSelf withAction:aSelectore];
+}
+
 @end

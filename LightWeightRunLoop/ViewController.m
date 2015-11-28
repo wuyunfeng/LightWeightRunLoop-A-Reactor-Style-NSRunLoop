@@ -28,10 +28,23 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self setContentView];
+    NSLog(@"%f",[NSProcessInfo processInfo].systemUptime * 1000);
+    NSInteger now = (NSInteger)([NSProcessInfo processInfo].systemUptime * 1000);
+    NSLog(@"now= %ld", now);
+
     _thread = [[NSThread alloc] initWithTarget:self selector:@selector(lightWeightRunloopThreadEntryPoint:) object:nil];
     _thread2 = [[NSThread alloc] initWithTarget:self selector:@selector(lightWeightRunloopThreadEntryPoint2:) object:nil];
     _thread.name = @"Thead 1";
     _thread2.name = @"Thread 2";
+    
+    NSInteger now1 = (NSInteger)[NSProcessInfo processInfo].systemUptime;
+    NSLog(@"now1 = %ld", now1);
+    
+    NSInteger during = 2500;
+    struct timespec waitTime = {during / 1000, during % 1000};
+    NSLog(@"tv_sec = %ld", waitTime.tv_sec);
+    NSLog(@"tv_nsec = %ld", waitTime.tv_nsec);
+
 
     [_thread start];
     [_thread2 start];
