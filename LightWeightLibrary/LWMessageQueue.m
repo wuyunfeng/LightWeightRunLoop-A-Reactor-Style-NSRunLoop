@@ -15,12 +15,11 @@ static pthread_key_t mTLSKey;
 
 @implementation LWMessageQueue
 {
-    LWMessage *_head;
+    LWMessage *_messages;
     NSRecursiveLock *_lock;
     LWNativeLoop *_nativeRunLoop;
+    BOOL _isBlocked;
 }
-
-
 
 void threadDestructor()
 {
@@ -42,8 +41,6 @@ void threadDestructor()
     return queue;
 }
 
-
-
 - (instancetype)init
 {
     if (self = [super init]) {
@@ -59,11 +56,11 @@ void threadDestructor()
 - (void)enqueueMessage:(LWMessage *)message
 {
     [_lock lock];
-    if (!_head) {
-        _head = message;
+    if (!_messages) {
+        _messages = message;
     } else {
         LWMessage *pointer;
-        pointer = _head;
+        pointer = _messages;
         while (pointer.next != nil) {
             pointer = pointer.next;
         }
@@ -72,24 +69,83 @@ void threadDestructor()
     [_lock unlock];
 }
 
+- (BOOL)enqueueMessage:(LWMessage *)msg when:(NSInteger)when
+{
+    @synchronized(self) {
+        msg.when = when;
+        LWMessage *p = _messages;
+        BOOL needWake = NO;
+        if (p == nil || when == 0 || when < p.when) {
+            msg.next = p;
+            _messages = msg;
+            needWake = _isBlocked;
+        } else {
+            needWake = _isBlocked & (p.mTarget == nil);
+            LWMessage *preMsg;
+            while (true) {
+                preMsg = p;
+                p = p.next;
+                if (p == nil || when < p.when) {
+                    break;
+                }
+            }
+            msg.next = p;
+            preMsg.next = msg;
+        }
+        if (needWake) {
+            [_nativeRunLoop nativeWakeRunLoop];
+        }
+    }
+    return YES;
+}
+
 
 
 - (LWMessage *)next
 {
+    
+    NSInteger nextTimeoutMillis = 0;
+
+    while (true) {
+        
+        [_nativeRunLoop nativeRunLoopFor:nextTimeoutMillis];
+        
+        NSInteger now = (NSInteger)([NSProcessInfo processInfo].systemUptime * 1000);
+        LWMessage *preMsg = nil;
+        LWMessage *msg = _messages;
+        if (msg != nil && msg.mTarget) {
+            _isBlocked = NO;
+        }
+        
+        if (msg != nil) {
+            if (now < msg.when) {
+                nextTimeoutMillis = msg.when - now;
+            } else {
+                _isBlocked = NO;
+            }
+            
+        } else {
+            nextTimeoutMillis = -1;
+        }
+
+        if (true) {
+            break;
+        }
+    }
     LWMessage *result;
-    if (_head == nil) {
+    if (_messages == nil) {
         return nil;
     }
     
-    result = _head;
-    _head = _head.next;
+    result = _messages;
+    _messages = _messages.next;
     
     return result;
 }
 
 - (NSInteger)count
 {
-    LWMessage *pointer = _head;
+    LWMessage *pointer = _messages;
     NSInteger count = 0;
     while (pointer != nil) {
         pointer = pointer.next;

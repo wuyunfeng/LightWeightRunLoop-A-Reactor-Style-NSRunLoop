@@ -12,11 +12,8 @@
 {
     
 }
-
-@property id mTarget;
 @property SEL mSelector;
 @property id mArgument;
-@property NSInteger when;
 
 @end
 

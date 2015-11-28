@@ -18,7 +18,10 @@
 - (void)performSelectorForTarget;
 
 
+@property (strong, nonatomic, nullable) id mTarget;
 
-@property (strong, nonatomic,nullable) LWMessage *next;
+@property NSInteger when;
+
+@property (strong, nonatomic, nullable) LWMessage *next;
 
 @end
