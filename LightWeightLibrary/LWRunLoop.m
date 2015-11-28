@@ -31,6 +31,13 @@ static pthread_once_t mTLSKeyOnceToken = PTHREAD_ONCE_INIT;
 static pthread_key_t mTLSKey;
 
 
+NSString * const  LWDefaultRunLoop = @"LWDefaultRunLoop";
+NSString * const  LWRunLoopCommonModes = @"LWRunLoopCommonModes";
+NSString * const  LWRunLoopModeReserve1 = @"LWRunLoopModeReserve1";
+NSString * const  LWRunLoopModeReserve2 = @"LWRunLoopModeReserve2";
+NSString * const  LWTrackingRunLoopMode = @"LWTrackingRunLoopMode";
+
+
 
 @implementation LWRunLoop
 {
@@ -77,6 +84,7 @@ void destructor(void * data)
     return instance;
 }
 
+#pragma mark run this loop forever
 - (void)run
 {
     struct kevent events[MAX_EVENT_COUNT];
