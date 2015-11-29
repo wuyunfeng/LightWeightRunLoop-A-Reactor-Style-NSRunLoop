@@ -51,6 +51,8 @@
     int ret = kevent(_kq, NULL, 0, events, MAX_EVENT_COUNT, waitTime);
     NSAssert(ret != -1, @"Failure in kevent().  errno=%d", errno);
     free(waitTime);
+    waitTime = NULL; // avoid wild pointer
+    [self handleReadWake];
 }
 
 - (void)nativeWakeRunLoop
@@ -93,6 +95,15 @@
     int ret = kevent(_kq, changes, 1, NULL, 0, NULL);
     NSAssert(ret != -1, @"Failure in kevent().  errno=%d", errno);
 #pragma clang diagnostic pop
+}
+
+- (void)handleReadWake
+{
+    char buffer[16];
+    ssize_t nRead;
+    do {
+        nRead = read(_mReadPipeFd, buffer, sizeof(buffer));
+    } while ((nRead == -1 && errno == EINTR) || nRead == sizeof(buffer));
 }
 
 - (void)nativeDestoryKernelFds

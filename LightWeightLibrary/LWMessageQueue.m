@@ -9,21 +9,27 @@
 #import "LWMessageQueue.h"
 #include <pthread.h>
 #import "LWNativeLoop.h"
-
+#import "LWSystemClock.h"
 
 static pthread_key_t mTLSKey;
 
 @implementation LWMessageQueue
 {
     LWMessage *_messages;
-    NSRecursiveLock *_lock;
     LWNativeLoop *_nativeRunLoop;
-    BOOL _isBlocked;
+    volatile BOOL _isCurrentLoopBlock;
 }
 
-void threadDestructor()
+void threadDestructor(void *data)
 {
     NSLog(@"********** LWMessageQueue destructor *******");
+    LWMessageQueue *currentQueue = (__bridge LWMessageQueue *)data;
+    [currentQueue destoryRunLoop];
+}
+
+- (void)destoryRunLoop
+{
+    [_nativeRunLoop nativeDestoryKernelFds];
 }
 
 + (instancetype)defaultInstance
@@ -44,121 +50,81 @@ void threadDestructor()
 - (instancetype)init
 {
     if (self = [super init]) {
-        //nop
-        _lock = [[NSRecursiveLock alloc] init];
-        _lock.name = @"MessageQueueLock";
         _nativeRunLoop = [[LWNativeLoop alloc] init];
     }
     return self;
 }
 
-#pragma mark  - bug point?  lock is necessary or not?
-- (void)enqueueMessage:(LWMessage *)message
-{
-    [_lock lock];
-    if (!_messages) {
-        _messages = message;
-    } else {
-        LWMessage *pointer;
-        pointer = _messages;
-        while (pointer.next != nil) {
-            pointer = pointer.next;
-        }
-        pointer.next = message;
-    }
-    [_lock unlock];
-}
-
+#pragma mark  - enqueue message
 - (BOOL)enqueueMessage:(LWMessage *)msg when:(NSInteger)when
 {
     @synchronized(self) {
         msg.when = when;
         LWMessage *p = _messages;
-        BOOL needWake = NO;
+        BOOL needInterruptBolckingState = NO;
+        
         if (p == nil || when == 0 || when < p.when) {
             msg.next = p;
             _messages = msg;
-            needWake = _isBlocked;
+            needInterruptBolckingState = _isCurrentLoopBlock;
         } else {
-            needWake = _isBlocked & (p.mTarget == nil);
-            LWMessage *preMsg;
-            while (true) {
-                preMsg = p;
+            LWMessage *prev = nil;
+            while (p != nil && p.when <= when) {
+                prev = p;
                 p = p.next;
-                if (p == nil || when < p.when) {
-                    break;
-                }
             }
-            msg.next = p;
-            preMsg.next = msg;
+            msg.next = prev.next;
+            prev.next = msg;
+            needInterruptBolckingState = false;
         }
-        if (needWake) {
+        if (needInterruptBolckingState) {
             [_nativeRunLoop nativeWakeRunLoop];
         }
     }
     return YES;
 }
 
-
-
 - (LWMessage *)next
 {
-    
-    NSInteger nextTimeoutMillis = 0;
-
-    while (true) {
-        
-        [_nativeRunLoop nativeRunLoopFor:nextTimeoutMillis];
-        
-        NSInteger now = (NSInteger)([NSProcessInfo processInfo].systemUptime * 1000);
-        LWMessage *preMsg = nil;
+    NSInteger nextWakeTimeoutMillis = 0;
+    while (YES) {
+        [_nativeRunLoop nativeRunLoopFor:nextWakeTimeoutMillis];
+        NSInteger now = [LWSystemClock uptimeMillions];
         LWMessage *msg = _messages;
-        if (msg != nil && msg.mTarget) {
-            _isBlocked = NO;
-        }
-        
         if (msg != nil) {
             if (now < msg.when) {
-                nextTimeoutMillis = msg.when - now;
+                nextWakeTimeoutMillis = msg.when - now;
             } else {
-                _isBlocked = NO;
+                _isCurrentLoopBlock = NO;
+                _messages = msg.next;
+                 msg.next = nil;
+//                NSLog(@"return msg : %@", msg);
+                return msg;
             }
-            
         } else {
-            nextTimeoutMillis = -1;
-        }
-
-        if (true) {
-            break;
+            nextWakeTimeoutMillis = -1;
+            _isCurrentLoopBlock = YES;
         }
     }
-    LWMessage *result;
-    if (_messages == nil) {
-        return nil;
-    }
-    
-    result = _messages;
-    _messages = _messages.next;
-    
-    return result;
 }
 
 - (NSInteger)count
 {
-    LWMessage *pointer = _messages;
-    NSInteger count = 0;
-    while (pointer != nil) {
-        pointer = pointer.next;
-        count++;
+    @synchronized(self) {
+        LWMessage *pointer = _messages;
+        NSInteger count = 0;
+        while (pointer != nil) {
+            pointer = pointer.next;
+            count++;
+        }
+        return count;
     }
-    return count;
 }
 
 
 - (void)performActionsForThisLoop
 {
     while (YES) {
-//        NSLog(@"[ %@ %@]", [self class], NSStringFromSelector(_cmd));
         LWMessage *msg = [[LWMessageQueue defaultInstance] next];
         if (msg) {
             [msg performSelectorForTarget];
@@ -166,15 +132,12 @@ void threadDestructor()
             break;
         }
     }
-    
-//    LWMessage *msg = [[LWMessageQueue defaultInstance] next];
-//    [msg performSelectorForTarget];
-
 }
 
 
 - (void)dealloc
 {
+    [self destoryRunLoop];
     NSLog(@"[%@ %@]", [self class], NSStringFromSelector(_cmd));
 }
 

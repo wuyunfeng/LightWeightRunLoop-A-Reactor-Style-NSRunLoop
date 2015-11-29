@@ -10,11 +10,6 @@
 
 @interface LWNativeLoop : NSObject
 
-/**
- *
- * @prarams during ms
- *
- **/
 - (void)nativeRunLoopFor:(NSInteger)timeoutMillis;
 
 - (void)nativeWakeRunLoop;

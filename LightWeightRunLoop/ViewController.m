@@ -28,23 +28,11 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self setContentView];
-    NSLog(@"%f",[NSProcessInfo processInfo].systemUptime * 1000);
-    NSInteger now = (NSInteger)([NSProcessInfo processInfo].systemUptime * 1000);
-    NSLog(@"now= %ld", now);
 
     _thread = [[NSThread alloc] initWithTarget:self selector:@selector(lightWeightRunloopThreadEntryPoint:) object:nil];
     _thread2 = [[NSThread alloc] initWithTarget:self selector:@selector(lightWeightRunloopThreadEntryPoint2:) object:nil];
     _thread.name = @"Thead 1";
     _thread2.name = @"Thread 2";
-    
-    NSInteger now1 = (NSInteger)[NSProcessInfo processInfo].systemUptime;
-    NSLog(@"now1 = %ld", now1);
-    
-    NSInteger during = 2500;
-    struct timespec waitTime = {during / 1000, during % 1000};
-    NSLog(@"tv_sec = %ld", waitTime.tv_sec);
-    NSLog(@"tv_nsec = %ld", waitTime.tv_nsec);
-
 
     [_thread start];
     [_thread2 start];
@@ -78,18 +66,18 @@
 //    [_target1 postSelector:@selector(performTest) onThread:_thread2 withObject:nil];
 //    [_target2 postSelector:@selector(performTest) onThread:_thread2 withObject:nil];
     [NSThread detachNewThreadSelector:@selector(asyncExecuteMethodOnThread:) toTarget:self withObject:nil];
-    [NSThread detachNewThreadSelector:@selector(asyncExecuteMethodOnThread:) toTarget:self withObject:nil];
+//    [NSThread detachNewThreadSelector:@selector(asyncExecuteMethodOnThread:) toTarget:self withObject:nil];
 }
 
 #pragma mark - post method from new-thread to _thread
 - (void)asyncExecuteMethodOnThread:(id)args
 {
-    sleep(2);
+//    sleep(2);
     [_target1 postSelector:@selector(performTest) onThread:_thread2 withObject:nil];
-    sleep(1);
-    [_target2 postSelector:@selector(performTest) onThread:_thread2 withObject:nil];
-    sleep(1);
-    [self postSelector:@selector(execute) onThread:_thread2 withObject:nil];
+//    sleep(1);
+    [_target2 postSelector:@selector(performTest) onThread:_thread2 withObject:nil afterDelay:2000];
+//    sleep(2);
+    [self postSelector:@selector(execute) onThread:_thread2 withObject:nil afterDelay:0];
 }
 
 #pragma mark - Thread EntryPoint

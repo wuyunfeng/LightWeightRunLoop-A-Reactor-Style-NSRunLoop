@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		4B07F9BC1C09DACB009B491B /* LWNativeLoop.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B07F9BB1C09DACB009B491B /* LWNativeLoop.m */; };
+		4BDC8C061C0AA2CA00787967 /* LWSystemClock.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BDC8C051C0AA2CA00787967 /* LWSystemClock.m */; };
 		5350CFAD1BE30EB5004463EE /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5350CFAC1BE30EB5004463EE /* main.m */; };
 		5350CFB01BE30EB5004463EE /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5350CFAF1BE30EB5004463EE /* AppDelegate.m */; };
 		5350CFB31BE30EB5004463EE /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5350CFB21BE30EB5004463EE /* ViewController.m */; };
@@ -59,6 +60,8 @@
 /* Begin PBXFileReference section */
 		4B07F9BA1C09DACB009B491B /* LWNativeLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LWNativeLoop.h; sourceTree = "<group>"; };
 		4B07F9BB1C09DACB009B491B /* LWNativeLoop.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LWNativeLoop.m; sourceTree = "<group>"; };
+		4BDC8C041C0AA2CA00787967 /* LWSystemClock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LWSystemClock.h; sourceTree = "<group>"; };
+		4BDC8C051C0AA2CA00787967 /* LWSystemClock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LWSystemClock.m; sourceTree = "<group>"; };
 		5350CFA81BE30EB5004463EE /* LightWeightRunLoop.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LightWeightRunLoop.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5350CFAC1BE30EB5004463EE /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5350CFAE1BE30EB5004463EE /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -232,6 +235,8 @@
 				5376CF861BE4E6940092DF5F /* LWMessageQueue.m */,
 				4B07F9BA1C09DACB009B491B /* LWNativeLoop.h */,
 				4B07F9BB1C09DACB009B491B /* LWNativeLoop.m */,
+				4BDC8C041C0AA2CA00787967 /* LWSystemClock.h */,
+				4BDC8C051C0AA2CA00787967 /* LWSystemClock.m */,
 			);
 			path = LightWeightLibrary;
 			sourceTree = "<group>";
@@ -477,6 +482,7 @@
 				5376CF871BE4E6940092DF5F /* LWMessageQueue.m in Sources */,
 				5350CFB01BE30EB5004463EE /* AppDelegate.m in Sources */,
 				5350CFAD1BE30EB5004463EE /* main.m in Sources */,
+				4BDC8C061C0AA2CA00787967 /* LWSystemClock.m in Sources */,
 				5350CFE61BE30FB9004463EE /* NSObject+post.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

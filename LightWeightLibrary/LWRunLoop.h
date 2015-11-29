@@ -19,14 +19,11 @@ extern NSString * const  LWTrackingRunLoopMode;
 
 @interface LWRunLoop : NSObject
 
-
 + (instancetype)currentLWRunLoop;
-
 
 - (void)run;
 
+- (void)postTarget:(id)target withAction:(SEL)aSel when:(NSInteger)when;
 
-
-- (void)postTarget:(id)target withAction:(SEL)aSel;
 
 @end

@@ -13,10 +13,10 @@
 
 + (instancetype)defaultInstance;
 
-- (void)enqueueMessage:(LWMessage *)message;
-
-- (void)performActionsForThisLoop;
+- (BOOL)enqueueMessage:(LWMessage *)msg when:(NSInteger)when;
 
 - (NSInteger)count;
+
+- (LWMessage *)next;
 
 @end

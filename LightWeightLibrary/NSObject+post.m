@@ -11,21 +11,21 @@
 #import "LWRunLoop.h"
 @implementation NSObject (post)
 
-- (void)postSelector:(SEL)aSelectore onThread:(NSThread *)thread withObject:(id)arg;
+- (void)postSelector:(SEL)aSel onThread:(NSThread *)thread withObject:(id)arg;
 {
     __weak __typeof(self) weakSelf = self;
     LWRunLoop *loop = [thread looper];
     NSAssert(loop != nil, @"be sure LWLoop is initialized for thread");
-    [loop postTarget:weakSelf withAction:aSelectore];
+    [loop postTarget:weakSelf withAction:aSel when:0];
 }
 
-- (void)postSelector:(SEL)aSelectore onThread:(NSThread *)thread
+- (void)postSelector:(SEL)aSel onThread:(NSThread *)thread
           withObject:(id)arg afterDelay:(NSTimeInterval)delay
 {
     __weak __typeof(self) weakSelf = self;
     LWRunLoop *loop = [thread looper];
     NSAssert(loop != nil, @"be sure LWLoop is initialized for thread");
-    [loop postTarget:weakSelf withAction:aSelectore];
+    [loop postTarget:weakSelf withAction:aSel when:delay];
 }
 
 @end

@@ -44,6 +44,7 @@
         [_mTarget performSelector:_mSelector withObject:_mArgument];
 #pragma clang diagnostic pop
     } else {
+        NSLog(@"xxxxx %@", NSStringFromSelector(_mSelector));
     }
 }
 
@@ -51,6 +52,12 @@
 - (void)dealloc
 {
 //    NSLog(@"[%@ %@]", [self class], NSStringFromSelector(_cmd));
+}
+
+- (NSString *)description
+{
+    NSString *result = [[NSString alloc] initWithFormat:@"%@ :[ target =  %@, selector = %@, when = %ld]", [self class], [self.mTarget class], NSStringFromSelector(_mSelector), self.when];
+    return result;
 }
 
 @end
