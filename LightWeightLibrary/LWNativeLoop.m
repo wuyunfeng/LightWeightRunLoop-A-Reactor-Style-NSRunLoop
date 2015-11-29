@@ -52,7 +52,6 @@
     NSAssert(ret != -1, @"Failure in kevent().  errno=%d", errno);
     free(waitTime);
     waitTime = NULL; // avoid wild pointer
-    [self handleReadWake];
 }
 
 - (void)nativeWakeRunLoop
