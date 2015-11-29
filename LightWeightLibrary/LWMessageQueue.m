@@ -103,8 +103,9 @@ void threadDestructor(void *data)
             }
         } else {
             nextWakeTimeoutMillis = -1;
-            _isCurrentLoopBlock = YES;
+//            _isCurrentLoopBlock = YES;
         }
+        _isCurrentLoopBlock = YES;
     }
 }
 
