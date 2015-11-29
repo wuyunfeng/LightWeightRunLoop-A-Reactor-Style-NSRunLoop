@@ -8,21 +8,28 @@
 
 #import "LWMessageQueue.h"
 #include <pthread.h>
-
+#import "LWNativeLoop.h"
+#import "LWSystemClock.h"
 
 static pthread_key_t mTLSKey;
 
 @implementation LWMessageQueue
 {
-    LWMessage *_head;
-    NSRecursiveLock *_lock;
+    LWMessage *_messages;
+    LWNativeLoop *_nativeRunLoop;
+    volatile BOOL _isCurrentLoopBlock;
 }
 
-
-
-void threadDestructor()
+void threadDestructor(void *data)
 {
     NSLog(@"********** LWMessageQueue destructor *******");
+    LWMessageQueue *currentQueue = (__bridge LWMessageQueue *)data;
+    [currentQueue destoryRunLoop];
+}
+
+- (void)destoryRunLoop
+{
+    [_nativeRunLoop nativeDestoryKernelFds];
 }
 
 + (instancetype)defaultInstance
@@ -40,66 +47,84 @@ void threadDestructor()
     return queue;
 }
 
-
-
 - (instancetype)init
 {
     if (self = [super init]) {
-        //nop
-        _lock = [[NSRecursiveLock alloc] init];
-        _lock.name = @"MessageQueueLock";
+        _nativeRunLoop = [[LWNativeLoop alloc] init];
     }
     return self;
 }
 
-#pragma mark  - bug point?  lock is necessary or not?
-- (void)enqueueMessage:(LWMessage *)message
+#pragma mark  - enqueue message
+- (BOOL)enqueueMessage:(LWMessage *)msg when:(NSInteger)when
 {
-    [_lock lock];
-    if (!_head) {
-        _head = message;
-    } else {
-        LWMessage *pointer;
-        pointer = _head;
-        while (pointer.next != nil) {
-            pointer = pointer.next;
+    @synchronized(self) {
+        msg.when = when;
+        LWMessage *p = _messages;
+        BOOL needInterruptBolckingState = NO;
+        
+        if (p == nil || when == 0 || when < p.when) {
+            msg.next = p;
+            _messages = msg;
+            needInterruptBolckingState = _isCurrentLoopBlock;
+        } else {
+            LWMessage *prev = nil;
+            while (p != nil && p.when <= when) {
+                prev = p;
+                p = p.next;
+            }
+            msg.next = prev.next;
+            prev.next = msg;
+            needInterruptBolckingState = false;
         }
-        pointer.next = message;
+        if (needInterruptBolckingState) {
+            [_nativeRunLoop nativeWakeRunLoop];
+        }
     }
-    [_lock unlock];
+    return YES;
 }
-
-
 
 - (LWMessage *)next
 {
-    LWMessage *result;
-    if (_head == nil) {
-        return nil;
+    NSInteger nextWakeTimeoutMillis = 0;
+    while (YES) {
+        [_nativeRunLoop nativeRunLoopFor:nextWakeTimeoutMillis];
+        NSInteger now = [LWSystemClock uptimeMillions];
+        LWMessage *msg = _messages;
+        if (msg != nil) {
+            if (now < msg.when) {
+                nextWakeTimeoutMillis = msg.when - now;
+            } else {
+                _isCurrentLoopBlock = NO;
+                _messages = msg.next;
+                 msg.next = nil;
+//                NSLog(@"return msg : %@", msg);
+                return msg;
+            }
+        } else {
+            nextWakeTimeoutMillis = -1;
+            _isCurrentLoopBlock = YES;
+        }
     }
-    
-    result = _head;
-    _head = _head.next;
-    
-    return result;
 }
 
 - (NSInteger)count
 {
-    LWMessage *pointer = _head;
-    NSInteger count = 0;
-    while (pointer != nil) {
-        pointer = pointer.next;
-        count++;
+    @synchronized(self) {
+        LWMessage *pointer = _messages;
+        NSInteger count = 0;
+        while (pointer != nil) {
+            pointer = pointer.next;
+            count++;
+        }
+        return count;
     }
-    return count;
 }
 
 
 - (void)performActionsForThisLoop
 {
     while (YES) {
-//        NSLog(@"[ %@ %@]", [self class], NSStringFromSelector(_cmd));
         LWMessage *msg = [[LWMessageQueue defaultInstance] next];
         if (msg) {
             [msg performSelectorForTarget];
@@ -107,15 +132,12 @@ void threadDestructor()
             break;
         }
     }
-    
-//    LWMessage *msg = [[LWMessageQueue defaultInstance] next];
-//    [msg performSelectorForTarget];
-
 }
 
 
 - (void)dealloc
 {
+    [self destoryRunLoop];
     NSLog(@"[%@ %@]", [self class], NSStringFromSelector(_cmd));
 }
 

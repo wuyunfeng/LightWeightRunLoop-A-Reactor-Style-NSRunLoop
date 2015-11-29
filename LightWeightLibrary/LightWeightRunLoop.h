@@ -12,6 +12,5 @@
 #import "LWRunLoop.h"
 #import "NSthread+Looper.h"
 #import "NSObject+post.h"
-#import "LWMessageQueue.h"
 
 #endif /* LightWeightRunLoop_h */

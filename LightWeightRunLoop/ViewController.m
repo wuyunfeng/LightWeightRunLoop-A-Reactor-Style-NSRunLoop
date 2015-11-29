@@ -28,6 +28,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self setContentView];
+
     _thread = [[NSThread alloc] initWithTarget:self selector:@selector(lightWeightRunloopThreadEntryPoint:) object:nil];
     _thread2 = [[NSThread alloc] initWithTarget:self selector:@selector(lightWeightRunloopThreadEntryPoint2:) object:nil];
     _thread.name = @"Thead 1";
@@ -65,18 +66,18 @@
 //    [_target1 postSelector:@selector(performTest) onThread:_thread2 withObject:nil];
 //    [_target2 postSelector:@selector(performTest) onThread:_thread2 withObject:nil];
     [NSThread detachNewThreadSelector:@selector(asyncExecuteMethodOnThread:) toTarget:self withObject:nil];
-    [NSThread detachNewThreadSelector:@selector(asyncExecuteMethodOnThread:) toTarget:self withObject:nil];
+//    [NSThread detachNewThreadSelector:@selector(asyncExecuteMethodOnThread:) toTarget:self withObject:nil];
 }
 
 #pragma mark - post method from new-thread to _thread
 - (void)asyncExecuteMethodOnThread:(id)args
 {
-    sleep(2);
+//    sleep(2);
     [_target1 postSelector:@selector(performTest) onThread:_thread2 withObject:nil];
-    sleep(1);
-    [_target2 postSelector:@selector(performTest) onThread:_thread2 withObject:nil];
-    sleep(1);
-    [self postSelector:@selector(execute) onThread:_thread2 withObject:nil];
+//    sleep(1);
+    [_target2 postSelector:@selector(performTest) onThread:_thread2 withObject:nil afterDelay:2000];
+//    sleep(2);
+    [self postSelector:@selector(execute) onThread:_thread2 withObject:nil afterDelay:0];
 }
 
 #pragma mark - Thread EntryPoint
