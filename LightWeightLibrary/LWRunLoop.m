@@ -12,7 +12,7 @@
 #import "NSThread+Looper.h"
 #import "LWMessageQueue.h"
 #import "LWSystemClock.h"
-
+#import "LWTimer.h"
 static pthread_once_t mTLSKeyOnceToken = PTHREAD_ONCE_INIT;
 static pthread_key_t mTLSKey;
 
@@ -26,6 +26,7 @@ NSString * const  LWTrackingRunLoopMode = @"LWTrackingRunLoopMode";
 @implementation LWRunLoop
 {
     LWMessageQueue *_queue;
+    NSString *_currentRunLoopMode;
 }
 
 void initTLSKey(void)
@@ -64,8 +65,21 @@ void destructor(void * data)
     while (true) {
         LWMessage *msg = [_queue next];
         [msg performSelectorForTarget];
+        [self necessaryInvocationForThisLoop:msg];
     }
 }
+
+- (void)necessaryInvocationForThisLoop:(LWMessage *)msg
+{
+    if ([msg.data isKindOfClass:[LWTimer class]]) {
+        LWTimer *timer = msg.data;
+        if (timer.repeat) {
+            msg.when = timer.timeInterval; // must
+            [self postMessage:msg];
+        }
+    }
+}
+
 
 #pragma mark - Private
 - (instancetype)init
@@ -77,11 +91,18 @@ void destructor(void * data)
     return self;
 }
 
+#pragma mark - Post
 - (void)postTarget:(id)target withAction:(SEL)aSel when:(NSInteger)when
 {
     when += [LWSystemClock uptimeMillions];
     LWMessage *message = [[LWMessage alloc] initWithTarget:target aSel:aSel withArgument:nil at:when];
     [_queue enqueueMessage:message when:when];
+}
+
+- (void)postMessage:(LWMessage *)msg
+{
+    NSInteger when = msg.when + [LWSystemClock uptimeMillions];
+    [_queue enqueueMessage:msg when:when];
 }
 
 - (void)dealloc

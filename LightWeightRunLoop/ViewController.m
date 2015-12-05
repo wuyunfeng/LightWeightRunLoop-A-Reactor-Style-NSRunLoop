@@ -11,14 +11,19 @@
 #import "UIViewAdditions.h"
 #import "TestTarget1.h"
 #import "TestTarget2.h"
+#import "LWTimer.h"
 @interface ViewController ()
 {
     UIButton *_button;
+    UIButton *_button2;
     NSThread *_thread;
     NSThread *_thread2;
     
     TestTarget1 *_target1;
     TestTarget2 *_target2;
+    
+    NSInteger _count;
+    LWTimer *gTimer;
 }
 
 @end
@@ -44,6 +49,9 @@
     [self.view setBackgroundColor:[UIColor grayColor]];
     self.title = @"Realize RunLoop";
     
+    _target1 = [[TestTarget1 alloc] init];
+    _target2 = [[TestTarget2 alloc] init];
+    
     _button = [UIButton new];
     _button.width = self.view.width / 4;
     _button.height = 50;
@@ -54,14 +62,27 @@
     [_button setTitleColor:[UIColor blackColor] forState:UIControlStateHighlighted];
     [_button addTarget:self action:@selector(executePost:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:_button];
+    
+    _button2 = [UIButton new];
+    _button2.width = self.view.width / 4;
+    _button2.height = 50;
+    _button2.top = 200;
+    _button2.centerX = self.view.centerX;
+    [_button2 setTitle:@"Perform Test" forState:UIControlStateNormal];
+    [_button2 setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
+    [_button2 setTitleColor:[UIColor blackColor] forState:UIControlStateHighlighted];
+    [_button2 addTarget:self action:@selector(performTest:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:_button2];
 }
 
+
+- (void)performTest:(UIButton *)button
+{
+  [_target2 postSelector:@selector(performTest) onThread:_thread2 withObject:nil afterDelay:3000];
+}
 #pragma mark - test LWRunLoop
 - (void)executePost:(UIButton *)button
 {
-    
-    _target1 = [[TestTarget1 alloc] init];
-    _target2 = [[TestTarget2 alloc] init];
 //    [self postSelector:@selector(execute) onThread:_thread2 withObject:nil];
 //    [_target1 postSelector:@selector(performTest) onThread:_thread2 withObject:nil];
 //    [_target2 postSelector:@selector(performTest) onThread:_thread2 withObject:nil];
@@ -73,9 +94,9 @@
 - (void)asyncExecuteMethodOnThread:(id)args
 {
 //    sleep(2);
-    [_target1 postSelector:@selector(performTest) onThread:_thread2 withObject:nil];
+//    [_target1 postSelector:@selector(performTest) onThread:_thread2 withObject:nil];
 //    sleep(1);
-    [_target2 postSelector:@selector(performTest) onThread:_thread2 withObject:nil afterDelay:2000];
+//    [_target2 postSelector:@selector(performTest) onThread:_thread2 withObject:nil afterDelay:3000];
 //    sleep(2);
     [self postSelector:@selector(execute) onThread:_thread2 withObject:nil afterDelay:0];
 }
@@ -83,20 +104,40 @@
 #pragma mark - Thread EntryPoint
 - (void)lightWeightRunloopThreadEntryPoint:(id)data
 {
-    [[LWRunLoop currentLWRunLoop] run];
+    @autoreleasepool {
+        [[LWRunLoop currentLWRunLoop] run];
+    }
 }
 
 
 - (void)lightWeightRunloopThreadEntryPoint2:(id)data
 {
-    LWRunLoop *looper = [LWRunLoop currentLWRunLoop];
-    [looper run];
-
+    @autoreleasepool {
+        LWRunLoop *looper = [LWRunLoop currentLWRunLoop];
+        [looper run];
+    }
 }
 #pragma mark - post method from main-thread to _thread
 - (void)execute
 {
+//    NSLog(@"* [ Object: %@ performSelector: ( %@ ) on Thread : %@ ] *", [self class], NSStringFromSelector(_cmd), [NSThread currentThread].name);
+//    LWTimer *timer = [LWTimer timerWithTimeInterval:1000 target:self selector:@selector(performTimer:) userInfo:nil repeats:YES];
+//    _count = 0;
+//
+    gTimer = [LWTimer scheduledLWTimerWithTimeInterval:2000 target:self selector:@selector(performTimer:) userInfo:nil repeats:YES];
+
+}
+
+- (void)performTimer:(LWTimer *)timer
+{
+    NSLog(@"timer = %p", timer);
+    NSLog(@"gTimer = %p", gTimer);
+
+    _count++;
     NSLog(@"* [ Object: %@ performSelector: ( %@ ) on Thread : %@ ] *", [self class], NSStringFromSelector(_cmd), [NSThread currentThread].name);
+    if (_count == 4) {
+        [timer invalidate];
+    }
 }
 
 #pragma mark - MemoryWaring

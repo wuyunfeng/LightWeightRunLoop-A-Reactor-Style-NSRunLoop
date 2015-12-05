@@ -12,6 +12,8 @@
 
 - (void)performTest
 {
+    NSLog(@"%@ : execute", [self class]);
+    sleep(1);
     NSLog(@"* [ Object: %@ performSelector: ( %@ ) on Thread : %@ ] *", [self class], NSStringFromSelector(_cmd), [NSThread currentThread].name);
 }
 

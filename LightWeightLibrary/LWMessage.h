@@ -24,4 +24,6 @@
 
 @property (strong, nonatomic, nullable) LWMessage *next;
 
+@property (weak, nonatomic, nullable) id data;
+
 @end

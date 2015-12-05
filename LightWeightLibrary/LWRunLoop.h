@@ -7,7 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
-
+#import "LWMessage.h"
 
 extern NSString * const  LWDefaultRunLoop;
 extern NSString * const  LWRunLoopCommonModes;
@@ -23,7 +23,15 @@ extern NSString * const  LWTrackingRunLoopMode;
 
 - (void)run;
 
+/**
+ *  execute selector for target after when
+ *
+ *  @param target the reveiver
+ *  @param aSel   the selector
+ *  @param when   unit ms
+ */
 - (void)postTarget:(id)target withAction:(SEL)aSel when:(NSInteger)when;
 
+- (void)postMessage:(LWMessage *)msg;
 
 @end

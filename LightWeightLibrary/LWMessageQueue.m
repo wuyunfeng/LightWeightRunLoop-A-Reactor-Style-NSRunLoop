@@ -63,10 +63,11 @@ void threadDestructor(void *data)
         LWMessage *p = _messages;
         BOOL needInterruptBolckingState = NO;
         
-        if (p == nil || when == 0 || when < p.when) {
+        if (p == nil /*|| when == 0 */|| when < p.when) {
             msg.next = p;
             _messages = msg;
             needInterruptBolckingState = _isCurrentLoopBlock;
+            NSLog(@"when = %ld, needInterruptBolckingState = %d", (long)when, needInterruptBolckingState);
         } else {
             LWMessage *prev = nil;
             while (p != nil && p.when <= when) {
@@ -78,6 +79,7 @@ void threadDestructor(void *data)
             needInterruptBolckingState = false;
         }
         if (needInterruptBolckingState) {
+            NSLog(@"when = %ld, needInterruptBolckingState = %d", (long)when, needInterruptBolckingState);
             [_nativeRunLoop nativeWakeRunLoop];
         }
     }
@@ -89,23 +91,25 @@ void threadDestructor(void *data)
     NSInteger nextWakeTimeoutMillis = 0;
     while (YES) {
         [_nativeRunLoop nativeRunLoopFor:nextWakeTimeoutMillis];
-        NSInteger now = [LWSystemClock uptimeMillions];
-        LWMessage *msg = _messages;
-        if (msg != nil) {
-            if (now < msg.when) {
-                nextWakeTimeoutMillis = msg.when - now;
+        @synchronized(self) {
+            NSInteger now = [LWSystemClock uptimeMillions];
+            LWMessage *msg = _messages;
+            if (msg != nil) {
+                if (now < msg.when) {
+                    nextWakeTimeoutMillis = msg.when - now;
+                } else {
+                    _isCurrentLoopBlock = NO;
+                    _messages = msg.next;
+                    msg.next = nil;
+                    //                NSLog(@"return msg : %@", msg);
+                    return msg;
+                }
             } else {
-                _isCurrentLoopBlock = NO;
-                _messages = msg.next;
-                 msg.next = nil;
-//                NSLog(@"return msg : %@", msg);
-                return msg;
+                nextWakeTimeoutMillis = -1;
+                //            _isCurrentLoopBlock = YES;
             }
-        } else {
-            nextWakeTimeoutMillis = -1;
-//            _isCurrentLoopBlock = YES;
+            _isCurrentLoopBlock = YES;
         }
-        _isCurrentLoopBlock = YES;
     }
 }
 
