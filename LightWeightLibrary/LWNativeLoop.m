@@ -60,7 +60,7 @@
         if (fd == _mReadPipeFd) {
             if (event & EVFILT_READ) {
                 //must read mReadWakeFd, or result in readwake always wake
-                [self handlePipeReadFdWake];
+                [self nativePollRunLoop];
             } else {
                 NSLog(@"other event happend.");
             }
@@ -83,7 +83,7 @@
     }
 }
 
-- (void)handlePipeReadFdWake
+- (void)nativePollRunLoop
 {
     char buffer[16];
     ssize_t nRead;
@@ -139,9 +139,7 @@
 
 - (void)dealloc
 {
-    close(_kq);
-    close(_mReadPipeFd);
-    close(_mWritePipeFd);
+    [self nativeDestoryKernelFds];
 }
 
 @end

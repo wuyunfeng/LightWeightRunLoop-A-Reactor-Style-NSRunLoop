@@ -15,8 +15,6 @@
 
 - (BOOL)enqueueMessage:(LWMessage *)msg when:(NSInteger)when;
 
-- (NSInteger)count;
-
 - (LWMessage *)next;
 
 @end

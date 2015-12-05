@@ -67,7 +67,6 @@ void threadDestructor(void *data)
             msg.next = p;
             _messages = msg;
             needInterruptBolckingState = _isCurrentLoopBlock;
-            NSLog(@"when = %ld, needInterruptBolckingState = %d", (long)when, needInterruptBolckingState);
         } else {
             LWMessage *prev = nil;
             while (p != nil && p.when <= when) {
@@ -79,7 +78,6 @@ void threadDestructor(void *data)
             needInterruptBolckingState = false;
         }
         if (needInterruptBolckingState) {
-            NSLog(@"when = %ld, needInterruptBolckingState = %d", (long)when, needInterruptBolckingState);
             [_nativeRunLoop nativeWakeRunLoop];
         }
     }
@@ -101,12 +99,12 @@ void threadDestructor(void *data)
                     _isCurrentLoopBlock = NO;
                     _messages = msg.next;
                     msg.next = nil;
-                    //                NSLog(@"return msg : %@", msg);
+//                    NSLog(@"return msg : %@", msg);
                     return msg;
                 }
             } else {
                 nextWakeTimeoutMillis = -1;
-                //            _isCurrentLoopBlock = YES;
+//                _isCurrentLoopBlock = YES;
             }
             _isCurrentLoopBlock = YES;
         }
