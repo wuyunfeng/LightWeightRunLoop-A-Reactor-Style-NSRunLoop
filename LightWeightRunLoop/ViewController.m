@@ -110,7 +110,7 @@
     _button4.layer.borderColor = [UIColor yellowColor].CGColor;
     _button4.layer.masksToBounds = YES;
     _button4.backgroundColor = [UIColor whiteColor];
-    [_button4 setTitle:@"Execute LWTimer" forState:UIControlStateNormal];
+    [_button4 setTitle:@"LWTimer -> LWRunLoop-Thread" forState:UIControlStateNormal];
     [_button4 setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     [_button4 setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
     [_button4 addTarget:self action:@selector(executeTimerOnRunLoopThread:) forControlEvents:UIControlEventTouchUpInside];
@@ -125,7 +125,7 @@
     _button5.layer.borderColor = [UIColor yellowColor].CGColor;
     _button5.layer.masksToBounds = YES;
     _button5.backgroundColor = [UIColor whiteColor];
-    [_button5 setTitle:@"Execute LWURLConnection" forState:UIControlStateNormal];
+    [_button5 setTitle:@"LWURLConnection" forState:UIControlStateNormal];
     [_button5 setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     [_button5 setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
     [_button5 addTarget:self action:@selector(executeURLConnectionOnRunLoopThread:) forControlEvents:UIControlEventTouchUpInside];
@@ -214,10 +214,10 @@
     }
 }
 
-#pragma mark - perform LWTimer Test on LWRunLoop Thread
+#pragma mark - perform URLConnection Test on LWRunLoop Thread
 - (void)executeURLConnectionOnRunLoopThread:(UIButton *)button
 {
-    
+    NSLog(@"[%@ %@]", [self class], NSStringFromSelector(_cmd));
 }
 
 #pragma mark - MemoryWaring
