@@ -85,6 +85,7 @@
 {
     _repeat = NO;
     _valid = NO;
+    _tMsg = nil;
 }
 
 - (void)setRepeat:(BOOL)repeat

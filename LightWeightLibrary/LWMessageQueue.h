@@ -11,6 +11,12 @@
 
 @interface LWMessageQueue : NSObject
 
+/**
+ *  LWMessageQueue instance
+ *  @note one thread one instance
+ *
+ *  @return LWMessageQueue instance
+ */
 + (instancetype)defaultInstance;
 
 /**
