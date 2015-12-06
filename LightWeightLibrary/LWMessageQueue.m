@@ -20,18 +20,6 @@ static pthread_key_t mTLSKey;
     volatile BOOL _isCurrentLoopBlock;
 }
 
-void threadDestructor(void *data)
-{
-    NSLog(@"********** LWMessageQueue destructor *******");
-    LWMessageQueue *currentQueue = (__bridge LWMessageQueue *)data;
-    [currentQueue destoryRunLoop];
-}
-
-- (void)destoryRunLoop
-{
-    [_nativeRunLoop nativeDestoryKernelFds];
-}
-
 + (instancetype)defaultInstance
 {
     static dispatch_once_t onceToken;
@@ -53,6 +41,18 @@ void threadDestructor(void *data)
         _nativeRunLoop = [[LWNativeLoop alloc] init];
     }
     return self;
+}
+
+void threadDestructor(void *data)
+{
+    NSLog(@"********** LWMessageQueue destructor *******");
+    LWMessageQueue *currentQueue = (__bridge LWMessageQueue *)data;
+    [currentQueue destoryRunLoop];
+}
+
+- (void)destoryRunLoop
+{
+    [_nativeRunLoop nativeDestoryKernelFds];
 }
 
 #pragma mark  - enqueue message
@@ -84,6 +84,7 @@ void threadDestructor(void *data)
     return YES;
 }
 
+#pragma mark - obtain message
 - (LWMessage *)next
 {
     NSInteger nextWakeTimeoutMillis = 0;
@@ -110,33 +111,6 @@ void threadDestructor(void *data)
         }
     }
 }
-
-- (NSInteger)count
-{
-    @synchronized(self) {
-        LWMessage *pointer = _messages;
-        NSInteger count = 0;
-        while (pointer != nil) {
-            pointer = pointer.next;
-            count++;
-        }
-        return count;
-    }
-}
-
-
-- (void)performActionsForThisLoop
-{
-    while (YES) {
-        LWMessage *msg = [[LWMessageQueue defaultInstance] next];
-        if (msg) {
-            [msg performSelectorForTarget];
-        } else {
-            break;
-        }
-    }
-}
-
 
 - (void)dealloc
 {

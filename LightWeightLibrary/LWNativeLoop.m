@@ -57,7 +57,7 @@
     for (int i = 0; i < ret; i++) {
         int fd = (int)events[i].ident;
         int event = events[i].filter;
-        if (fd == _mReadPipeFd) {
+        if (fd == _mReadPipeFd) { // for pipe read fd
             if (event & EVFILT_READ) {
                 //must read mReadWakeFd, or result in readwake always wake
                 [self nativePollRunLoop];
@@ -125,7 +125,7 @@
     int ret = kevent(_kq, changes, 1, NULL, 0, NULL);
     NSAssert(ret != -1, @"Failure in kevent().  errno=%d", errno);
 #pragma clang diagnostic pop
-    
+
     _fds = [[NSMutableArray alloc] init];
 }
 

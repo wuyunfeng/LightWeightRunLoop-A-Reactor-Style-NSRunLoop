@@ -71,7 +71,7 @@ void destructor(void * data)
 
 - (void)necessaryInvocationForThisLoop:(LWMessage *)msg
 {
-    if ([msg.data isKindOfClass:[LWTimer class]]) {
+    if ([msg.data isKindOfClass:[LWTimer class]]) { // LWTimer: periodical perform selector
         LWTimer *timer = msg.data;
         if (timer.repeat) {
             msg.when = timer.timeInterval; // must

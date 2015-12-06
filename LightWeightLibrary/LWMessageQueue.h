@@ -13,8 +13,21 @@
 
 + (instancetype)defaultInstance;
 
+/**
+ *  enqueue message @see LWMessage
+ *
+ *  @param msg  LWMessage
+ *  @param when the time to be executed
+ *
+ *  @return if enqueue success return true, otherwise false
+ */
 - (BOOL)enqueueMessage:(LWMessage *)msg when:(NSInteger)when;
 
+/**
+ *  obtain message @see LWMessage
+ *
+ *  @return the message to be executed
+ */
 - (LWMessage *)next;
 
 @end
