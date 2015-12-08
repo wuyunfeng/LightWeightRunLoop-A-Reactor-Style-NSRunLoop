@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		4B07F9BC1C09DACB009B491B /* LWNativeLoop.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B07F9BB1C09DACB009B491B /* LWNativeLoop.m */; };
 		4B7AC2631C0DD00600B7F031 /* LWTimer.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B7AC2621C0DD00600B7F031 /* LWTimer.m */; };
+		4B91E98C1C15C54700DFFFE2 /* LWURLConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B91E98B1C15C54700DFFFE2 /* LWURLConnection.m */; };
 		4BD9B1411C12A07E006B3F78 /* NSObject+post.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BD9B1401C12A07E006B3F78 /* NSObject+post.m */; };
 		4BDC8C061C0AA2CA00787967 /* LWSystemClock.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BDC8C051C0AA2CA00787967 /* LWSystemClock.m */; };
 		5350CFAD1BE30EB5004463EE /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5350CFAC1BE30EB5004463EE /* main.m */; };
@@ -63,6 +64,8 @@
 		4B07F9BB1C09DACB009B491B /* LWNativeLoop.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LWNativeLoop.m; sourceTree = "<group>"; };
 		4B7AC2611C0DD00600B7F031 /* LWTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LWTimer.h; sourceTree = "<group>"; };
 		4B7AC2621C0DD00600B7F031 /* LWTimer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LWTimer.m; sourceTree = "<group>"; };
+		4B91E98A1C15C54700DFFFE2 /* LWURLConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LWURLConnection.h; sourceTree = "<group>"; };
+		4B91E98B1C15C54700DFFFE2 /* LWURLConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LWURLConnection.m; sourceTree = "<group>"; };
 		4BD9B13F1C12A07E006B3F78 /* NSObject+post.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+post.h"; sourceTree = "<group>"; };
 		4BD9B1401C12A07E006B3F78 /* NSObject+post.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+post.m"; sourceTree = "<group>"; };
 		4BDC8C041C0AA2CA00787967 /* LWSystemClock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LWSystemClock.h; sourceTree = "<group>"; };
@@ -164,6 +167,8 @@
 				4BD9B1401C12A07E006B3F78 /* NSObject+post.m */,
 				4B7AC2611C0DD00600B7F031 /* LWTimer.h */,
 				4B7AC2621C0DD00600B7F031 /* LWTimer.m */,
+				4B91E98A1C15C54700DFFFE2 /* LWURLConnection.h */,
+				4B91E98B1C15C54700DFFFE2 /* LWURLConnection.m */,
 			);
 			path = LightWeightFoundation;
 			sourceTree = "<group>";
@@ -496,6 +501,7 @@
 				5350D01B1BE31F2B004463EE /* UIViewAdditions.m in Sources */,
 				5376CF871BE4E6940092DF5F /* LWMessageQueue.m in Sources */,
 				5350CFB01BE30EB5004463EE /* AppDelegate.m in Sources */,
+				4B91E98C1C15C54700DFFFE2 /* LWURLConnection.m in Sources */,
 				5350CFAD1BE30EB5004463EE /* main.m in Sources */,
 				4BDC8C061C0AA2CA00787967 /* LWSystemClock.m in Sources */,
 			);
