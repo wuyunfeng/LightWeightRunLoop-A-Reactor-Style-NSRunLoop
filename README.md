@@ -32,7 +32,8 @@ such as:
 
     [self postSelector:@selector(execute) onThread:_lwRunLoopThread withObject:nil afterDelay:1000];
 
-#You use the LWTimer class to create timer objects or, more simply, timers. A timer waits until a certain time interval has elapsed and then fires, sending a specified message to a target object. 
+#You use the LWTimer class to create timer objects or, more simply, timers. 
+A timer waits until a certain time interval has elapsed and then fires, sending a specified message to a target object. 
 
 
 > +(LWTimer * _Nonnull)scheduledLWTimerWithTimeInterval:(NSTimeInterval)interval target:(nonnull id)aTarget selector:(nonnull SEL)aSelector userInfo:(nullable id)userInfo repeats:(BOOL)yesOrNo;
