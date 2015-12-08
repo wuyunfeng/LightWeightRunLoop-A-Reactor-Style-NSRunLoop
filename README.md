@@ -67,6 +67,5 @@ the selector for `LWTimer` to be executed:
         }
     }   
 #To the Future: the LWURLConnection will be added to the LWFundation
-#Links and Email
 
-#if you want to john me, cantact me with <wyfsky888@126.com> or fork this project <https://github.com/wuyunfeng/LightWeightRunLoop>
+#If you want to john me, cantact me with <wyfsky888@126.com> or fork this project <https://github.com/wuyunfeng/LightWeightRunLoop>
