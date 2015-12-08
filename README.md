@@ -69,4 +69,4 @@ the selector for `LWTimer` to be executed:
     }   
 ##For the Future: the LWURLConnection using BSD socket will be added to the LWFundation
 
-###if you want to john me, cantact me with <wyfsky888@126.com> or fork this project <https://github.com/wuyunfeng/LightWeightRunLoop>
+###If you want to john me, cantact me with <wyfsky888@126.com> or fork this project <https://github.com/wuyunfeng/LightWeightRunLoop> and create a pull-request
