@@ -30,7 +30,7 @@ extern NSString * const  LWTrackingRunLoopMode;
  *  @param aSel   the selector
  *  @param when   unit ms
  */
-- (void)postTarget:(id)target withAction:(SEL)aSel afterDelay:(NSInteger)delayMillis;
+- (void)postTarget:(id)target withAction:(SEL)aSel withObject:(id)arg afterDelay:(NSInteger)delayMillis;
 
 - (void)postMessage:(LWMessage *)msg;
 

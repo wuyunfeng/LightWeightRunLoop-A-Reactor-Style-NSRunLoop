@@ -16,7 +16,7 @@
     __weak __typeof(self) weakSelf = self;
     LWRunLoop *loop = [thread looper];
     NSAssert(loop != nil, @"be sure LWLoop is initialized for thread");
-    [loop postTarget:weakSelf withAction:aSelector afterDelay:0];
+    [loop postTarget:weakSelf withAction:aSelector withObject:arg afterDelay:0];
 }
 
 - (void)postSelector:(SEL)aSelector onThread:(NSThread *)thread
@@ -25,7 +25,7 @@
     __weak __typeof(self) weakSelf = self;
     LWRunLoop *loop = [thread looper];
     NSAssert(loop != nil, @"be sure LWLoop is initialized for thread");
-    [loop postTarget:weakSelf withAction:aSelector afterDelay:delay];
+    [loop postTarget:weakSelf withAction:aSelector withObject:arg afterDelay:delay];
 }
 
 @end

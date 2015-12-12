@@ -92,10 +92,10 @@ void destructor(void * data)
 }
 
 #pragma mark - Post
-- (void)postTarget:(id)target withAction:(SEL)aSel afterDelay:(NSInteger)delayMillis
+- (void)postTarget:(id)target withAction:(SEL)aSel withObject:(id)arg afterDelay:(NSInteger)delayMillis
 {
     NSInteger when = [LWSystemClock uptimeMillions] + delayMillis;
-    LWMessage *message = [[LWMessage alloc] initWithTarget:target aSel:aSel withArgument:nil at:when];
+    LWMessage *message = [[LWMessage alloc] initWithTarget:target aSel:aSel withArgument:arg at:when];
     [_queue enqueueMessage:message when:when];
 }
 

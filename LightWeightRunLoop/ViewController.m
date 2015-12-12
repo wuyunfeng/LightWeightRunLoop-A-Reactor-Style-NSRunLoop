@@ -12,7 +12,9 @@
 #import "TestTarget1.h"
 #import "TestTarget2.h"
 #import "LWTimer.h"
-@interface ViewController ()
+#import "LWURLConnection.h"
+#import "LWURLResponse.h"
+@interface ViewController ()<LWURLConnectionDataDelegate>
 {
     UIButton *_button1;
     UIButton *_button2;
@@ -28,6 +30,8 @@
     
     NSInteger _count;
     LWTimer *gTimer;
+    NSInputStream *_inputStream;
+    NSMutableData *_responseData;
 }
 
 @end
@@ -37,6 +41,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     [self setContentView];
+    [self testInputStream];
 
     _thread = [[NSThread alloc] initWithTarget:self selector:@selector(lightWeightRunloopThreadEntryPoint:) object:nil];
     _thread.name = @"Thead 1";
@@ -45,6 +50,14 @@
     _lwRunLoopThread = [[NSThread alloc] initWithTarget:self selector:@selector(lightWeightRunloopThreadEntryPoint2:) object:nil];
     _lwRunLoopThread.name = @"LWRunLoopThread";
     [_lwRunLoopThread start];
+}
+
+- (void)testInputStream
+{
+    NSString *content = @"name=john&address=beijing&mobile=140005&age=1200";
+
+    NSData *data = [content dataUsingEncoding:NSUTF8StringEncoding];
+    _inputStream = [[NSInputStream alloc] initWithData:data];
 }
 
 #pragma mark - layout all subviews
@@ -57,7 +70,7 @@
     _target2 = [[TestTarget2 alloc] init];
     
     _button1 = [UIButton new];
-    _button1.width = self.view.width- 40;
+    _button1.width = self.view.width - 10;
     _button1.height = 40;
     _button1.top = 65;
     _button1.centerX = self.view.centerX;
@@ -72,7 +85,7 @@
     [self.view addSubview:_button1];
     
     _button2 = [UIButton new];
-    _button2.width = self.view.width - 40;
+    _button2.width = self.view.width - 10;
     _button2.height = 40;
     _button2.top = _button1.bottom + 5;
     _button2.centerX = self.view.centerX;
@@ -87,7 +100,7 @@
     [self.view addSubview:_button2];
     
     _button3 = [UIButton new];
-    _button3.width = self.view.width - 40;
+    _button3.width = self.view.width - 10;
     _button3.height = 40;
     _button3.top = _button2.bottom + 5;
     _button3.centerX = self.view.centerX;
@@ -102,7 +115,7 @@
     [self.view addSubview:_button3];
     
     _button4 = [UIButton new];
-    _button4.width = self.view.width - 40;
+    _button4.width = self.view.width - 10;
     _button4.height = 40;
     _button4.top = _button3.bottom + 5;
     _button4.centerX = self.view.centerX;
@@ -117,7 +130,7 @@
     [self.view addSubview:_button4];
     
     _button5 = [UIButton new];
-    _button5.width = self.view.width - 40;
+    _button5.width = self.view.width - 10;
     _button5.height = 40;
     _button5.top = _button4.bottom + 5;
     _button5.centerX = self.view.centerX;
@@ -128,7 +141,7 @@
     [_button5 setTitle:@"LWURLConnection" forState:UIControlStateNormal];
     [_button5 setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     [_button5 setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
-    [_button5 addTarget:self action:@selector(executeURLConnectionOnRunLoopThread:) forControlEvents:UIControlEventTouchUpInside];
+    [_button5 addTarget:self action:@selector(executeURLConnection:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:_button5];
 }
 
@@ -209,16 +222,57 @@
 {
     _count++;
     NSLog(@"* [ LWTimer : %@ performSelector: ( %@ ) on Thread : %@ ] *", [self class], NSStringFromSelector(_cmd), [NSThread currentThread].name);
-    if (_count == 4) {
+    if (_count >= 4) {
         [timer invalidate];
     }
 }
 
 #pragma mark - perform URLConnection Test on LWRunLoop Thread
-- (void)executeURLConnectionOnRunLoopThread:(UIButton *)button
+- (void)executeURLConnection:(UIButton *)button
 {
-    NSLog(@"[%@ %@]", [self class], NSStringFromSelector(_cmd));
+    [self postSelector:@selector(performURLConnectionOnRunLoopThread) onThread:_lwRunLoopThread withObject:nil];
 }
+
+- (void)performURLConnectionOnRunLoopThread
+{
+    //    [self testInputStream];
+    NSLog(@"[%@ %@]", [self class], NSStringFromSelector(_cmd));
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"http://192.168.1.8:8888/post.php"]];
+    request.HTTPMethod = @"POST";
+    NSString *content = @"name=john&address=beijing&mobile=140005";
+    request.HTTPBody = [content dataUsingEncoding:NSUTF8StringEncoding];
+    //    request.HTTPBodyStream = _inputStream;
+    LWURLConnection *conn = [[LWURLConnection alloc] initWithRequest:request delegate:self startImmediately:NO];
+    [conn scheduleInRunLoop:_lwRunLoopThread.looper];
+    [conn start];
+}
+
+#pragma mark - LWURLConnectionDataDelegate
+- (void)lw_connection:(LWURLConnection * _Nonnull)connection didReceiveData:(NSData * _Nullable)data
+{
+    if (!_responseData) {
+        _responseData = [[NSMutableData alloc] init];
+    }
+    NSLog(@"**Thread : %@ --[%@ %@]**",[NSThread currentThread].name, [self class], NSStringFromSelector(_cmd));
+    [_responseData appendData:data];
+}
+- (void)lw_connection:(LWURLConnection * _Nonnull)connection didFailWithError:(NSError * _Nullable)error
+{
+    NSLog(@"**Thread : %@ --[%@ %@]**",[NSThread currentThread].name, [self class], NSStringFromSelector(_cmd));
+}
+
+- (void)lw_connectionDidFinishLoading:(LWURLConnection * _Nonnull)connection
+{
+    NSLog(@"**Thread : %@ --[%@ %@]**",[NSThread currentThread].name, [self class], NSStringFromSelector(_cmd));
+//    NSString *response = [[NSString alloc] initWithData:_responseData encoding:NSUTF8StringEncoding];
+    LWURLResponse *response = [[LWURLResponse alloc] initWithData:_responseData];
+    NSLog(@"statusCode = %lu",(long)[response statusCode]);
+    NSLog(@"statusMsg = %@", [response statusMsg]);
+    NSLog(@"responseBody = %@", [response responseBody]);
+    NSLog(@"responseHeader = %@", [response allHeaderFields]);
+}
+
+
 
 #pragma mark - MemoryWaring
 - (void)didReceiveMemoryWarning {
