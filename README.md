@@ -68,7 +68,27 @@ the selector for `LWTimer` to be executed:
         }
     }   
 ##An LWURLConnection(v0.1) object lets you load the contents of a URL by providing a URL request object.
-you implements the delegate methods on a certain Target:
+Step1: Perform `LWURLConnection` on `_lwRunLoopThread`:
+
+	- (void)executeURLConnection:(UIButton *)button
+	{
+       [self postSelector:@selector(performURLConnectionOnRunLoopThread) onThread:_lwRunLoopThread withObject:nil];
+	}
+	
+Step2: Create `LWURLConnection`, schedule `LWURLConnection` to `_lwRunLoopThread` such as following code snippet:
+
+	- (void)performURLConnectionOnRunLoopThread
+	{
+        NSLog(@"[%@ %@]", [self class], NSStringFromSelector(_cmd));
+        NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"http://192.168.1.8:8888/post.php"]];
+       request.HTTPMethod = @"POST";
+       NSString *content = @"name=john&address=beijing&mobile=140005";
+       request.HTTPBody = [content dataUsingEncoding:NSUTF8StringEncoding];
+       LWURLConnection *conn = [[LWURLConnection alloc] initWithRequest:request delegate:self startImmediately:NO];
+       [conn scheduleInRunLoop:_lwRunLoopThread.looper];
+       [conn start];
+    }
+Step3: Implement the delegate methods on host Target:
 
 	@protocol LWURLConnectionDataDelegate <NSObject>
 
@@ -76,15 +96,7 @@ you implements the delegate methods on a certain Target:
 	- (void)lw_connection:(LWURLConnection * _Nonnull)connection didFailWithError:(NSError * _Nullable)error;
 	- (void)lw_connectionDidFinishLoading:(LWURLConnection * _Nonnull)connection;
 	@end
-you create LWURLConnection with following code snippet:
 
-	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"http://192.168.1.8:8888/post.php"]];
-    request.HTTPMethod = @"POST";
-    NSString *content = @"name=john&address=beijing&mobile=140005";
-    request.HTTPBody = [content dataUsingEncoding:NSUTF8StringEncoding];
-    LWURLConnection *conn = [[LWURLConnection alloc] initWithRequest:request delegate:self startImmediately:NO];
-    [conn scheduleInRunLoop:_lwRunLoopThread.looper];
-    [conn start];
- 
+
 
 ###If you want to john me, cantact me with <wyfsky888@126.com> or fork this project <https://github.com/wuyunfeng/LightWeightRunLoop> and create a pull-request
