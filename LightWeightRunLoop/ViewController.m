@@ -235,13 +235,11 @@
 
 - (void)performURLConnectionOnRunLoopThread
 {
-    //    [self testInputStream];
     NSLog(@"[%@ %@]", [self class], NSStringFromSelector(_cmd));
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"http://192.168.1.8:8888/post.php"]];
     request.HTTPMethod = @"POST";
     NSString *content = @"name=john&address=beijing&mobile=140005";
     request.HTTPBody = [content dataUsingEncoding:NSUTF8StringEncoding];
-    //    request.HTTPBodyStream = _inputStream;
     LWURLConnection *conn = [[LWURLConnection alloc] initWithRequest:request delegate:self startImmediately:NO];
     [conn scheduleInRunLoop:_lwRunLoopThread.looper];
     [conn start];

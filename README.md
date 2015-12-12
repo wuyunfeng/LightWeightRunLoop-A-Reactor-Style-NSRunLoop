@@ -67,6 +67,24 @@ the selector for `LWTimer` to be executed:
             [timer invalidate];
         }
     }   
-##For the Future: the LWURLConnection using BSD socket will be added to the LWFundation
+##An LWURLConnection(v0.1) object lets you load the contents of a URL by providing a URL request object.
+you implements the delegate methods on a certain Target:
+
+	@protocol LWURLConnectionDataDelegate <NSObject>
+
+	- (void)lw_connection:(LWURLConnection * _Nonnull)connection didReceiveData:(NSData * _Nullable)data;
+	- (void)lw_connection:(LWURLConnection * _Nonnull)connection didFailWithError:(NSError * _Nullable)error;
+	- (void)lw_connectionDidFinishLoading:(LWURLConnection * _Nonnull)connection;
+	@end
+you create LWURLConnection with following code snippet:
+
+	NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"http://192.168.1.8:8888/post.php"]];
+    request.HTTPMethod = @"POST";
+    NSString *content = @"name=john&address=beijing&mobile=140005";
+    request.HTTPBody = [content dataUsingEncoding:NSUTF8StringEncoding];
+    LWURLConnection *conn = [[LWURLConnection alloc] initWithRequest:request delegate:self startImmediately:NO];
+    [conn scheduleInRunLoop:_lwRunLoopThread.looper];
+    [conn start];
+ 
 
 ###If you want to john me, cantact me with <wyfsky888@126.com> or fork this project <https://github.com/wuyunfeng/LightWeightRunLoop> and create a pull-request
