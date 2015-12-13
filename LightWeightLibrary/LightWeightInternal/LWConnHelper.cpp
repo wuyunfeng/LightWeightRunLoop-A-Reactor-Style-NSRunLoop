@@ -17,6 +17,11 @@
 #include <netdb.h> //for gethostbyname
 #include <sys/errno.h>
 #include <sys/select.h>
+
+void LWConnHelper::setLWConnHelperContext(LWConnHelperContext *context)
+{
+    this->mContext = context;
+}
 char * LWConnHelper::resolveHostName(const char *hostName)
 {
     if (hostName == NULL) {
@@ -86,9 +91,8 @@ void LWConnHelper::sendHttpBody(const char *ptrBody, int length)
     } while (mWrite == -1 && errno == EINTR);
 }
 
-void LWConnHelper::createHttpRequest(int timeoutMills,LWConnHelperContext *context)
+void LWConnHelper::createHttpRequest(int timeoutMills)
 {
-    this->mContext = context;
     fd_set readfds;
     struct timeval timeout;
     timeout.tv_sec = timeoutMills / 1000;

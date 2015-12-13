@@ -76,9 +76,13 @@ NSString* LWHeaderStringFromHTTPHeaderFieldsDictironary(NSDictionary *headerFiel
 - (void)startInternal
 {
     LWConnHelperContext context = {(__bridge void *)self,TimeOutCallBackRoutine, ReceiveCallBackRoutine, FinshCallBackRoutine, FailureCallBackRoutine};
+    _helper->setLWConnHelperContext(&context);
     [self prepareHttpRequest];
     [self prepareHTTPBody];
-    _helper->createHttpRequest(request.timeoutInterval, &context);
+    if (request.timeoutInterval <= 0) {
+        request.timeoutInterval = 30;
+    }
+    _helper->createHttpRequest(request.timeoutInterval);
 }
 
 - (void)cancel

@@ -29,11 +29,12 @@ private:
 public:
     LWConnHelper() : mContext(NULL){};
     ~LWConnHelper();
+    void setLWConnHelperContext(LWConnHelperContext *context);
     char *resolveHostName(const char *hostName);
     void establishSocket(const char *ip, const int port);
     void sendHttpHeader(const char *ptrHeader, int length);
     void sendHttpBody(const char *ptrBody, int lenght);
-    void createHttpRequest(int timeoutMills, LWConnHelperContext *context);
+    void createHttpRequest(int timeoutMills);
     void closeConn();
 };
 

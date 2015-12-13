@@ -43,7 +43,7 @@ A timer waits until a certain time interval has elapsed and then fires, sending 
 
 fire the LWTimer using `- (void)fire` and invalidate the LWTimer using `- (void)invalidate`
 
-####For example:
+#####For example:
 
 run the `- (void)genernateLWTimer` on `_lwRunLoopThread`:
 
@@ -102,4 +102,4 @@ Step4: You can use `LWURLResponse` to format Http response
     LWURLResponse *response = [[LWURLResponse alloc] initWithData:_responseData];
 
 
-###If you want to john me, cantact me with <wyfsky888@126.com> or fork this project <https://github.com/wuyunfeng/LightWeightRunLoop> and create a pull-request
+####If you want to join me, cantact me with <wyfsky888@126.com> or fork this project <https://github.com/wuyunfeng/LightWeightRunLoop> and create a pull-request
