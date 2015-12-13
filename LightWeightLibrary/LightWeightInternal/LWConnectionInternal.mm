@@ -9,6 +9,30 @@
 #import "LWConnectionInternal.h"
 #import "LWConnHelper.hpp"
 
+/**
+ *  Automatic change `NSDictionary` presentation of HTTP HEADER to `NSString` presentation
+ *
+ *  @param headerFields `NSDictionary` presentation of HTTP HEADER
+ *
+ *  @return `NSString` presentation of HTTP HEADER
+ */
+NSString* LWHeaderStringFromHTTPHeaderFieldsDictironary(NSDictionary *headerFields)
+{
+    NSSortDescriptor *sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"description" ascending:YES selector:@selector(compare:)];
+    NSArray *allKeys = [[headerFields allKeys] sortedArrayUsingDescriptors:@[sortDescriptor]];
+    NSMutableString *result = [[NSMutableString alloc] init];
+    for (NSString* key in allKeys) {
+        id value = [headerFields objectForKey:key];
+        if (key && value) {
+            [result appendFormat:@"%@: %@", key, value];
+            [result appendString:@"\r\n"];
+        }
+    }
+    [result appendString:@"\r\n"];
+    return result;
+}
+
+
 @implementation LWConnectionInternal
 {
     LWConnHelper *_helper;
@@ -80,29 +104,22 @@
     NSMutableString *httpRequestLineAndHeader = [[NSMutableString alloc] init];
     
     NSString *requestLine = [NSString stringWithFormat:@"%@ %@ HTTP/1.1 \r\n",httpMethod, path];
+    NSString *hostHeader = [NSString stringWithFormat:@"HOST: %@ \r\n", host];
     [httpRequestLineAndHeader appendString:requestLine];
+    [httpRequestLineAndHeader appendString:hostHeader];
     
-    NSString *genernalHostHeader = [NSString stringWithFormat:@"HOST: %@ \r\n", host];
-    [httpRequestLineAndHeader appendString:genernalHostHeader];
-
-    NSString *contentType = @"Content-Type: application/x-www-form-urlencoded\r\n";
-    [httpRequestLineAndHeader appendString:contentType];
-
-    NSString *agentHeader = [NSString stringWithFormat:@"User-Agent: %@\r\n", @"iPhoneOS"];
-    [httpRequestLineAndHeader appendString:agentHeader];
-
-    NSString *httpAccept = [NSString stringWithFormat:@"Http_Accept: %@\r\n", @"*/*"];
-    [httpRequestLineAndHeader appendString:httpAccept];
-    
-    NSString *contentLengthHeader = [NSString stringWithFormat:@"Content-Length: %u\r\n", request.HTTPBody.length];
-    [httpRequestLineAndHeader appendString:contentLengthHeader];
-
-    NSString *httpEncoding = [NSString stringWithFormat:@"HTTP-ACCPET-ENCODING: %@\r\n", @"gzip"];
-    [httpRequestLineAndHeader appendString:httpEncoding];
-    
-    NSString *httpConn = [NSString stringWithFormat:@"Connection: close\r\n"];
-    [httpRequestLineAndHeader appendString:httpConn];
-    [httpRequestLineAndHeader appendString:@"\r\n"];
+    NSMutableDictionary *allHTTPHeaderFields = [[NSMutableDictionary alloc] init];
+    [allHTTPHeaderFields setValue:@"application/x-www-form-urlencoded" forKey:@"Content-Type"];
+    [allHTTPHeaderFields setValue:@(request.HTTPBody.length) forKey:@"Content-Length"];
+    [allHTTPHeaderFields setValue:@"wuyunfeng@LWURLConnection" forKey:@"Accept"];
+    [allHTTPHeaderFields setValue:@"gzip, deflate" forKey:@"Accept-Encoding"];
+    [allHTTPHeaderFields setValue:@"utf-8" forKey:@"Accept-Charset"];
+    [allHTTPHeaderFields setValue:@"wuyunfeng@LWURLConnection" forKey:@"User-Agent"];
+    [allHTTPHeaderFields setValue:@"no-cache" forKey:@"Cache-Control"];
+    [allHTTPHeaderFields setValue:@"close" forKey:@"Connection"];
+    [allHTTPHeaderFields addEntriesFromDictionary:request.allHTTPHeaderFields];
+    NSString *httpHeaderAndValues = LWHeaderStringFromHTTPHeaderFieldsDictironary(allHTTPHeaderFields);
+    [httpRequestLineAndHeader appendString:httpHeaderAndValues];
     _helper->sendHttpHeader([httpRequestLineAndHeader UTF8String], httpRequestLineAndHeader.length);
 }
 

@@ -19,7 +19,7 @@
 - (instancetype)initWithData:(NSData *)data
 {
     if (self = [super init]) {
-        NSLog(@"raw response = %@",[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+        NSLog(@"raw http response = \n%@",[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
         allHeaderFields = [[NSMutableDictionary alloc] init];
         [self parseResponse:data];
     }

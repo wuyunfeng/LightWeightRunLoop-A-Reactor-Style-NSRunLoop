@@ -88,7 +88,7 @@ Step2: Create `LWURLConnection`, schedule `LWURLConnection` to `_lwRunLoopThread
        [conn scheduleInRunLoop:_lwRunLoopThread.looper];
        [conn start];
     }
-Step3: Implement the delegate methods on host Target:
+Step3: Implement the delegate methods on Receiver:
 
 	@protocol LWURLConnectionDataDelegate <NSObject>
 
@@ -97,6 +97,9 @@ Step3: Implement the delegate methods on host Target:
 	- (void)lw_connectionDidFinishLoading:(LWURLConnection * _Nonnull)connection;
 	@end
 
+Step4: You can use `LWURLResponse` to format Http response
+   
+    LWURLResponse *response = [[LWURLResponse alloc] initWithData:_responseData];
 
 
 ###If you want to john me, cantact me with <wyfsky888@126.com> or fork this project <https://github.com/wuyunfeng/LightWeightRunLoop> and create a pull-request
