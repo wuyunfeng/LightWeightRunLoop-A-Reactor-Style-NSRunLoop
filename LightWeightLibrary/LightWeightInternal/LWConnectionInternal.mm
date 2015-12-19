@@ -124,13 +124,13 @@ NSString* LWHeaderStringFromHTTPHeaderFieldsDictironary(NSDictionary *headerFiel
     [allHTTPHeaderFields addEntriesFromDictionary:request.allHTTPHeaderFields];
     NSString *httpHeaderAndValues = LWHeaderStringFromHTTPHeaderFieldsDictironary(allHTTPHeaderFields);
     [httpRequestLineAndHeader appendString:httpHeaderAndValues];
-    _helper->sendHttpHeader([httpRequestLineAndHeader UTF8String], httpRequestLineAndHeader.length);
+    _helper->sendMsg([httpRequestLineAndHeader UTF8String], httpRequestLineAndHeader.length);
 }
 
 - (void)prepareHTTPBody
 {
     NSData *data = request.HTTPBody;
-    _helper->sendHttpBody((char *)([data bytes]), [data length]);
+    _helper->sendMsg((const char *)([data bytes]), [data length]);
 }
 
 #pragma mark - C-Style CallBack

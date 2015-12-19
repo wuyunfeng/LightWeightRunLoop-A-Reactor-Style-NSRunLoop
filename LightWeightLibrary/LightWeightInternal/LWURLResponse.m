@@ -33,19 +33,20 @@
         return;
     }
     NSArray *responseArray = [responseStr componentsSeparatedByString:@"\r\n\r\n"];
-    [self getAllHttpHeaders:[responseArray firstObject]];
+    [self getHttpResponseHeaders:[responseArray firstObject]];
     responseBody = [responseArray lastObject];
 }
 
-- (void)getAllHttpHeaders:(NSString *)content
+- (void)getHttpResponseHeaders:(NSString *)content
 {
     NSArray *headerArray = [content componentsSeparatedByString:@"\r\n"];
-    NSString *httpRequestLine = [headerArray firstObject];
-    if (httpRequestLine) {
-        NSArray *requstLineArray = [httpRequestLine componentsSeparatedByString:@" "];
-        statusCode = [[requstLineArray objectAtIndex:1] integerValue];
-        statusMsg = [requstLineArray objectAtIndex:2];
-    }
+    NSString *statusLine = [headerArray firstObject];
+    
+    const char *ptrStatusLine = [statusLine UTF8String];
+    char httpVersion[10];
+    char httpStatusMsg[20];
+    sscanf(ptrStatusLine, "%s %d %s", httpVersion, &statusCode, httpStatusMsg);
+    statusMsg = [NSString stringWithUTF8String:httpStatusMsg];
     [headerArray enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         if (idx == 0) {
             return;

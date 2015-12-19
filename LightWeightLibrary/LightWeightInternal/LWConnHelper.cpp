@@ -17,7 +17,7 @@
 #include <netdb.h> //for gethostbyname
 #include <sys/errno.h>
 #include <sys/select.h>
-
+#include <sys/fcntl.h>
 void LWConnHelper::setLWConnHelperContext(LWConnHelperContext *context)
 {
     this->mContext = context;
@@ -55,39 +55,27 @@ void LWConnHelper::establishSocket(const char *ip, const int port)
 {
     struct sockaddr_in serverAddr;
     serverAddr.sin_len = sizeof(struct sockaddr_in);
-    serverAddr.sin_family = PF_INET;
+    serverAddr.sin_family = AF_INET;
     serverAddr.sin_port = htons(port);
     if (inet_aton(ip, &serverAddr.sin_addr) == 0) {
         printf("address error\n");
         return;
     }
     inet_aton(ip, &serverAddr.sin_addr);
-    this->mSockFd = socket(PF_INET, SOCK_STREAM, 0);
-
+    this->mSockFd = socket(AF_INET, SOCK_STREAM, 0);
     if (connect(this->mSockFd, (struct sockaddr *)&serverAddr, sizeof(struct sockaddr)) < 0) {
         printf("errno = %d\n", errno);
     }
 }
 
-void LWConnHelper::sendHttpHeader(const char *ptrHeader, int length)
+void LWConnHelper::sendMsg(const char *content, int length)
 {
-    if (ptrHeader == NULL) {
+    if (content == NULL) {
         return;
     }
     ssize_t mWrite;
     do {
-        mWrite = write(this->mSockFd, ptrHeader, length);
-    } while (mWrite == -1 && errno == EINTR);
-}
-
-void LWConnHelper::sendHttpBody(const char *ptrBody, int length)
-{
-    if (ptrBody == NULL) {
-        return;
-    }
-    ssize_t mWrite;
-    do {
-        mWrite = write(this->mSockFd, ptrBody, length);
+        mWrite = write(this->mSockFd, content, length);
     } while (mWrite == -1 && errno == EINTR);
 }
 
