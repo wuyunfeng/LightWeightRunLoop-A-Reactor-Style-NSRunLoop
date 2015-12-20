@@ -31,7 +31,7 @@ public:
     ~LWConnHelper();
     void setLWConnHelperContext(LWConnHelperContext *context);
     char *resolveHostName(const char *hostName);
-    void establishSocket(const char *ip, const int port);
+    bool establishSocket(const char *ip, const int port);
     void sendMsg(const char *content, int length);
     void createHttpRequest(int timeoutMills);
     void closeConn();

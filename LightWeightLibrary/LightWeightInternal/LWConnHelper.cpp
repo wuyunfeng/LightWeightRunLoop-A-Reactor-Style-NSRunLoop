@@ -51,7 +51,7 @@ char * LWConnHelper::resolveHostName(const char *hostName)
     return targetIp;
 }
 
-void LWConnHelper::establishSocket(const char *ip, const int port)
+bool LWConnHelper::establishSocket(const char *ip, const int port)
 {
     struct sockaddr_in serverAddr;
     serverAddr.sin_len = sizeof(struct sockaddr_in);
@@ -59,13 +59,56 @@ void LWConnHelper::establishSocket(const char *ip, const int port)
     serverAddr.sin_port = htons(port);
     if (inet_aton(ip, &serverAddr.sin_addr) == 0) {
         printf("address error\n");
-        return;
+        return false;
     }
     inet_aton(ip, &serverAddr.sin_addr);
+    
     this->mSockFd = socket(AF_INET, SOCK_STREAM, 0);
-    if (connect(this->mSockFd, (struct sockaddr *)&serverAddr, sizeof(struct sockaddr)) < 0) {
-        printf("errno = %d\n", errno);
+//    if (connect(this->mSockFd, (struct sockaddr *)&serverAddr, sizeof(struct sockaddr)) < 0) {
+//        printf("errno = %d\n", errno);
+//    }
+    int flag = fcntl(this->mSockFd, F_GETFL, NULL);
+    flag |= O_NONBLOCK;
+    fcntl(this->mSockFd, F_SETFL, flag);
+    int ret = connect(this->mSockFd, (struct sockaddr *)&serverAddr, sizeof(struct sockaddr));
+    struct timeval tv = {15, 0};
+    fd_set writeset;
+    FD_ZERO(&writeset);
+    if (ret < 0) {
+        if (errno == EINPROGRESS) {
+            printf("errno = EINPROGRESS in connect() - do `select()` \n");
+            do {
+                FD_SET(this->mSockFd, &writeset);
+                ret = select(this->mSockFd + 1, NULL, &writeset, NULL, &tv);
+                if (ret < 0 && errno != EINTR) {
+                    printf("Error connecting %d\n", errno);
+                    return false;
+                } else if (ret > 0) {
+                    int optval;
+                    socklen_t optlen = sizeof(socklen_t);
+                    if (getsockopt(this->mSockFd, SOL_SOCKET, SO_ERROR, (void *)(&optval), &optlen) < 0) {
+                        printf("Error in getsockopt() %d\n", errno);
+                        return false;
+                    }
+                    if (optval) {
+                        printf("Error in delayed connection()\n");
+                        return false;
+                    }
+                } else {
+                    printf("timeout in select() - Cancelling!\n");
+                    return false;
+                }
+            } while (ret == -1 && errno == EINTR);
+        } else {
+            //ENETUNREACH	51		/* Network is unreachable */
+            printf("Error in connecting %d\n", errno);
+            return false;
+        }
     }
+    flag = fcntl(this->mSockFd, F_GETFL, NULL);
+    flag &= (~O_NONBLOCK);
+    fcntl(this->mSockFd, F_SETFL, flag);
+    return true;
 }
 
 void LWConnHelper::sendMsg(const char *content, int length)
@@ -87,25 +130,17 @@ void LWConnHelper::createHttpRequest(int timeoutMills)
     timeout.tv_usec = timeoutMills % 1000 * 1000;
     int maxfd = -1;
     FD_ZERO(&readfds);
-    FD_SET(this->mSockFd, &readfds);
     maxfd = this->mSockFd + 1;
     int ret;
     do {
+        FD_SET(this->mSockFd, &readfds);
         ret = select(maxfd, &readfds, NULL, NULL, &timeout);
-        if (-1 == ret) {
-            printf("select error!\n");
-            if (this->mContext->LWConnectionFailureCallBack != NULL) {
-                this->mContext->LWConnectionFailureCallBack(this->mContext->info, -1);
-            }
-
-        }
+        
         if (0 == ret) {
-            printf("select timeout");
             if (this->mContext->LWConnectionTimeOutCallBack != NULL) {
                 this->mContext->LWConnectionTimeOutCallBack(this->mContext->info);
             }
         }
-        
         if (FD_ISSET(this->mSockFd, &readfds)) {
             char buffer[4 * 1024];
             ssize_t nRead;
@@ -120,6 +155,12 @@ void LWConnHelper::createHttpRequest(int timeoutMills)
             }
         }
     } while (-1 == ret && errno == EINTR);
+    
+    if (-1 == ret) {
+        if (this->mContext->LWConnectionFailureCallBack != NULL) {
+            this->mContext->LWConnectionFailureCallBack(this->mContext->info, -1);
+        }
+    }
     closeConn();
 }
 

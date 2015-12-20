@@ -236,7 +236,7 @@
 - (void)performURLConnectionOnRunLoopThread
 {
     NSLog(@"[%@ %@]", [self class], NSStringFromSelector(_cmd));
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"http://192.168.1.8:8888/post.php"]];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"http://192.168.1.4:8080/postpage.php"]];
     request.HTTPMethod = @"POST";
     NSString *content = @"name=john&address=beijing&mobile=140005";
     request.HTTPBody = [content dataUsingEncoding:NSUTF8StringEncoding];
@@ -264,10 +264,10 @@
     NSLog(@"**Thread : %@ --[%@ %@]**",[NSThread currentThread].name, [self class], NSStringFromSelector(_cmd));
 //    NSString *response = [[NSString alloc] initWithData:_responseData encoding:NSUTF8StringEncoding];
     LWURLResponse *response = [[LWURLResponse alloc] initWithData:_responseData];
+    NSLog(@"responseHeader = %@", [response allHeaderFields]);
     NSLog(@"statusCode = %lu",(long)[response statusCode]);
     NSLog(@"statusMsg = %@", [response statusMsg]);
     NSLog(@"responseBody = %@", [response responseBody]);
-    NSLog(@"responseHeader = %@", [response allHeaderFields]);
 }
 
 

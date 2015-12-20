@@ -77,12 +77,17 @@ NSString* LWHeaderStringFromHTTPHeaderFieldsDictironary(NSDictionary *headerFiel
 {
     LWConnHelperContext context = {(__bridge void *)self,TimeOutCallBackRoutine, ReceiveCallBackRoutine, FinshCallBackRoutine, FailureCallBackRoutine};
     _helper->setLWConnHelperContext(&context);
-    [self prepareHttpRequest];
-    [self prepareHTTPBody];
-    if (request.timeoutInterval <= 0) {
-        request.timeoutInterval = 30;
+    if ([self establishConnection]) {
+        [self prepareHttpRequest];
+        [self prepareHTTPBody];
+        if (request.timeoutInterval <= 0) {
+            request.timeoutInterval = 30;
+        }
+        _helper->createHttpRequest(request.timeoutInterval);
+    } else {
+        _helper->closeConn();
+        [self failure];
     }
-    _helper->createHttpRequest(request.timeoutInterval);
 }
 
 - (void)cancel
@@ -91,19 +96,25 @@ NSString* LWHeaderStringFromHTTPHeaderFieldsDictironary(NSDictionary *headerFiel
     self.delegate = nil;
 }
 
+- (BOOL)establishConnection
+{
+    NSURL *targetURL = request.URL;
+    NSString *host = targetURL.host;
+    NSInteger port = [targetURL.port intValue];
+    char *ip = _helper->resolveHostName([host UTF8String]);
+    if (ip == NULL) {
+        NSLog(@"resolve host name failure");
+        return NO;
+    }
+    return _helper->establishSocket(ip, port);
+}
+
 - (void)prepareHttpRequest
 {
     NSURL *targetURL = request.URL;
     NSString *httpMethod = request.HTTPMethod;
     NSString *path = targetURL.path;
     NSString *host = targetURL.host;
-    NSInteger port = [targetURL.port intValue];
-    char *ip = _helper->resolveHostName([host UTF8String]);
-    if (ip == NULL) {
-        NSLog(@"resolve host name failure");
-        return;
-    }
-    _helper->establishSocket(ip, port);
     
     NSMutableString *httpRequestLineAndHeader = [[NSMutableString alloc] init];
     
