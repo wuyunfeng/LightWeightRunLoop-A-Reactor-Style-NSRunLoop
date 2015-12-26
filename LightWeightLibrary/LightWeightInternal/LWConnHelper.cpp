@@ -105,9 +105,9 @@ bool LWConnHelper::establishSocket(const char *ip, const int port)
             return false;
         }
     }
-    flag = fcntl(this->mSockFd, F_GETFL, NULL);
-    flag &= (~O_NONBLOCK);
-    fcntl(this->mSockFd, F_SETFL, flag);
+//    flag = fcntl(this->mSockFd, F_GETFL, NULL);
+//    flag &= (~O_NONBLOCK);
+//    fcntl(this->mSockFd, F_SETFL, flag);
     return true;
 }
 

@@ -106,7 +106,7 @@ NSString* LWHeaderStringFromHTTPHeaderFieldsDictironary(NSDictionary *headerFiel
         NSLog(@"resolve host name failure");
         return NO;
     }
-    return _helper->establishSocket(ip, port);
+    return _helper->establishSocket(ip, (int)port);
 }
 
 - (void)prepareHttpRequest
