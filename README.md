@@ -67,7 +67,7 @@ the selector for `LWTimer` to be executed:
             [timer invalidate];
         }
     }   
-##An LWURLConnection(v0.1) object lets you load the contents of a URL by providing a URL request object.
+##An LWURLConnection object lets you load the contents of a URL by providing a URL request object.
 Step1: Perform `LWURLConnection` on `_lwRunLoopThread`:
 
 	- (void)executeURLConnection:(UIButton *)button
