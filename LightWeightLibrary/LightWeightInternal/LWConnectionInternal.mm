@@ -79,9 +79,11 @@ NSString* LWHeaderStringFromHTTPHeaderFieldsDictironary(NSDictionary *headerFiel
     _helper->setLWConnHelperContext(&context);
     if ([self establishConnection]) {
         [self prepareHttpRequest];
-        [self prepareHTTPBody];
+        if (strcasecmp("post", [request.HTTPMethod UTF8String]) && request.HTTPBody.length > 0) {
+            [self prepareHTTPBody];
+        }
         if (request.timeoutInterval <= 0) {
-            request.timeoutInterval = 30;
+            request.timeoutInterval = 60;
         }
         _helper->createHttpRequest(request.timeoutInterval);
     } else {
