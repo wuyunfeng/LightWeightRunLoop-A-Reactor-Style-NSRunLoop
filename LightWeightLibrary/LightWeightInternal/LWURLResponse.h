@@ -10,6 +10,9 @@
 
 @interface LWURLResponse : NSObject
 
+
+@property (readonly, strong, nullable) NSData *responseData;
+
 @property (readonly ,strong, nullable) NSString *responseBody;
 
 @property (readonly) NSInteger statusCode;

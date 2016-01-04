@@ -14,6 +14,7 @@
     NSInteger statusCode;
     NSDictionary *allHeaderFields;
     NSString *statusMsg;
+    NSData *responseData;
 }
 
 - (instancetype)initWithData:(NSData *)data
@@ -35,6 +36,7 @@
     NSArray *responseArray = [responseStr componentsSeparatedByString:@"\r\n\r\n"];
     [self getHttpResponseHeaders:[responseArray firstObject]];
     responseBody = [responseArray lastObject];
+    responseData = [[responseArray lastObject] dataUsingEncoding:NSUTF8StringEncoding];
 }
 
 - (void)getHttpResponseHeaders:(NSString *)content
@@ -45,7 +47,7 @@
     const char *ptrStatusLine = [statusLine UTF8String];
     char httpVersion[10];
     char httpStatusMsg[20];
-    sscanf(ptrStatusLine, "%s %d %s", httpVersion, &statusCode, httpStatusMsg);
+    sscanf(ptrStatusLine, "%s %ld %s", httpVersion, &statusCode, httpStatusMsg);
     statusMsg = [NSString stringWithUTF8String:httpStatusMsg];
     [headerArray enumerateObjectsUsingBlock:^(id  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         if (idx == 0) {
@@ -56,6 +58,11 @@
         NSString *headerValue = [[headerItem lastObject] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
         [allHeaderFields setValue:headerValue forKey:headerKey];
     }];
+}
+
+- (NSData *)responseData
+{
+    return responseData;
 }
 
 - (NSString *)responseBody
