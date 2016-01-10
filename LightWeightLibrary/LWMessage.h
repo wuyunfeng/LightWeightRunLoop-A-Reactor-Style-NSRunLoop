@@ -12,7 +12,16 @@
 #define  MSG_TIME_NOW 0
 @interface LWMessage : NSObject
 
-
+/**
+ *  improve this class in future
+ *
+ *  @param aTarget anObject that which selector to be executed.
+ *  @param aSel    the selector to be executed
+ *  @param arg     the arguments for the selector
+ *  @param when    seconds unit.
+ *
+ *  @return LWMessage instance
+ */
 - (instancetype _Nonnull)initWithTarget:(id _Nullable)aTarget aSel:(SEL _Nullable)aSel withArgument:(id _Nullable)arg at:(NSInteger)when;
 
 - (void)performSelectorForTarget;

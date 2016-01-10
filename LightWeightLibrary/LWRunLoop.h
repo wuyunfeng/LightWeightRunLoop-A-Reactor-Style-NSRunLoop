@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "LWMessage.h"
-
+#include <sys/stat.h>
 extern NSString * const  LWDefaultRunLoop;
 extern NSString * const  LWRunLoopCommonModes;
 
@@ -19,8 +19,16 @@ extern NSString * const  LWTrackingRunLoopMode;
 
 @interface LWRunLoop : NSObject
 
+/**
+ *  Get The LWRunLoop for The Thread
+ *
+ *  @return LWRunLoop
+ */
 + (instancetype)currentLWRunLoop;
 
+/**
+ *  make Thread entering into event-driver-mode
+ */
 - (void)run;
 
 /**
@@ -32,6 +40,11 @@ extern NSString * const  LWTrackingRunLoopMode;
  */
 - (void)postTarget:(id)target withAction:(SEL)aSel withObject:(id)arg afterDelay:(NSInteger)delayMillis;
 
+/**
+ *  post message
+ *
+ *  @param msg LWMessage
+ */
 - (void)postMessage:(LWMessage *)msg;
 
 @end
