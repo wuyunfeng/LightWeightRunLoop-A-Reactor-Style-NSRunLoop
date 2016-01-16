@@ -29,6 +29,8 @@
 
 @property (strong, nonatomic, nullable) id mTarget;
 
+@property (strong, nonatomic, nullable) NSArray< NSString *> *modes;
+
 @property NSInteger when;
 
 @property (strong, nonatomic, nullable) LWMessage *next;

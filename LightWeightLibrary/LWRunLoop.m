@@ -69,6 +69,18 @@ void destructor(void * data)
     }
 }
 
+#pragma mark run this loop at specific mode
+- (void)runMode:(NSString *)mode
+{
+    _currentRunLoopMode = mode;
+    _queue.queueRunMode = mode;
+    while (true) {
+        LWMessage *msg = [_queue next];
+        [msg performSelectorForTarget];
+        [self necessaryInvocationForThisLoop:msg];
+    }
+}
+
 - (void)necessaryInvocationForThisLoop:(LWMessage *)msg
 {
     if ([msg.data isKindOfClass:[LWTimer class]]) { // LWTimer: periodical perform selector

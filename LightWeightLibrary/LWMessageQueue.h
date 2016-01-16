@@ -11,6 +11,10 @@
 
 @interface LWMessageQueue : NSObject
 
+@property (nonatomic) NSString *queueRunMode;
+
+@property (nonatomic, assign) BOOL allowStop;
+
 /**
  *  LWMessageQueue instance
  *  @note one thread one instance
@@ -35,5 +39,18 @@
  *  @return the message to be executed
  */
 - (LWMessage *)next;
+
+/**
+ *
+ *  @note we will replace @selector(next) in future with this selector
+ *
+ *  obtain message for specific mode
+ *
+ *  @param mode @see LWRunLoop modes
+ *
+ *  @return the message to be executed for specific mode
+ */
+- (LWMessage *)next:(NSString *)mode;
+
 
 @end

@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "LWMessage.h"
-#include <sys/stat.h>
+
 extern NSString * const  LWDefaultRunLoop;
 extern NSString * const  LWRunLoopCommonModes;
 
@@ -30,6 +30,13 @@ extern NSString * const  LWTrackingRunLoopMode;
  *  make Thread entering into event-driver-mode
  */
 - (void)run;
+
+/**
+ *  make Thread entering into event-driver-mode at specific mode
+ *
+ *  @param mode the loop run in specific mode
+ */
+- (void)runMode:(NSString *)mode;
 
 /**
  *  execute selector for target after when

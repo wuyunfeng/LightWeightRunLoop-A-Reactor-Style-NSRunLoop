@@ -21,6 +21,7 @@
 
 @property (readonly, strong, nullable) NSDictionary *allHeaderFields;
 
+//may have bug
 - (instancetype _Nullable)initWithData:(NSData * _Nullable)data;
 
 

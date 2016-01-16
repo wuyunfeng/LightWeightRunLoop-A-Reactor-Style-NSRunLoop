@@ -16,6 +16,7 @@ static pthread_key_t mTLSKey;
 @implementation LWMessageQueue
 {
     LWMessage *_messages;
+    LWMessage *_preMessages;
     LWNativeLoop *_nativeRunLoop;
     volatile BOOL _isCurrentLoopBlock;
 }
@@ -39,8 +40,27 @@ static pthread_key_t mTLSKey;
 {
     if (self = [super init]) {
         _nativeRunLoop = [[LWNativeLoop alloc] init];
+        _allowStop = NO;
+        [self addObserver:self forKeyPath:@"queueRunMode" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:"modechange"];
     }
     return self;
+}
+
+// when queuemode changed in current loop, preposition _messages
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context
+{
+    if ([keyPath isEqualToString:@"queueRunMode"] && strcmp("modechange", (char *)context)) {
+        _messages = _preMessages;//runtime change
+        //TODO:  should wake kernel
+    }
+}
+
+- (NSString *)queueRunMode
+{
+    if (!_queueRunMode) {
+        _queueRunMode = @"LWDefaultRunLoop";
+    }
+    return _queueRunMode;
 }
 
 void threadDestructor(void *data)
@@ -88,11 +108,16 @@ void threadDestructor(void *data)
 - (LWMessage *)next
 {
     NSInteger nextWakeTimeoutMillis = 0;
+    _messages = _preMessages;
     while (YES) {
         [_nativeRunLoop nativeRunLoopFor:nextWakeTimeoutMillis];
         @synchronized(self) {
             NSInteger now = [LWSystemClock uptimeMillions];
             LWMessage *msg = _messages;
+            //find the head message, assign it to _preMessages for preposition
+            if (msg && !_preMessages) {
+                _preMessages = msg;
+            }
             if (msg != nil) {
                 if (now < msg.when) {
                     nextWakeTimeoutMillis = msg.when - now;
@@ -100,20 +125,62 @@ void threadDestructor(void *data)
                     _isCurrentLoopBlock = NO;
                     _messages = msg.next;
                     msg.next = nil;
-//                    NSLog(@"return msg : %@", msg);
                     return msg;
                 }
             } else {
                 nextWakeTimeoutMillis = -1;
-//                _isCurrentLoopBlock = YES;
             }
             _isCurrentLoopBlock = YES;
         }
     }
 }
 
+- (LWMessage *)next:(NSString *)mode
+{
+    NSInteger nextWakeTimeoutMillis = 0;
+    while (YES) {
+        [_nativeRunLoop nativeRunLoopFor:nextWakeTimeoutMillis];
+        @synchronized(self) {
+            NSInteger now = [LWSystemClock uptimeMillions];
+            LWMessage *msg = _messages;
+            if (msg != nil) {
+                if ([self isMsgModesHit:msg.modes]) {
+                    // can not discard, but may use in mode's changing
+                    _messages = msg.next;
+                    continue;// enter into next loop
+                } else {
+                    if (now < msg.when) {
+                        nextWakeTimeoutMillis = msg.when - now;
+                    } else {
+                        _isCurrentLoopBlock = NO;
+                        _messages = msg.next;
+                        msg.next = nil;
+                        return msg;
+                    }
+                }
+            } else {
+                nextWakeTimeoutMillis = -1;
+            }
+            _isCurrentLoopBlock = YES;
+        }
+    }
+}
+
+- (BOOL)isMsgModesHit:(NSArray *)modes
+{
+    for (NSString *mode in modes) {
+        if ([@"LWRunLoopCommonModes" isEqualToString:mode]) {
+            return YES;
+        } else if([mode isEqualToString:self.queueRunMode]) {
+            return YES;
+        }
+    }
+    return NO;
+}
+
 - (void)dealloc
 {
+    [self removeObserver:self forKeyPath:@"queueRunMode"];
     [self destoryRunLoop];
     NSLog(@"[%@ %@]", [self class], NSStringFromSelector(_cmd));
 }
