@@ -22,8 +22,12 @@
     UIButton *_button4;
     UIButton *_button5;
     
+    UIButton *_button6;
+    
     NSThread *_thread;
     NSThread *_lwRunLoopThread;
+    
+    NSThread *_lwModeRunLoopThread;
     
     TestTarget1 *_target1;
     TestTarget2 *_target2;
@@ -50,6 +54,10 @@
     _lwRunLoopThread = [[NSThread alloc] initWithTarget:self selector:@selector(lightWeightRunloopThreadEntryPoint2:) object:nil];
     _lwRunLoopThread.name = @"LWRunLoopThread";
     [_lwRunLoopThread start];
+    
+    _lwModeRunLoopThread = [[NSThread alloc] initWithTarget:self selector:@selector(lightWeightRunloopThreadEntryPoint3:) object:nil];
+    _lwModeRunLoopThread.name = @"LWRunLoopThread-Mode";
+    [_lwModeRunLoopThread start];
 }
 
 - (void)testInputStream
@@ -143,6 +151,21 @@
     [_button5 setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
     [_button5 addTarget:self action:@selector(executeURLConnection:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:_button5];
+    
+    _button6 = [UIButton new];
+    _button6.width = self.view.width - 10;
+    _button6.height = 40;
+    _button6.top = _button5.bottom + 5;
+    _button6.centerX = self.view.centerX;
+    _button6.layer.cornerRadius = 4.0f;
+    _button6.layer.borderColor = [UIColor yellowColor].CGColor;
+    _button6.layer.masksToBounds = YES;
+    _button6.backgroundColor = [UIColor whiteColor];
+    [_button6 setTitle:@"MainThread > LWRunLoop-Thread(mode)" forState:UIControlStateNormal];
+    [_button6 setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [_button6 setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
+    [_button6 addTarget:self action:@selector(executeSelectorForMode:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:_button6];
 }
 
 #pragma mark - test perform selector on LWRunLoop Thread without delay
@@ -196,6 +219,14 @@
     @autoreleasepool {
         LWRunLoop *looper = [LWRunLoop currentLWRunLoop];
         [looper run];
+    }
+}
+
+- (void)lightWeightRunloopThreadEntryPoint3:(id)data
+{
+    @autoreleasepool {
+        LWRunLoop *looper = [LWRunLoop currentLWRunLoop];
+        [looper runMode:LWRunLoopModeReserve1];
     }
 }
 #pragma mark - post method from main-thread to _thread
@@ -270,7 +301,28 @@
     NSLog(@"responseBody = %@", [response responseBody]);
 }
 
+#pragma mark - performSelector for mode 
+- (void)executeSelectorForMode:(NSString *)mode
+{
+    [self postSelector:@selector(executeSpecialModeSelectorOnModeThread:) onThread:_lwModeRunLoopThread withObject:nil afterDelay:4000 modes:@[LWRunLoopCommonModes]];
+    [self postSelector:@selector(executeSpecialModeSelectorOnModeThread100:) onThread:_lwModeRunLoopThread withObject:nil afterDelay:1000 modes:@[LWRunLoopCommonModes]];
+        [self postSelector:@selector(executeSpecialModeSelectorOnModeThread200:) onThread:_lwModeRunLoopThread withObject:nil afterDelay:2000 modes:@[LWRunLoopModeReserve2]];
+}
 
+- (void)executeSpecialModeSelectorOnModeThread:(UIButton *)button
+{
+    NSLog(@"^o^ Mode **Thread : %@ --[%@ %@]**",[NSThread currentThread].name, [self class], NSStringFromSelector(_cmd));
+}
+
+- (void)executeSpecialModeSelectorOnModeThread100:(UIButton *)button
+{
+    NSLog(@"^o^ ^o^ Mode **Thread : %@ --[%@ %@]**",[NSThread currentThread].name, [self class], NSStringFromSelector(_cmd));
+}
+
+- (void)executeSpecialModeSelectorOnModeThread200:(UIButton *)button
+{
+    NSLog(@"^o^ ^o^ ^o^ Mode **Thread : %@ --[%@ %@]**",[NSThread currentThread].name, [self class], NSStringFromSelector(_cmd));
+}
 
 #pragma mark - MemoryWaring
 - (void)didReceiveMemoryWarning {

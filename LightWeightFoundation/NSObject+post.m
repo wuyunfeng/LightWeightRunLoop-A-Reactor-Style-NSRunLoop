@@ -31,9 +31,11 @@
 - (void)postSelector:(SEL)aSelector onThread:(NSThread *)thread withObject:(id)arg afterDelay:(NSInteger)delay modes:(NSArray<NSString *> *)modes
 {
     __weak __typeof(self) weakSelf = self;
+    LWMessage *message = [[LWMessage alloc] initWithTarget:weakSelf aSel:aSelector withArgument:arg at:delay];
+    message.modes = modes;
     LWRunLoop *loop = [thread looper];
     NSAssert(loop != nil, @"be sure LWLoop is initialized for thread");
-    [loop postTarget:weakSelf withAction:aSelector withObject:arg afterDelay:delay];
+    [loop postMessage:message];
 }
 
 @end

@@ -144,7 +144,7 @@ void threadDestructor(void *data)
             NSInteger now = [LWSystemClock uptimeMillions];
             LWMessage *msg = _messages;
             if (msg != nil) {
-                if ([self isMsgModesHit:msg.modes]) {
+                if (![self isMsgModesHit:msg.modes]) {
                     // can not discard, but may use in mode's changing
                     _messages = msg.next;
                     continue;// enter into next loop

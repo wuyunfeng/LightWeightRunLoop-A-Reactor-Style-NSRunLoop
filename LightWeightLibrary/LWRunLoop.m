@@ -75,7 +75,7 @@ void destructor(void * data)
     _currentRunLoopMode = mode;
     _queue.queueRunMode = mode;
     while (true) {
-        LWMessage *msg = [_queue next];
+        LWMessage *msg = [_queue next:mode];
         [msg performSelectorForTarget];
         [self necessaryInvocationForThisLoop:msg];
     }
