@@ -73,12 +73,18 @@ void destructor(void * data)
 - (void)runMode:(NSString *)mode
 {
     _currentRunLoopMode = mode;
-    _queue.queueRunMode = mode;
+    _queue.queueRunMode = _currentRunLoopMode;
     while (true) {
-        LWMessage *msg = [_queue next:mode];
+        LWMessage *msg = [_queue next:_queue.queueRunMode];
         [msg performSelectorForTarget];
         [self necessaryInvocationForThisLoop:msg];
     }
+}
+
+- (void)changeRunLoopMode:(NSString *)targetMode
+{
+    _currentRunLoopMode = targetMode;
+    _queue.queueRunMode = _currentRunLoopMode;
 }
 
 - (void)necessaryInvocationForThisLoop:(LWMessage *)msg
@@ -115,6 +121,14 @@ void destructor(void * data)
 {
     NSInteger when = msg.when + [LWSystemClock uptimeMillions];
     [_queue enqueueMessage:msg when:when];
+}
+
+- (NSString *)currentMode
+{
+    if (_currentRunLoopMode) {
+        return _currentRunLoopMode;
+    }
+    return LWDefaultRunLoop;
 }
 
 - (void)dealloc

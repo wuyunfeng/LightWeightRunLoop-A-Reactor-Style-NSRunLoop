@@ -19,6 +19,18 @@ extern NSString * const  LWTrackingRunLoopMode;
 
 @interface LWRunLoop : NSObject
 
+
+@property (readonly, copy) NSString *currentMode;
+
+
+/**
+ *  change the runloop's mode to `targetMode`
+ *
+ *  @param targetMode the mode you want to run.
+ */
+- (void)changeRunLoopMode:(NSString *)targetMode;
+
+
 /**
  *  Get The LWRunLoop for The Thread
  *
@@ -53,5 +65,6 @@ extern NSString * const  LWTrackingRunLoopMode;
  *  @param msg LWMessage
  */
 - (void)postMessage:(LWMessage *)msg;
+
 
 @end

@@ -21,8 +21,8 @@
     UIButton *_button3;
     UIButton *_button4;
     UIButton *_button5;
-    
     UIButton *_button6;
+    UIButton *_button7;
     
     NSThread *_thread;
     NSThread *_lwRunLoopThread;
@@ -166,6 +166,21 @@
     [_button6 setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
     [_button6 addTarget:self action:@selector(executeSelectorForMode:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:_button6];
+    
+    _button7 = [UIButton new];
+    _button7.width = self.view.width - 10;
+    _button7.height = 40;
+    _button7.top = _button6.bottom + 5;
+    _button7.centerX = self.view.centerX;
+    _button7.layer.cornerRadius = 4.0f;
+    _button7.layer.borderColor = [UIColor yellowColor].CGColor;
+    _button7.layer.masksToBounds = YES;
+    _button7.backgroundColor = [UIColor whiteColor];
+    [_button7 setTitle:@"Change LWRunLoop-Thread mode" forState:UIControlStateNormal];
+    [_button7 setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [_button7 setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
+    [_button7 addTarget:self action:@selector(changeLWRunLoopMode) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:_button7];
 }
 
 #pragma mark - test perform selector on LWRunLoop Thread without delay
@@ -304,22 +319,30 @@
 #pragma mark - performSelector for mode 
 - (void)executeSelectorForMode:(NSString *)mode
 {
-    [self postSelector:@selector(executeSpecialModeSelectorOnModeThread:) onThread:_lwModeRunLoopThread withObject:nil afterDelay:4000 modes:@[LWRunLoopCommonModes]];
-    [self postSelector:@selector(executeSpecialModeSelectorOnModeThread100:) onThread:_lwModeRunLoopThread withObject:nil afterDelay:1000 modes:@[LWRunLoopCommonModes]];
-        [self postSelector:@selector(executeSpecialModeSelectorOnModeThread200:) onThread:_lwModeRunLoopThread withObject:nil afterDelay:2000 modes:@[LWRunLoopModeReserve2]];
+    [self postSelector:@selector(executeSpecialModeSelectorOnModeThread4s:) onThread:_lwModeRunLoopThread withObject:nil afterDelay:4000 modes:@[LWRunLoopCommonModes]];
+        [self postSelector:@selector(executeSpecialModeSelectorOnModeThread1s:) onThread:_lwModeRunLoopThread withObject:nil afterDelay:1000 modes:@[LWRunLoopModeReserve2]];
+    [self postSelector:@selector(executeSpecialModeSelectorOnModeThread1s:) onThread:_lwModeRunLoopThread withObject:nil afterDelay:8000 modes:@[LWRunLoopModeReserve2]];
+    [self postSelector:@selector(executeSpecialModeSelectorOnModeThread2s:) onThread:_lwModeRunLoopThread withObject:nil afterDelay:9000 modes:@[LWRunLoopModeReserve2]];
 }
 
-- (void)executeSpecialModeSelectorOnModeThread:(UIButton *)button
+- (void)changeLWRunLoopMode
+{
+    LWRunLoop *runLoop = [_lwModeRunLoopThread looper];
+    [runLoop changeRunLoopMode:LWRunLoopModeReserve2];
+}
+
+
+- (void)executeSpecialModeSelectorOnModeThread4s:(UIButton *)button
 {
     NSLog(@"^o^ Mode **Thread : %@ --[%@ %@]**",[NSThread currentThread].name, [self class], NSStringFromSelector(_cmd));
 }
 
-- (void)executeSpecialModeSelectorOnModeThread100:(UIButton *)button
+- (void)executeSpecialModeSelectorOnModeThread1s:(UIButton *)button
 {
     NSLog(@"^o^ ^o^ Mode **Thread : %@ --[%@ %@]**",[NSThread currentThread].name, [self class], NSStringFromSelector(_cmd));
 }
 
-- (void)executeSpecialModeSelectorOnModeThread200:(UIButton *)button
+- (void)executeSpecialModeSelectorOnModeThread2s:(UIButton *)button
 {
     NSLog(@"^o^ ^o^ ^o^ Mode **Thread : %@ --[%@ %@]**",[NSThread currentThread].name, [self class], NSStringFromSelector(_cmd));
 }

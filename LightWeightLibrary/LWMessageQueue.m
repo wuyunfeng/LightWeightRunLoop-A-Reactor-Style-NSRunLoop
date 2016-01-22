@@ -17,6 +17,8 @@ static pthread_key_t mTLSKey;
 {
     LWMessage *_messages;
     LWMessage *_preMessages;
+    LWMessage *notHitCurrentMsg;
+
     LWNativeLoop *_nativeRunLoop;
     volatile BOOL _isCurrentLoopBlock;
 }
@@ -49,9 +51,11 @@ static pthread_key_t mTLSKey;
 // when queuemode changed in current loop, preposition _messages
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context
 {
-    if ([keyPath isEqualToString:@"queueRunMode"] && strcmp("modechange", (char *)context)) {
+
+    if ([keyPath isEqualToString:@"queueRunMode"] && (strcmp("modechange", context) == 0 )) {
         _messages = _preMessages;//runtime change
         //TODO:  should wake kernel
+        [_nativeRunLoop nativeWakeRunLoop];
     }
 }
 
@@ -108,16 +112,11 @@ void threadDestructor(void *data)
 - (LWMessage *)next
 {
     NSInteger nextWakeTimeoutMillis = 0;
-    _messages = _preMessages;
     while (YES) {
         [_nativeRunLoop nativeRunLoopFor:nextWakeTimeoutMillis];
         @synchronized(self) {
             NSInteger now = [LWSystemClock uptimeMillions];
             LWMessage *msg = _messages;
-            //find the head message, assign it to _preMessages for preposition
-            if (msg && !_preMessages) {
-                _preMessages = msg;
-            }
             if (msg != nil) {
                 if (now < msg.when) {
                     nextWakeTimeoutMillis = msg.when - now;
@@ -143,9 +142,17 @@ void threadDestructor(void *data)
         @synchronized(self) {
             NSInteger now = [LWSystemClock uptimeMillions];
             LWMessage *msg = _messages;
+            //find the head message, assign it to _preMessages for preposition
             if (msg != nil) {
                 if (![self isMsgModesHit:msg.modes]) {
                     // can not discard, but may use in mode's changing
+                    if (!_preMessages) {
+                        _preMessages = msg;
+                        notHitCurrentMsg = _preMessages;
+                    } else {
+                        notHitCurrentMsg.next = msg;
+                        notHitCurrentMsg = msg;
+                    }
                     _messages = msg.next;
                     continue;// enter into next loop
                 } else {
