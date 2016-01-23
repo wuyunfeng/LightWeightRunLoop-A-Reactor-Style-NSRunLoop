@@ -282,7 +282,7 @@
 - (void)performURLConnectionOnRunLoopThread
 {
     NSLog(@"[%@ %@]", [self class], NSStringFromSelector(_cmd));
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"http://192.168.1.4:8080/postpage.php"]];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@"http://192.168.1.11:8080/v1/list/post"]];
     request.HTTPMethod = @"POST";
     NSString *content = @"name=john&address=beijing&mobile=140005";
     request.HTTPBody = [content dataUsingEncoding:NSUTF8StringEncoding];
@@ -320,7 +320,7 @@
 - (void)executeSelectorForMode:(NSString *)mode
 {
     [self postSelector:@selector(executeSpecialModeSelectorOnModeThread4s:) onThread:_lwModeRunLoopThread withObject:nil afterDelay:4000 modes:@[LWRunLoopCommonModes]];
-        [self postSelector:@selector(executeSpecialModeSelectorOnModeThread1s:) onThread:_lwModeRunLoopThread withObject:nil afterDelay:1000 modes:@[LWRunLoopModeReserve2]];
+        [self postSelector:@selector(executeSpecialModeSelectorOnModeThread1s:) onThread:_lwModeRunLoopThread withObject:nil afterDelay:20000 modes:@[LWRunLoopModeReserve2]];
     [self postSelector:@selector(executeSpecialModeSelectorOnModeThread1s:) onThread:_lwModeRunLoopThread withObject:nil afterDelay:8000 modes:@[LWRunLoopModeReserve2]];
     [self postSelector:@selector(executeSpecialModeSelectorOnModeThread2s:) onThread:_lwModeRunLoopThread withObject:nil afterDelay:9000 modes:@[LWRunLoopModeReserve2]];
 }

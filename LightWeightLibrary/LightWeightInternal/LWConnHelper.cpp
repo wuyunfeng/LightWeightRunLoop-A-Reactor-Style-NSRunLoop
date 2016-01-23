@@ -147,7 +147,7 @@ void LWConnHelper::createHttpRequest(int timeoutMills)
             do {
                 nRead = read(this->mSockFd, buffer, sizeof(buffer));
                 if (this->mContext->LWConnectionReceiveCallBack != NULL) {
-                    this->mContext->LWConnectionReceiveCallBack(this->mContext->info, buffer, nRead);
+                    this->mContext->LWConnectionReceiveCallBack(this->mContext->info, buffer, (int)nRead);
                 }
             } while ((nRead == -1 && errno == EINTR) || nRead == sizeof(buffer));
             if (this->mContext->LWConnectionFinishCallBack) {
