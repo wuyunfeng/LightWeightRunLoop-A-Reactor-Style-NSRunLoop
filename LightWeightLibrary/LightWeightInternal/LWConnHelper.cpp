@@ -144,6 +144,10 @@ void LWConnHelper::createHttpRequest(int timeoutMills)
         if (FD_ISSET(this->mSockFd, &readfds)) {
             char buffer[4 * 1024];
             ssize_t nRead;
+//            int length = -1;
+//            while ((length = readLine(this->mSockFd, buffer, sizeof(buffer))) != 0) {
+//                printf("buffer = %s\n", buffer);
+//            }
             do {
                 nRead = read(this->mSockFd, buffer, sizeof(buffer));
                 if (this->mContext->LWConnectionReceiveCallBack != NULL) {
@@ -173,6 +177,34 @@ LWConnHelper::~LWConnHelper()
 {
     mContext = NULL;
     closeConn();
+}
+
+int LWConnHelper::readLine(int sock, char *buf, int size)
+{
+    int i = 0;
+    char c = '\0';
+    ssize_t n;
+    
+    while ((i < size - 1) && (c != '\n')) {
+        n = recv(sock, &c, 1, 0);
+        if (n > 0) {
+            if (c == '\r') {
+                n = recv(sock, &c, 1, MSG_PEEK);
+                if ((n > 0) && (c == '\n')) {
+                    recv(sock, &c, 1, 0);
+                    break; // add `break` to avoid add '\n' to buffer[len - 2]
+                } else {
+                    c = '\n';
+                }
+            }
+            buf[i] = c;
+            i++;
+        } else {
+            c = '\n';
+        }
+    }
+    buf[i] = '\0';// add '\0' to buffer[len - 1]
+    return(i);
 }
 
 

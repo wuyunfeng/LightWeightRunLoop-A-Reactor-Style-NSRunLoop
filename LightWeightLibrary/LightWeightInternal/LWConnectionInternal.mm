@@ -128,12 +128,12 @@ NSString* LWHeaderStringFromHTTPHeaderFieldsDictironary(NSDictionary *headerFiel
     NSMutableDictionary *allHTTPHeaderFields = [[NSMutableDictionary alloc] init];
     [allHTTPHeaderFields setValue:@"application/x-www-form-urlencoded" forKey:@"Content-Type"];
     [allHTTPHeaderFields setValue:@(request.HTTPBody.length) forKey:@"Content-Length"];
-//    [allHTTPHeaderFields setValue:@"wuyunfeng@LWURLConnection" forKey:@"Accept"];
-//    [allHTTPHeaderFields setValue:@"gzip, deflate" forKey:@"Accept-Encoding"];
-//    [allHTTPHeaderFields setValue:@"utf-8" forKey:@"Accept-Charset"];
-//    [allHTTPHeaderFields setValue:@"wuyunfeng@LWURLConnection" forKey:@"User-Agent"];
-//    [allHTTPHeaderFields setValue:@"no-cache" forKey:@"Cache-Control"];
-//    [allHTTPHeaderFields setValue:@"close" forKey:@"Connection"];
+    [allHTTPHeaderFields setValue:@"wuyunfeng@LWURLConnection" forKey:@"Accept"];
+    [allHTTPHeaderFields setValue:@"gzip, deflate" forKey:@"Accept-Encoding"];
+    [allHTTPHeaderFields setValue:@"utf-8" forKey:@"Accept-Charset"];
+    [allHTTPHeaderFields setValue:@"LWRunLoopAgent" forKey:@"User-Agent"];
+    [allHTTPHeaderFields setValue:@"no-cache" forKey:@"Cache-Control"];
+    [allHTTPHeaderFields setValue:@"close" forKey:@"Connection"];
     [allHTTPHeaderFields addEntriesFromDictionary:request.allHTTPHeaderFields];
     NSString *httpHeaderAndValues = LWHeaderStringFromHTTPHeaderFieldsDictironary(allHTTPHeaderFields);
     [httpRequestLineAndHeader appendString:httpHeaderAndValues];

@@ -35,6 +35,7 @@ public:
     void sendMsg(const char *content, int length);
     void createHttpRequest(int timeoutMills);
     void closeConn();
+    int readLine(int sock, char *buf, int size);
 };
 
 
