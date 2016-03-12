@@ -108,11 +108,20 @@
     
     _mReadPipeFd = wakeFds[0];
     _mWritePipeFd = wakeFds[1];
-    
-    result = fcntl(_mReadPipeFd, F_SETFL, O_NONBLOCK);
+    int rflags;
+    if ((rflags = fcntl(_mReadPipeFd, F_GETFL, 0)) < 0) {
+        NSLog(@"Failure in fcntl F_GETFL");
+    };
+    rflags |= O_NONBLOCK;
+    result = fcntl(_mReadPipeFd, F_SETFL, rflags);
     NSAssert(result == 0, @"Failure in fcntl() for read wake fd.  errno=%d", errno);
     
-    result = fcntl(_mWritePipeFd, F_SETFL, O_NONBLOCK);
+    int wflags;
+    if ((wflags = fcntl(_mWritePipeFd, F_GETFL, 0)) < 0) {
+        NSLog(@"Failure in fcntl F_GETFL");
+    };
+    wflags |= O_NONBLOCK;
+    result = fcntl(_mWritePipeFd, F_SETFL, wflags);
     NSAssert(result == 0, @"Failure in fcntl() for write wake fd.  errno=%d", errno);
     
     _kq = kqueue();
