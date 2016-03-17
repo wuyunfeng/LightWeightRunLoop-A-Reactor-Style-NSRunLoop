@@ -1,4 +1,25 @@
-#Overview:  
+## [LightWeightRunLoop](https://github.com/wuyunfeng/LightWeightRunLoop.git)
+
+> Using BSD kqueue realize iOS RunLoop and some Runloop-Relative Fundation API such as perform selector(or delay some times) on other thread , Timer, URLConnection etc..
+
+## Main Features
+
+* **NSObject** - *postSelector:onThread:withObject:afterDelay:modes* etc.
+
+* **LWTimer** - Extremely like *NSTimer*.
+
+* **LWURLConnection** - Extremely like *NSURLConnection*.
+
+## Future Features
+
+* **LWPort** - Extremely like *NSMachPort*.
+
+* **Socket Pools** - reuse socket.
+
+* **LWInputStream** - Extremely like *NSInputStream* (maybe).
+
+
+## Get Started
 Each NSThread object, `excluding the application’s main thread`, can own an `LWRunLoop` object. You can get the current thread’s  `LWRunLoop`, through the class method *`currentLWRunLoop`*. Subsequently code snippet shows how configure LWRunLoop for NSThread and make the NSThread `_lwRunLoopThread` entering into `Event-Driver-Mode:`
 
 
