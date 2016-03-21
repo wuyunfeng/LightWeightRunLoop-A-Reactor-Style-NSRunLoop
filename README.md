@@ -28,30 +28,43 @@ Each NSThread object, `excluding the application’s main thread`, can own an `L
     @autoreleasepool {
         LWRunLoop *looper = [LWRunLoop currentLWRunLoop];
         [looper run];
-        // or
-        //[[LWRunLoop currentLWRunLoop] run];
+        
+        //or
+        [[LWRunLoop currentLWRunLoop] run];
         }
     }
        
-##To enqueue a selector to be performed on a different thread than your own 
+##To enqueue a selector to be performed on a different thread than your own &&  schedule a selector to be executed at some point in the future
 you can use the category of NSObject(post)
 
-> -(void)postSelector:(SEL)aSelector onThread:(NSThread *)thread withObject:(id)arg;
+* -(void)postSelector:(SEL)aSelector onThread:(NSThread *)thread withObject:(id)arg;
 
-such as:
+* -(void)postSelector:(SEL)aSelector onThread:(NSThread *)thread withObject:(id)arg afterDelay:(NSInteger)delay
+
+* -(void)postSelector:(SEL)aSelector onThread:(NSThread *)thread withObject:(id)arg afterDelay:(NSInteger)delay modes:(NSArray<NSString *> modes)
+
+lwrunloop modes are:
+
+
+
+	NSString * const  LWDefaultRunLoop = @"LWDefaultRunLoop";
+	NSString * const  LWRunLoopCommonModes = @"LWRunLoopCommonModes";
+	NSString * const  LWRunLoopModeReserve1 = @"LWRunLoopModeReserve1";
+	NSString * const  LWRunLoopModeReserve2 = @"LWRunLoopModeReserve2";
+	NSString * const  LWTrackingRunLoopMode = @"LWTrackingRunLoopMode";
+
+you can switch runloop mode at any time you can like this:
+
+		    LWRunLoop *runLoop = [_lwModeRunLoopThread looper];
+            [runLoop changeRunLoopMode:LWRunLoopModeReserve2];
+you can use the category of NSObject(post):
 
 
       [self postSelector:@selector(execute) onThread:_lwRunLoopThread withObject:nil];
+      self postSelector:@selector(execute) onThread:_lwRunLoopThread withObject:nil afterDelay:5000];
+      self postSelector:@selector(execute) onThread:_lwRunLoopThread withObject:nil afterDelay:5000 modes:@[LWDefaultRunLoop]];
       
-      
-##To schedule a selector to be executed at some point in the future
 
-you can use the category of NSObject(post)
-> -(void)postSelector:(SEL)aSelector onThread:(NSThread *)thread withObject:(id)arg afterDelay:(NSInteger)delay;
-           
-such as:
-
-    [self postSelector:@selector(execute) onThread:_lwRunLoopThread withObject:nil afterDelay:1000];
 
 ##You use the LWTimer class to create timer objects or, more simply, timers. 
 A timer waits until a certain time interval has elapsed and then fires, sending a specified message to a target object. 
