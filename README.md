@@ -34,20 +34,22 @@ Each NSThread object, `excluding the application’s main thread`, can own an `L
     }
        
 ##To enqueue a selector to be performed on a different thread than your own 
-you can use the category of NSObject(post) just like NSObject(performSelector*****)
+you can use the category of NSObject(post)
 
-*  >-(void)postSelector:(SEL)aSelector onThread:(NSThread *)thread withObject:(id)arg;
+> -(void)postSelector:(SEL)aSelector onThread:(NSThread *)thread withObject:(id)arg;
 
-*  >-(void)postSelector:(SEL)aSelector onThread:(NSThread *)thread
-          withObject:(id)arg afterDelay:(NSInteger)delay
 such as:
 
-*  >(void)postSelector:(SEL)aSelector onThread:(NSThread *)thread withObject:(id)arg afterDelay:(NSInteger)delay modes:(NSArray<NSString *> *)modes
 
+      [self postSelector:@selector(execute) onThread:_lwRunLoopThread withObject:nil];
       
       
-####To schedule a selector to be executed at some point in the future
+##To schedule a selector to be executed at some point in the future
 
+you can use the category of NSObject(post)
+> -(void)postSelector:(SEL)aSelector onThread:(NSThread *)thread withObject:(id)arg afterDelay:(NSInteger)delay;
+           
+such as:
 
     [self postSelector:@selector(execute) onThread:_lwRunLoopThread withObject:nil afterDelay:1000];
 
