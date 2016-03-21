@@ -7,14 +7,18 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4B07F9BC1C09DACB009B491B /* LWNativeLoop.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B07F9BB1C09DACB009B491B /* LWNativeLoop.m */; };
 		4B6FEA101C1BD09100F50973 /* LWConnHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B6FEA0E1C1BD09000F50973 /* LWConnHelper.cpp */; };
 		4B7AC2631C0DD00600B7F031 /* LWTimer.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B7AC2621C0DD00600B7F031 /* LWTimer.m */; };
 		4B91E98C1C15C54700DFFFE2 /* LWURLConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B91E98B1C15C54700DFFFE2 /* LWURLConnection.m */; };
 		4BB7468A1C1BFD6B000D9559 /* LWConnectionInternal.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4BB746891C1BFD6B000D9559 /* LWConnectionInternal.mm */; };
 		4BB7468D1C1C37C9000D9559 /* LWURLResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BB7468C1C1C37C9000D9559 /* LWURLResponse.m */; };
 		4BD9B1411C12A07E006B3F78 /* NSObject+post.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BD9B1401C12A07E006B3F78 /* NSObject+post.m */; };
-		4BDC8C061C0AA2CA00787967 /* LWSystemClock.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BDC8C051C0AA2CA00787967 /* LWSystemClock.m */; };
+		4BE5CE321CA033B000CBB9E3 /* LWMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BE5CE271CA033B000CBB9E3 /* LWMessage.m */; };
+		4BE5CE331CA033B000CBB9E3 /* LWMessageQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BE5CE291CA033B000CBB9E3 /* LWMessageQueue.m */; };
+		4BE5CE341CA033B000CBB9E3 /* LWNativeLoop.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BE5CE2B1CA033B000CBB9E3 /* LWNativeLoop.m */; };
+		4BE5CE351CA033B000CBB9E3 /* LWRunLoop.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BE5CE2D1CA033B000CBB9E3 /* LWRunLoop.m */; };
+		4BE5CE361CA033B000CBB9E3 /* LWSystemClock.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BE5CE2F1CA033B000CBB9E3 /* LWSystemClock.m */; };
+		4BE5CE371CA033B000CBB9E3 /* NSThread+Looper.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BE5CE311CA033B000CBB9E3 /* NSThread+Looper.m */; };
 		5350CFAD1BE30EB5004463EE /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5350CFAC1BE30EB5004463EE /* main.m */; };
 		5350CFB01BE30EB5004463EE /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 5350CFAF1BE30EB5004463EE /* AppDelegate.m */; };
 		5350CFB31BE30EB5004463EE /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5350CFB21BE30EB5004463EE /* ViewController.m */; };
@@ -22,8 +26,6 @@
 		5350CFBB1BE30EB5004463EE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5350CFB91BE30EB5004463EE /* LaunchScreen.storyboard */; };
 		5350CFC61BE30EB5004463EE /* LightWeightRunLoopTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5350CFC51BE30EB5004463EE /* LightWeightRunLoopTests.m */; };
 		5350CFD11BE30EB6004463EE /* LightWeightRunLoopUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5350CFD01BE30EB6004463EE /* LightWeightRunLoopUITests.m */; };
-		5350CFE51BE30FB9004463EE /* LWRunLoop.m in Sources */ = {isa = PBXBuildFile; fileRef = 5350CFE01BE30FB9004463EE /* LWRunLoop.m */; };
-		5350CFE71BE30FB9004463EE /* NSThread+Looper.m in Sources */ = {isa = PBXBuildFile; fileRef = 5350CFE41BE30FB9004463EE /* NSThread+Looper.m */; };
 		5350D00E1BE31F2B004463EE /* MASCompositeConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = 5350CFEC1BE31F2B004463EE /* MASCompositeConstraint.m */; };
 		5350D00F1BE31F2B004463EE /* MASConstraint.m in Sources */ = {isa = PBXBuildFile; fileRef = 5350CFEF1BE31F2B004463EE /* MASConstraint.m */; };
 		5350D0101BE31F2B004463EE /* MASConstraintMaker.m in Sources */ = {isa = PBXBuildFile; fileRef = 5350CFF11BE31F2B004463EE /* MASConstraintMaker.m */; };
@@ -39,8 +41,6 @@
 		5350D01A1BE31F2B004463EE /* UIView+TKCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = 5350D00B1BE31F2B004463EE /* UIView+TKCategory.m */; };
 		5350D01B1BE31F2B004463EE /* UIViewAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 5350D00D1BE31F2B004463EE /* UIViewAdditions.m */; };
 		5350D01F1BE31F5D004463EE /* LWImageUtil.m in Sources */ = {isa = PBXBuildFile; fileRef = 5350D01E1BE31F5D004463EE /* LWImageUtil.m */; };
-		5376CF841BE4E0770092DF5F /* LWMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 5376CF831BE4E0770092DF5F /* LWMessage.m */; };
-		5376CF871BE4E6940092DF5F /* LWMessageQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 5376CF861BE4E6940092DF5F /* LWMessageQueue.m */; };
 		5376CF8B1BE4EF030092DF5F /* TestTarget1.m in Sources */ = {isa = PBXBuildFile; fileRef = 5376CF8A1BE4EF030092DF5F /* TestTarget1.m */; };
 		5376CF8E1BE4EF410092DF5F /* TestTarget2.m in Sources */ = {isa = PBXBuildFile; fileRef = 5376CF8D1BE4EF410092DF5F /* TestTarget2.m */; };
 /* End PBXBuildFile section */
@@ -63,8 +63,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		4B07F9BA1C09DACB009B491B /* LWNativeLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LWNativeLoop.h; sourceTree = "<group>"; };
-		4B07F9BB1C09DACB009B491B /* LWNativeLoop.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LWNativeLoop.m; sourceTree = "<group>"; };
 		4B6FEA0E1C1BD09000F50973 /* LWConnHelper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LWConnHelper.cpp; sourceTree = "<group>"; };
 		4B6FEA0F1C1BD09000F50973 /* LWConnHelper.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = LWConnHelper.hpp; sourceTree = "<group>"; };
 		4B7AC2611C0DD00600B7F031 /* LWTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LWTimer.h; sourceTree = "<group>"; };
@@ -77,8 +75,19 @@
 		4BB7468C1C1C37C9000D9559 /* LWURLResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LWURLResponse.m; sourceTree = "<group>"; };
 		4BD9B13F1C12A07E006B3F78 /* NSObject+post.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+post.h"; sourceTree = "<group>"; };
 		4BD9B1401C12A07E006B3F78 /* NSObject+post.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+post.m"; sourceTree = "<group>"; };
-		4BDC8C041C0AA2CA00787967 /* LWSystemClock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LWSystemClock.h; sourceTree = "<group>"; };
-		4BDC8C051C0AA2CA00787967 /* LWSystemClock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LWSystemClock.m; sourceTree = "<group>"; };
+		4BE5CE251CA033B000CBB9E3 /* LightWeightRunLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LightWeightRunLoop.h; sourceTree = "<group>"; };
+		4BE5CE261CA033B000CBB9E3 /* LWMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LWMessage.h; sourceTree = "<group>"; };
+		4BE5CE271CA033B000CBB9E3 /* LWMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LWMessage.m; sourceTree = "<group>"; };
+		4BE5CE281CA033B000CBB9E3 /* LWMessageQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LWMessageQueue.h; sourceTree = "<group>"; };
+		4BE5CE291CA033B000CBB9E3 /* LWMessageQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LWMessageQueue.m; sourceTree = "<group>"; };
+		4BE5CE2A1CA033B000CBB9E3 /* LWNativeLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LWNativeLoop.h; sourceTree = "<group>"; };
+		4BE5CE2B1CA033B000CBB9E3 /* LWNativeLoop.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LWNativeLoop.m; sourceTree = "<group>"; };
+		4BE5CE2C1CA033B000CBB9E3 /* LWRunLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LWRunLoop.h; sourceTree = "<group>"; };
+		4BE5CE2D1CA033B000CBB9E3 /* LWRunLoop.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LWRunLoop.m; sourceTree = "<group>"; };
+		4BE5CE2E1CA033B000CBB9E3 /* LWSystemClock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LWSystemClock.h; sourceTree = "<group>"; };
+		4BE5CE2F1CA033B000CBB9E3 /* LWSystemClock.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LWSystemClock.m; sourceTree = "<group>"; };
+		4BE5CE301CA033B000CBB9E3 /* NSThread+Looper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSThread+Looper.h"; sourceTree = "<group>"; };
+		4BE5CE311CA033B000CBB9E3 /* NSThread+Looper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSThread+Looper.m"; sourceTree = "<group>"; };
 		5350CFA81BE30EB5004463EE /* LightWeightRunLoop.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LightWeightRunLoop.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5350CFAC1BE30EB5004463EE /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		5350CFAE1BE30EB5004463EE /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -94,11 +103,6 @@
 		5350CFCC1BE30EB6004463EE /* LightWeightRunLoopUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LightWeightRunLoopUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5350CFD01BE30EB6004463EE /* LightWeightRunLoopUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LightWeightRunLoopUITests.m; sourceTree = "<group>"; };
 		5350CFD21BE30EB6004463EE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		5350CFDF1BE30FB9004463EE /* LWRunLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LWRunLoop.h; sourceTree = "<group>"; };
-		5350CFE01BE30FB9004463EE /* LWRunLoop.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LWRunLoop.m; sourceTree = "<group>"; };
-		5350CFE31BE30FB9004463EE /* NSThread+Looper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSThread+Looper.h"; sourceTree = "<group>"; };
-		5350CFE41BE30FB9004463EE /* NSThread+Looper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSThread+Looper.m"; sourceTree = "<group>"; };
-		5350CFE81BE31066004463EE /* LightWeightRunLoop.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LightWeightRunLoop.h; sourceTree = "<group>"; };
 		5350CFEB1BE31F2B004463EE /* MASCompositeConstraint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MASCompositeConstraint.h; sourceTree = "<group>"; };
 		5350CFEC1BE31F2B004463EE /* MASCompositeConstraint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MASCompositeConstraint.m; sourceTree = "<group>"; };
 		5350CFED1BE31F2B004463EE /* MASConstraint+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MASConstraint+Private.h"; sourceTree = "<group>"; };
@@ -134,10 +138,6 @@
 		5350D00D1BE31F2B004463EE /* UIViewAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIViewAdditions.m; sourceTree = "<group>"; };
 		5350D01D1BE31F5D004463EE /* LWImageUtil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LWImageUtil.h; sourceTree = "<group>"; };
 		5350D01E1BE31F5D004463EE /* LWImageUtil.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LWImageUtil.m; sourceTree = "<group>"; };
-		5376CF821BE4E0770092DF5F /* LWMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LWMessage.h; sourceTree = "<group>"; };
-		5376CF831BE4E0770092DF5F /* LWMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LWMessage.m; sourceTree = "<group>"; };
-		5376CF851BE4E6940092DF5F /* LWMessageQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LWMessageQueue.h; sourceTree = "<group>"; };
-		5376CF861BE4E6940092DF5F /* LWMessageQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LWMessageQueue.m; sourceTree = "<group>"; };
 		5376CF891BE4EF030092DF5F /* TestTarget1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestTarget1.h; sourceTree = "<group>"; };
 		5376CF8A1BE4EF030092DF5F /* TestTarget1.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestTarget1.m; sourceTree = "<group>"; };
 		5376CF8C1BE4EF410092DF5F /* TestTarget2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestTarget2.h; sourceTree = "<group>"; };
@@ -193,6 +193,26 @@
 				4B91E98B1C15C54700DFFFE2 /* LWURLConnection.m */,
 			);
 			path = LightWeightFoundation;
+			sourceTree = "<group>";
+		};
+		4BE5CE241CA033B000CBB9E3 /* LightWeightBasement */ = {
+			isa = PBXGroup;
+			children = (
+				4BE5CE251CA033B000CBB9E3 /* LightWeightRunLoop.h */,
+				4BE5CE261CA033B000CBB9E3 /* LWMessage.h */,
+				4BE5CE271CA033B000CBB9E3 /* LWMessage.m */,
+				4BE5CE281CA033B000CBB9E3 /* LWMessageQueue.h */,
+				4BE5CE291CA033B000CBB9E3 /* LWMessageQueue.m */,
+				4BE5CE2A1CA033B000CBB9E3 /* LWNativeLoop.h */,
+				4BE5CE2B1CA033B000CBB9E3 /* LWNativeLoop.m */,
+				4BE5CE2C1CA033B000CBB9E3 /* LWRunLoop.h */,
+				4BE5CE2D1CA033B000CBB9E3 /* LWRunLoop.m */,
+				4BE5CE2E1CA033B000CBB9E3 /* LWSystemClock.h */,
+				4BE5CE2F1CA033B000CBB9E3 /* LWSystemClock.m */,
+				4BE5CE301CA033B000CBB9E3 /* NSThread+Looper.h */,
+				4BE5CE311CA033B000CBB9E3 /* NSThread+Looper.m */,
+			);
+			path = LightWeightBasement;
 			sourceTree = "<group>";
 		};
 		5350CF9F1BE30EB5004463EE = {
@@ -264,20 +284,8 @@
 		5350CFDE1BE30FB9004463EE /* LightWeightLibrary */ = {
 			isa = PBXGroup;
 			children = (
+				4BE5CE241CA033B000CBB9E3 /* LightWeightBasement */,
 				4B6FEA0D1C1BD06500F50973 /* LightWeightInternal */,
-				5350CFDF1BE30FB9004463EE /* LWRunLoop.h */,
-				5350CFE01BE30FB9004463EE /* LWRunLoop.m */,
-				5350CFE31BE30FB9004463EE /* NSThread+Looper.h */,
-				5350CFE41BE30FB9004463EE /* NSThread+Looper.m */,
-				5350CFE81BE31066004463EE /* LightWeightRunLoop.h */,
-				5376CF821BE4E0770092DF5F /* LWMessage.h */,
-				5376CF831BE4E0770092DF5F /* LWMessage.m */,
-				5376CF851BE4E6940092DF5F /* LWMessageQueue.h */,
-				5376CF861BE4E6940092DF5F /* LWMessageQueue.m */,
-				4B07F9BA1C09DACB009B491B /* LWNativeLoop.h */,
-				4B07F9BB1C09DACB009B491B /* LWNativeLoop.m */,
-				4BDC8C041C0AA2CA00787967 /* LWSystemClock.h */,
-				4BDC8C051C0AA2CA00787967 /* LWSystemClock.m */,
 			);
 			path = LightWeightLibrary;
 			sourceTree = "<group>";
@@ -498,38 +506,38 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4BE5CE351CA033B000CBB9E3 /* LWRunLoop.m in Sources */,
 				4B6FEA101C1BD09100F50973 /* LWConnHelper.cpp in Sources */,
 				4BB7468A1C1BFD6B000D9559 /* LWConnectionInternal.mm in Sources */,
+				4BE5CE371CA033B000CBB9E3 /* NSThread+Looper.m in Sources */,
 				5350D00F1BE31F2B004463EE /* MASConstraint.m in Sources */,
-				4B07F9BC1C09DACB009B491B /* LWNativeLoop.m in Sources */,
 				5350D0121BE31F2B004463EE /* MASViewAttribute.m in Sources */,
 				5350D01F1BE31F5D004463EE /* LWImageUtil.m in Sources */,
 				4B7AC2631C0DD00600B7F031 /* LWTimer.m in Sources */,
 				5350D01A1BE31F2B004463EE /* UIView+TKCategory.m in Sources */,
 				5350D0171BE31F2B004463EE /* ViewController+MASAdditions.m in Sources */,
 				5350D0141BE31F2B004463EE /* NSArray+MASAdditions.m in Sources */,
-				5350CFE51BE30FB9004463EE /* LWRunLoop.m in Sources */,
 				5350D0131BE31F2B004463EE /* MASViewConstraint.m in Sources */,
 				5376CF8B1BE4EF030092DF5F /* TestTarget1.m in Sources */,
 				4BD9B1411C12A07E006B3F78 /* NSObject+post.m in Sources */,
+				4BE5CE331CA033B000CBB9E3 /* LWMessageQueue.m in Sources */,
 				5350D0111BE31F2B004463EE /* MASLayoutConstraint.m in Sources */,
 				4BB7468D1C1C37C9000D9559 /* LWURLResponse.m in Sources */,
 				5350D0191BE31F2B004463EE /* UIView+Sizes.m in Sources */,
 				5350D0181BE31F2B004463EE /* MBProgressHUD.m in Sources */,
-				5350CFE71BE30FB9004463EE /* NSThread+Looper.m in Sources */,
 				5350CFB31BE30EB5004463EE /* ViewController.m in Sources */,
 				5376CF8E1BE4EF410092DF5F /* TestTarget2.m in Sources */,
 				5350D0161BE31F2B004463EE /* View+MASAdditions.m in Sources */,
 				5350D00E1BE31F2B004463EE /* MASCompositeConstraint.m in Sources */,
 				5350D0151BE31F2B004463EE /* NSLayoutConstraint+MASDebugAdditions.m in Sources */,
-				5376CF841BE4E0770092DF5F /* LWMessage.m in Sources */,
+				4BE5CE361CA033B000CBB9E3 /* LWSystemClock.m in Sources */,
 				5350D0101BE31F2B004463EE /* MASConstraintMaker.m in Sources */,
 				5350D01B1BE31F2B004463EE /* UIViewAdditions.m in Sources */,
-				5376CF871BE4E6940092DF5F /* LWMessageQueue.m in Sources */,
+				4BE5CE321CA033B000CBB9E3 /* LWMessage.m in Sources */,
 				5350CFB01BE30EB5004463EE /* AppDelegate.m in Sources */,
+				4BE5CE341CA033B000CBB9E3 /* LWNativeLoop.m in Sources */,
 				4B91E98C1C15C54700DFFFE2 /* LWURLConnection.m in Sources */,
 				5350CFAD1BE30EB5004463EE /* main.m in Sources */,
-				4BDC8C061C0AA2CA00787967 /* LWSystemClock.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
