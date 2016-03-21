@@ -61,8 +61,8 @@ you can use the category of NSObject(post):
 
 
       [self postSelector:@selector(execute) onThread:_lwRunLoopThread withObject:nil];
-      self postSelector:@selector(execute) onThread:_lwRunLoopThread withObject:nil afterDelay:5000];
-      self postSelector:@selector(execute) onThread:_lwRunLoopThread withObject:nil afterDelay:5000 modes:@[LWDefaultRunLoop]];
+      [self postSelector:@selector(execute) onThread:_lwRunLoopThread withObject:nil afterDelay:5000];
+      [self postSelector:@selector(execute) onThread:_lwRunLoopThread withObject:nil afterDelay:5000 modes:@[LWDefaultRunLoop]];
       
 
 
@@ -70,9 +70,9 @@ you can use the category of NSObject(post):
 A timer waits until a certain time interval has elapsed and then fires, sending a specified message to a target object. 
 
 
-> +(LWTimer * _Nonnull)scheduledLWTimerWithTimeInterval:(NSTimeInterval)interval target:(nonnull id)aTarget selector:(nonnull SEL)aSelector userInfo:(nullable id)userInfo repeats:(BOOL)yesOrNo;
+* +(LWTimer *)scheduledLWTimerWithTimeInterval:(NSTimeInterval)interval target:(id)aTarget selector:(SEL)aSelector userInfo:(id)userInfo repeats:(BOOL)yesOrNo;
 
-> +(LWTimer * _Nonnull)timerWithTimeInterval:(NSTimeInterval)interval target:(nonnull id)aTarget selector:(nonnull SEL)aSelector userInfo:(nullable id)userInfo repeats:(BOOL)yesOrNo;
+* +(LWTimer *)timerWithTimeInterval:(NSTimeInterval)interval target:(id)aTarget selector:( SEL)aSelector userInfo:(nullable id)userInfo repeats:(BOOL)yesOrNo;
 
 
 fire the LWTimer using `- (void)fire` and invalidate the LWTimer using `- (void)invalidate`
