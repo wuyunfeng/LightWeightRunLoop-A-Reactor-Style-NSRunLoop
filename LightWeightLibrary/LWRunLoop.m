@@ -64,8 +64,10 @@ void destructor(void * data)
 {
     while (true) {
         LWMessage *msg = [_queue next];
-        [msg performSelectorForTarget];
-        [self necessaryInvocationForThisLoop:msg];
+        @autoreleasepool {
+            [msg performSelectorForTarget];
+            [self necessaryInvocationForThisLoop:msg];
+        }
     }
 }
 
