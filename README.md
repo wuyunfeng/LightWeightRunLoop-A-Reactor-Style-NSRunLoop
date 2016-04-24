@@ -1,12 +1,12 @@
 ## [LightWeightRunLoop](https://github.com/wuyunfeng/LightWeightRunLoop.git)
 
-> Using BSD kqueue realize iOS RunLoop and some Runloop-Relative Fundation API such as perform selector(or delay some times) on other thread , Timer, URLConnection etc..
+> Using BSD kqueue realize iOS RunLoop and some Runloop-Relative Fundation API such as perform selector(or delay some times) on other thread , Timer, URLConnection, LWStream(LWInputStream、LWOutputStream) etc..
 
 ## Main Features
 
 * **NSObject** - *postSelector:onThread:withObject:afterDelay:modes* etc.
 
-* **LWTimer** - Extremely like *NSTimer*.
+* **LWTimer** - Extremely like *NSTimer*, `nanosecond` precision.
 
 * **LWURLConnection** - Extremely like *NSURLConnection*.
 
