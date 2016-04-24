@@ -14,7 +14,10 @@
 #import "LWTimer.h"
 #import "LWURLConnection.h"
 #import "LWURLResponse.h"
-@interface ViewController ()<LWURLConnectionDataDelegate>
+#import "LWStream.h"
+
+#define TEST_FILE (@"test.txt")
+@interface ViewController ()<LWURLConnectionDataDelegate, LWStreamDelegate>
 {
     UIButton *_button1;
     UIButton *_button2;
@@ -23,6 +26,9 @@
     UIButton *_button5;
     UIButton *_button6;
     UIButton *_button7;
+    UIButton *_button8;
+    UIButton *_button9;
+
     
     NSThread *_thread;
     NSThread *_lwRunLoopThread;
@@ -36,6 +42,10 @@
     LWTimer *gTimer;
     NSInputStream *_inputStream;
     NSMutableData *_responseData;
+    LWInputStream *_lwInputStream;
+    LWOutputStream *_lwOutputStream;
+    
+    NSMutableData *_inputStreamData;
 }
 
 @end
@@ -181,6 +191,36 @@
     [_button7 setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
     [_button7 addTarget:self action:@selector(changeLWRunLoopMode) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:_button7];
+    
+    _button8 = [UIButton new];
+    _button8.width = self.view.width - 10;
+    _button8.height = 40;
+    _button8.top = _button7.bottom + 5;
+    _button8.centerX = self.view.centerX;
+    _button8.layer.cornerRadius = 4.0f;
+    _button8.layer.borderColor = [UIColor yellowColor].CGColor;
+    _button8.layer.masksToBounds = YES;
+    _button8.backgroundColor = [UIColor whiteColor];
+    [_button8 setTitle:@"LWInputStread write" forState:UIControlStateNormal];
+    [_button8 setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [_button8 setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
+    [_button8 addTarget:self action:@selector(prepareLWOutputStream:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:_button8];
+    
+    _button9 = [UIButton new];
+    _button9.width = self.view.width - 10;
+    _button9.height = 40;
+    _button9.top = _button8.bottom + 5;
+    _button9.centerX = self.view.centerX;
+    _button9.layer.cornerRadius = 4.0f;
+    _button9.layer.borderColor = [UIColor yellowColor].CGColor;
+    _button9.layer.masksToBounds = YES;
+    _button9.backgroundColor = [UIColor whiteColor];
+    [_button9 setTitle:@"LWInputStread read" forState:UIControlStateNormal];
+    [_button9 setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [_button9 setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
+    [_button9 addTarget:self action:@selector(prepareLWInputStream:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:_button9];
 }
 
 #pragma mark - test perform selector on LWRunLoop Thread without delay
@@ -347,10 +387,91 @@
     NSLog(@"^o^ ^o^ ^o^ Mode **Thread : %@ --[%@ %@]**",[NSThread currentThread].name, [self class], NSStringFromSelector(_cmd));
 }
 
-#pragma mark - MemoryWaring
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+#pragma mark - LWInputStream
+- (void)prepareLWInputStream:(UIButton *)button
+{
+    _inputStreamData = [[NSMutableData alloc] init];
+    [self postSelector:@selector(executeLWInputStream) onThread:_lwModeRunLoopThread withObject:nil afterDelay:0 modes:@[LWRunLoopCommonModes]];//    [self executeLWInputStream];
+}
+
+- (void)executeLWInputStream
+{
+    NSString *path = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
+    NSString *filePath = [path stringByAppendingPathComponent:TEST_FILE];
+
+    _lwInputStream = [[LWInputStream alloc]initWithFileAtPath:filePath];
+    _lwInputStream.delegate = self;
+    [_lwInputStream scheduleInRunLoop:[_thread looper] forMode:LWDefaultRunLoop];
+    [_lwInputStream open];
+}
+
+#pragma mark - LWOutputStream
+- (void)prepareLWOutputStream:(UIButton *)button
+{
+    [self postSelector:@selector(executeLWOutputStream) onThread:_lwModeRunLoopThread withObject:nil afterDelay:0 modes:@[LWRunLoopCommonModes]];//    [self executeLWInputStream];
+}
+
+- (void)executeLWOutputStream
+{
+    NSString *path = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
+    NSString *filePath = [path stringByAppendingPathComponent:TEST_FILE];
+    
+    _lwOutputStream = [[LWOutputStream alloc]initWithFileAtPath:filePath];
+    _lwOutputStream.delegate = self;
+    [_lwOutputStream scheduleInRunLoop:[_thread looper] forMode:LWDefaultRunLoop];
+    [_lwOutputStream open];
+}
+
+#pragma mark - LWStreamDelegate
+- (void)lw_stream:(LWStream * _Nonnull)aStream handleEvent:(LWStreamEvent)eventCode
+{
+    if ([aStream isKindOfClass:[LWInputStream class]]) {
+        switch (eventCode) {
+            case LWStreamEventOpenCompleted:
+                 NSLog(@"LWInputStream Mode **Thread : %@ LWStreamEventOpenCompleted",[NSThread currentThread].name);
+                 break;
+            case LWStreamEventHasBytesAvailable:
+            {
+                uint8_t buffer[1];
+                NSUInteger len = [(LWInputStream *)aStream read:buffer maxLength:sizeof(buffer)];
+                [_inputStreamData appendBytes:buffer length:len];
+            }
+                break;
+            case LWStreamEventEndEncountered:
+            {
+                NSLog(@"LWInputStream Mode **Thread : %@ LWStreamEventEndEncountered",[NSThread currentThread].name);
+                NSString *content = [[NSString alloc] initWithData:_inputStreamData encoding:NSUTF8StringEncoding];
+                NSLog(@"content = %@", content);
+                [(LWInputStream *)aStream close];
+            }
+                break;
+            default:
+                break;
+        }
+    }
+    
+    if ([aStream isKindOfClass:[LWOutputStream class]]) {
+        switch (eventCode) {
+            case LWStreamEventOpenCompleted:
+                NSLog(@"LWOutputStream Mode **Thread : %@ LWStreamEventOpenCompleted",[NSThread currentThread].name);
+                break;
+            case LWStreamEventHasSpaceAvailable:
+            {
+                uint8_t buffer[50] = "abcdefghijklmnopqrstuvwxyz";
+                NSUInteger len = [(LWOutputStream *)aStream write:buffer maxLength:50];
+                [_inputStreamData appendBytes:buffer length:len];
+                [(LWOutputStream *)aStream close];
+            }
+                break;
+            case LWStreamEventEndEncountered:
+            {
+                NSLog(@"LWOutputStream Mode **Thread : %@ LWStreamEventEndEncountered",[NSThread currentThread].name);
+            }
+                break;
+            default:
+                break;
+        }
+    }
 }
 
 @end

@@ -69,3 +69,13 @@ typedef NS_OPTIONS(NSUInteger, LWStreamEvent) {
 - (NSInteger)read:(uint8_t * _Nonnull)buffer maxLength:(NSUInteger)len;
 
 @end
+
+
+@interface LWOutputStream : LWStream
+
+@property (weak, nonatomic, nullable) id<LWStreamDelegate> delegate;
+- (NSInteger)write:(const uint8_t * _Nonnull)buffer maxLength:(NSUInteger)len;
+- (nullable instancetype)initWithFileAtPath:(NSString * _Nonnull)path;
+
+
+@end
