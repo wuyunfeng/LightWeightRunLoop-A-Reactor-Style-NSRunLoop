@@ -10,6 +10,7 @@
 		4B6FEA101C1BD09100F50973 /* LWConnHelper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4B6FEA0E1C1BD09000F50973 /* LWConnHelper.cpp */; };
 		4B7AC2631C0DD00600B7F031 /* LWTimer.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B7AC2621C0DD00600B7F031 /* LWTimer.m */; };
 		4B91E98C1C15C54700DFFFE2 /* LWURLConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B91E98B1C15C54700DFFFE2 /* LWURLConnection.m */; };
+		4B978C321CCC64B000184916 /* LWStream.m in Sources */ = {isa = PBXBuildFile; fileRef = 4B978C311CCC64B000184916 /* LWStream.m */; };
 		4BB7468A1C1BFD6B000D9559 /* LWConnectionInternal.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4BB746891C1BFD6B000D9559 /* LWConnectionInternal.mm */; };
 		4BB7468D1C1C37C9000D9559 /* LWURLResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BB7468C1C1C37C9000D9559 /* LWURLResponse.m */; };
 		4BD9B1411C12A07E006B3F78 /* NSObject+post.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BD9B1401C12A07E006B3F78 /* NSObject+post.m */; };
@@ -69,6 +70,8 @@
 		4B7AC2621C0DD00600B7F031 /* LWTimer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LWTimer.m; sourceTree = "<group>"; };
 		4B91E98A1C15C54700DFFFE2 /* LWURLConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LWURLConnection.h; sourceTree = "<group>"; };
 		4B91E98B1C15C54700DFFFE2 /* LWURLConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LWURLConnection.m; sourceTree = "<group>"; };
+		4B978C301CCC64B000184916 /* LWStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LWStream.h; sourceTree = "<group>"; };
+		4B978C311CCC64B000184916 /* LWStream.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LWStream.m; sourceTree = "<group>"; };
 		4BB746881C1BFD6B000D9559 /* LWConnectionInternal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LWConnectionInternal.h; sourceTree = "<group>"; };
 		4BB746891C1BFD6B000D9559 /* LWConnectionInternal.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LWConnectionInternal.mm; sourceTree = "<group>"; };
 		4BB7468B1C1C37C9000D9559 /* LWURLResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LWURLResponse.h; sourceTree = "<group>"; };
@@ -185,6 +188,8 @@
 		4B7AC2601C0DCFE500B7F031 /* LightWeightFoundation */ = {
 			isa = PBXGroup;
 			children = (
+				4B978C301CCC64B000184916 /* LWStream.h */,
+				4B978C311CCC64B000184916 /* LWStream.m */,
 				4BD9B13F1C12A07E006B3F78 /* NSObject+post.h */,
 				4BD9B1401C12A07E006B3F78 /* NSObject+post.m */,
 				4B7AC2611C0DD00600B7F031 /* LWTimer.h */,
@@ -518,6 +523,7 @@
 				5350D0171BE31F2B004463EE /* ViewController+MASAdditions.m in Sources */,
 				5350D0141BE31F2B004463EE /* NSArray+MASAdditions.m in Sources */,
 				5350D0131BE31F2B004463EE /* MASViewConstraint.m in Sources */,
+				4B978C321CCC64B000184916 /* LWStream.m in Sources */,
 				5376CF8B1BE4EF030092DF5F /* TestTarget1.m in Sources */,
 				4BD9B1411C12A07E006B3F78 /* NSObject+post.m in Sources */,
 				4BE5CE331CA033B000CBB9E3 /* LWMessageQueue.m in Sources */,
