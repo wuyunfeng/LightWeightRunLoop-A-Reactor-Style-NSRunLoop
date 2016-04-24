@@ -136,6 +136,60 @@ Step3: Implement the delegate methods on Receiver:
 Step4: You can use `LWURLResponse` to format Http response
    
     LWURLResponse *response = [[LWURLResponse alloc] initWithData:_responseData];
+## LWInputStream & LWOutputStream(later maybe refator some code)
+######Initilize LWInputStream or LWOutputStream : 
+		
+		  _lwInputStream = [[LWInputStream alloc]initWithFileAtPath:filePath];
+		  _lwInputStream.delegate = self;
+    	  [_lwInputStream scheduleInRunLoop:[_thread looper] forMode:LWDefaultRunLoop];
+    	  [_lwInputStream open];
+or
+
+          _lwOutputStream = [[LWOutputStream alloc]initWithFileAtPath:filePath];
+    	  _lwOutputStream.delegate = self;
+          [_lwOutputStream scheduleInRunLoop:[_thread looper] forMode:LWDefaultRunLoop];
+          [_lwOutputStream open];
+          
+######Then read or write data on the selector of delegate,such as:
+
+          
+	 switch (eventCode) {
+            case LWStreamEventOpenCompleted:
+                 break;
+            case LWStreamEventHasBytesAvailable:
+            {
+                uint8_t buffer[1];
+                NSUInteger len = [(LWInputStream *)aStream read:buffer maxLength:sizeof(buffer)];
+                [_inputStreamData appendBytes:buffer length:len];
+            }
+                break;
+            case LWStreamEventEndEncountered:
+            {
+                NSString *content = [[NSString alloc] initWithData:_inputStreamData encoding:NSUTF8StringEncoding];
+                NSLog(@"content = %@", content);
+                [(LWInputStream *)aStream close];
+            }
+                break;
+            default:
+                break;
+        }
+or 
+
+		        switch (eventCode) {
+            case LWStreamEventOpenCompleted:
+                break;
+            case LWStreamEventHasSpaceAvailable:
+            {
+                uint8_t buffer[50] = "abcdefghijklmnopqrstuvwxyz";
+                NSUInteger len = [(LWOutputStream *)aStream write:buffer maxLength:50];
+                [_inputStreamData appendBytes:buffer length:len];
+                [(LWOutputStream *)aStream close];
+            }
+                break;
+            case LWStreamEventEndEncountered:
+            {
+            }
+                break;
 
 
 ##[Links](https://github.com/wuyunfeng/PHPMApi.git)
