@@ -9,15 +9,15 @@
 * **LWTimer** - Extremely like *NSTimer*.
 
 * **LWURLConnection** - Extremely like *NSURLConnection*.
+* **LWInputStream** - Extremely like *NSInputStream* (will refactor code).
+* **LWOutputStream** - Extremely like *NSOutputStream(will refactor code)*.
+
 
 ## Future Features
 
 * **LWPort** - Extremely like *NSMachPort*.
 
 * **Socket Pools** - reuse socket.
-
-* **LWInputStream** - Extremely like *NSInputStream* (maybe).
-
 
 ## Get Started
 Each NSThread object, `excluding the application’s main thread`, can own an `LWRunLoop` object. You can get the current thread’s  `LWRunLoop`, through the class method *`currentLWRunLoop`*. Subsequently code snippet shows how configure LWRunLoop for NSThread and make the NSThread `_lwRunLoopThread` entering into `Event-Driver-Mode:`
