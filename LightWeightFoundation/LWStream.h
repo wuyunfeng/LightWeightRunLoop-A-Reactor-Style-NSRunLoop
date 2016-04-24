@@ -66,5 +66,6 @@ typedef NS_OPTIONS(NSUInteger, LWStreamEvent) {
 
 - (nullable instancetype)initWithFileAtPath:(NSString * _Nonnull)path;
 
+- (NSInteger)read:(uint8_t * _Nonnull)buffer maxLength:(NSUInteger)len;
 
 @end
