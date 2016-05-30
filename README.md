@@ -10,9 +10,9 @@
 
 * **LWURLConnection** - Extremely like *NSURLConnection*.
 
-* **LWInputStream** - Extremely like *NSInputStream* (`Design Failure according to Java InputStream`).
+* **LWInputStream** - Extremely like *NSInputStream* (`Design Fault`).
 
-* **LWOutputStream** - Extremely like *NSOutputStream(`Design Failure according to Java InputStream`)*.
+* **LWOutputStream** - Extremely like *NSOutputStream(`Design Fault`)*.
 
 
 ## Future Features
