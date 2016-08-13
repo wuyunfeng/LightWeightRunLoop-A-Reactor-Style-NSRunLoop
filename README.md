@@ -10,9 +10,9 @@
 
 * **LWURLConnection** - Extremely like *NSURLConnection*.
 
-* **LWInputStream** - Extremely like *NSInputStream* (`correspond to FileInputStream of Java`).
+* **LWInputStream** - Realize `File` relative Foundation API*(`correspond to FileOutputStream of Java`)
 
-* **LWOutputStream** - Extremely like *NSOutputStream(`correspond to FileOutputStream of Java`)*.
+* **LWOutputStream** - Realize `File` relative Foundation API* (`correspond to FileOutputStream of Java`)*.
 
 
 ## Future Features
@@ -139,13 +139,13 @@ Step4: You can use `LWURLResponse` to format Http response
 ## LWInputStream & LWOutputStream(later maybe refator some code)
 ######Initilize LWInputStream or LWOutputStream : 
 		
-		  _lwInputStream = [[LWInputStream alloc]initWithFileAtPath:filePath];
+		  _lwInputStream = [LWInputStream inputStreamWithFileAtPath:filePath];
 		  _lwInputStream.delegate = self;
     	  [_lwInputStream scheduleInRunLoop:[_thread looper] forMode:LWDefaultRunLoop];
     	  [_lwInputStream open];
 or
 
-          _lwOutputStream = [[LWOutputStream alloc]initWithFileAtPath:filePath];
+          _lwOutputStream = [LWOutputStream outputStreamToFileAtPath:filePath append:YES];
     	  _lwOutputStream.delegate = self;
           [_lwOutputStream scheduleInRunLoop:[_thread looper] forMode:LWDefaultRunLoop];
           [_lwOutputStream open];

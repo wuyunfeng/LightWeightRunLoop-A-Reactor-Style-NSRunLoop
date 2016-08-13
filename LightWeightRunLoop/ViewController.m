@@ -201,7 +201,7 @@
     _button8.layer.borderColor = [UIColor yellowColor].CGColor;
     _button8.layer.masksToBounds = YES;
     _button8.backgroundColor = [UIColor whiteColor];
-    [_button8 setTitle:@"LWInputStread write" forState:UIControlStateNormal];
+    [_button8 setTitle:@"LWOutputStream write" forState:UIControlStateNormal];
     [_button8 setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     [_button8 setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
     [_button8 addTarget:self action:@selector(prepareLWOutputStream:) forControlEvents:UIControlEventTouchUpInside];
@@ -216,7 +216,7 @@
     _button9.layer.borderColor = [UIColor yellowColor].CGColor;
     _button9.layer.masksToBounds = YES;
     _button9.backgroundColor = [UIColor whiteColor];
-    [_button9 setTitle:@"LWInputStread read" forState:UIControlStateNormal];
+    [_button9 setTitle:@"LWInputStream read" forState:UIControlStateNormal];
     [_button9 setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     [_button9 setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
     [_button9 addTarget:self action:@selector(prepareLWInputStream:) forControlEvents:UIControlEventTouchUpInside];
@@ -398,8 +398,7 @@
 {
     NSString *path = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
     NSString *filePath = [path stringByAppendingPathComponent:TEST_FILE];
-
-    _lwInputStream = [[LWInputStream alloc]initWithFileAtPath:filePath];
+    _lwInputStream = [LWInputStream inputStreamWithFileAtPath:filePath];
     _lwInputStream.delegate = self;
     [_lwInputStream scheduleInRunLoop:[_thread looper] forMode:LWDefaultRunLoop];
     [_lwInputStream open];
@@ -415,8 +414,7 @@
 {
     NSString *path = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) firstObject];
     NSString *filePath = [path stringByAppendingPathComponent:TEST_FILE];
-    
-    _lwOutputStream = [[LWOutputStream alloc]initWithFileAtPath:filePath];
+    _lwOutputStream = [LWOutputStream outputStreamToFileAtPath:filePath append:YES];
     _lwOutputStream.delegate = self;
     [_lwOutputStream scheduleInRunLoop:[_thread looper] forMode:LWDefaultRunLoop];
     [_lwOutputStream open];
@@ -432,9 +430,11 @@
                  break;
             case LWStreamEventHasBytesAvailable:
             {
-                uint8_t buffer[1];
-                NSUInteger len = [(LWInputStream *)aStream read:buffer maxLength:sizeof(buffer)];
-                [_inputStreamData appendBytes:buffer length:len];
+                uint8_t buffer[100];
+                NSInteger len = [(LWInputStream *)aStream read:buffer maxLength:sizeof(buffer)];
+                if (len != -1) {
+                    [_inputStreamData appendBytes:buffer length:len];
+                }
             }
                 break;
             case LWStreamEventEndEncountered:
@@ -457,9 +457,8 @@
                 break;
             case LWStreamEventHasSpaceAvailable:
             {
-                uint8_t buffer[50] = "abcdefghijklmnopqrstuvwxyz";
-                NSUInteger len = [(LWOutputStream *)aStream write:buffer maxLength:50];
-                [_inputStreamData appendBytes:buffer length:len];
+                uint8_t buffer[] = "abcdefg";
+                [(LWOutputStream *)aStream write:buffer maxLength:sizeof(buffer)];
                 [(LWOutputStream *)aStream close];
             }
                 break;

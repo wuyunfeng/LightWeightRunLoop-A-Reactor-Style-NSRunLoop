@@ -60,11 +60,7 @@ typedef NS_OPTIONS(NSUInteger, LWStreamEvent) {
 
 @interface LWInputStream : LWStream
 
-
 @property (weak, nonatomic, nullable) id<LWStreamDelegate> delegate;
-
-
-- (nullable instancetype)initWithFileAtPath:(NSString * _Nonnull)path;
 
 - (NSInteger)read:(uint8_t * _Nonnull)buffer maxLength:(NSUInteger)len;
 
@@ -74,8 +70,24 @@ typedef NS_OPTIONS(NSUInteger, LWStreamEvent) {
 @interface LWOutputStream : LWStream
 
 @property (weak, nonatomic, nullable) id<LWStreamDelegate> delegate;
-- (NSInteger)write:(const uint8_t * _Nonnull)buffer maxLength:(NSUInteger)len;
-- (nullable instancetype)initWithFileAtPath:(NSString * _Nonnull)path;
 
+- (NSInteger)write:(const uint8_t * _Nonnull)buffer maxLength:(NSUInteger)len;
+
+//- (nullable instancetype)initWithFileAtPath:(NSString * _Nonnull)path;
 
 @end
+
+
+@interface LWInputStream (LWInputStreamExtensions)
+
++ (nullable instancetype)inputStreamWithFileAtPath:(NSString * _Nonnull)path;
+
+@end
+
+@interface LWOutputStream (LWOutputStreamExtensions)
+
++ (nullable instancetype)outputStreamToFileAtPath:(NSString * _Nonnull)path append:(BOOL)shouldAppend;
+
+@end
+
+
