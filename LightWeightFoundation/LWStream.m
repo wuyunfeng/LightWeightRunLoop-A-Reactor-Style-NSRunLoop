@@ -164,14 +164,12 @@
     if (feof(_fp)) {
         LWStreamEvent streamEvent = LWStreamEventEndEncountered;
         [self sendDelegateMessage:&streamEvent];
-        fclose(_fp);
         return -1;
     }
     size_t nRead = fread(buffer, sizeof(uint8_t), len, _fp);
     if (ferror(_fp)) {
         LWStreamEvent streamEvent = LWStreamEventErrorOccurred;
         [self sendDelegateMessage:&streamEvent];
-        fclose(_fp);
         return -1;
     }
 
@@ -271,9 +269,9 @@
 - (void)entryRoutine
 {
     if (_shouldAppend) {
-        _fp = fopen([_fileAtPath UTF8String], "at");
+        _fp = fopen([_fileAtPath UTF8String], "a");
     } else {
-        _fp = fopen([_fileAtPath UTF8String], "w+");
+        _fp = fopen([_fileAtPath UTF8String], "w");
     }
     if (_fp == NULL) {
         LWStreamEvent streamEvent = LWStreamEventErrorOccurred;
@@ -311,13 +309,12 @@
 - (NSInteger)write:(const uint8_t *)buffer maxLength:(NSUInteger)len
 {
     size_t nWrite = fwrite(buffer, sizeof(uint8_t), len, _fp);
-//    if (nWrite < len) {
-//        LWStreamEvent streamEvent = LWStreamEventErrorOccurred;
-//        [self sendDelegateMessage:&streamEvent];
-//        fclose(_fp);
-//        return -1;
-//    }
-    LWStreamEvent streamEvent = LWStreamEventHasSpaceAvailable;
+    if (nWrite < len && ferror(_fp)) {
+        LWStreamEvent streamEvent = LWStreamEventErrorOccurred;
+        [self sendDelegateMessage:&streamEvent];
+        return -1;
+    }
+    LWStreamEvent streamEvent = LWStreamEventEndEncountered;
     [self sendDelegateMessage:&streamEvent];
     return nWrite;
 }
