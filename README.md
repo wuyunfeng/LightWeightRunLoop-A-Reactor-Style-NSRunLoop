@@ -136,7 +136,7 @@ Step3: Implement the delegate methods on Receiver:
 Step4: You can use `LWURLResponse` to format Http response
    
     LWURLResponse *response = [[LWURLResponse alloc] initWithData:_responseData];
-## LWInputStream & LWOutputStream(later maybe refator some code)
+## LWInputStream & LWOutputStream (File Relative)
 ######Initilize LWInputStream or LWOutputStream : 
 		
 		  _lwInputStream = [LWInputStream inputStreamWithFileAtPath:filePath];
@@ -175,7 +175,7 @@ or
         }
 or 
 
-		        switch (eventCode) {
+	switch (eventCode) {
             case LWStreamEventOpenCompleted:
                 break;
             case LWStreamEventHasSpaceAvailable:
