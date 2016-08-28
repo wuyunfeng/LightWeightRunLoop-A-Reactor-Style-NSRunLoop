@@ -16,7 +16,7 @@
 		4BD9B1411C12A07E006B3F78 /* NSObject+post.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BD9B1401C12A07E006B3F78 /* NSObject+post.m */; };
 		4BE5CE321CA033B000CBB9E3 /* LWMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BE5CE271CA033B000CBB9E3 /* LWMessage.m */; };
 		4BE5CE331CA033B000CBB9E3 /* LWMessageQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BE5CE291CA033B000CBB9E3 /* LWMessageQueue.m */; };
-		4BE5CE341CA033B000CBB9E3 /* LWNativeLoop.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BE5CE2B1CA033B000CBB9E3 /* LWNativeLoop.m */; };
+		4BE5CE341CA033B000CBB9E3 /* LWNativeRunLoop.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BE5CE2B1CA033B000CBB9E3 /* LWNativeRunLoop.m */; };
 		4BE5CE351CA033B000CBB9E3 /* LWRunLoop.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BE5CE2D1CA033B000CBB9E3 /* LWRunLoop.m */; };
 		4BE5CE361CA033B000CBB9E3 /* LWSystemClock.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BE5CE2F1CA033B000CBB9E3 /* LWSystemClock.m */; };
 		4BE5CE371CA033B000CBB9E3 /* NSThread+Looper.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BE5CE311CA033B000CBB9E3 /* NSThread+Looper.m */; };
@@ -83,8 +83,8 @@
 		4BE5CE271CA033B000CBB9E3 /* LWMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LWMessage.m; sourceTree = "<group>"; };
 		4BE5CE281CA033B000CBB9E3 /* LWMessageQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LWMessageQueue.h; sourceTree = "<group>"; };
 		4BE5CE291CA033B000CBB9E3 /* LWMessageQueue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LWMessageQueue.m; sourceTree = "<group>"; };
-		4BE5CE2A1CA033B000CBB9E3 /* LWNativeLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LWNativeLoop.h; sourceTree = "<group>"; };
-		4BE5CE2B1CA033B000CBB9E3 /* LWNativeLoop.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LWNativeLoop.m; sourceTree = "<group>"; };
+		4BE5CE2A1CA033B000CBB9E3 /* LWNativeRunLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LWNativeRunLoop.h; sourceTree = "<group>"; };
+		4BE5CE2B1CA033B000CBB9E3 /* LWNativeRunLoop.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LWNativeRunLoop.m; sourceTree = "<group>"; };
 		4BE5CE2C1CA033B000CBB9E3 /* LWRunLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LWRunLoop.h; sourceTree = "<group>"; };
 		4BE5CE2D1CA033B000CBB9E3 /* LWRunLoop.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LWRunLoop.m; sourceTree = "<group>"; };
 		4BE5CE2E1CA033B000CBB9E3 /* LWSystemClock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LWSystemClock.h; sourceTree = "<group>"; };
@@ -208,8 +208,8 @@
 				4BE5CE271CA033B000CBB9E3 /* LWMessage.m */,
 				4BE5CE281CA033B000CBB9E3 /* LWMessageQueue.h */,
 				4BE5CE291CA033B000CBB9E3 /* LWMessageQueue.m */,
-				4BE5CE2A1CA033B000CBB9E3 /* LWNativeLoop.h */,
-				4BE5CE2B1CA033B000CBB9E3 /* LWNativeLoop.m */,
+				4BE5CE2A1CA033B000CBB9E3 /* LWNativeRunLoop.h */,
+				4BE5CE2B1CA033B000CBB9E3 /* LWNativeRunLoop.m */,
 				4BE5CE2C1CA033B000CBB9E3 /* LWRunLoop.h */,
 				4BE5CE2D1CA033B000CBB9E3 /* LWRunLoop.m */,
 				4BE5CE2E1CA033B000CBB9E3 /* LWSystemClock.h */,
@@ -541,7 +541,7 @@
 				5350D01B1BE31F2B004463EE /* UIViewAdditions.m in Sources */,
 				4BE5CE321CA033B000CBB9E3 /* LWMessage.m in Sources */,
 				5350CFB01BE30EB5004463EE /* AppDelegate.m in Sources */,
-				4BE5CE341CA033B000CBB9E3 /* LWNativeLoop.m in Sources */,
+				4BE5CE341CA033B000CBB9E3 /* LWNativeRunLoop.m in Sources */,
 				4B91E98C1C15C54700DFFFE2 /* LWURLConnection.m in Sources */,
 				5350CFAD1BE30EB5004463EE /* main.m in Sources */,
 			);

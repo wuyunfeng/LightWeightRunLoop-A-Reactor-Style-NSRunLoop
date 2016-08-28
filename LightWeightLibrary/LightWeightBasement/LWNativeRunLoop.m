@@ -6,7 +6,7 @@
 //  Copyright © 2015年 com.wuyunfeng.open. All rights reserved.
 //
 
-#import "LWNativeLoop.h"
+#import "LWNativeRunLoop.h"
 // unix standard
 #include <sys/unistd.h>
 
@@ -22,7 +22,7 @@
 #include <sys/errno.h>
 #define MAX_EVENT_COUNT 16
 
-@implementation LWNativeLoop
+@implementation LWNativeRunLoop
 {
     int _mReadPipeFd;
     int _mWritePipeFd;

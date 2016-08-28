@@ -10,7 +10,7 @@
 
 typedef int (*LWRunLoop_callbackfunc)(int fd, int events, void* data);
 
-@interface LWNativeLoop : NSObject
+@interface LWNativeRunLoop : NSObject
 
 - (void)nativeRunLoopFor:(NSInteger)timeoutMillis;
 

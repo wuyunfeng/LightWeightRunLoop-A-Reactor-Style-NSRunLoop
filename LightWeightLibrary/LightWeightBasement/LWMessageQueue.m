@@ -8,7 +8,7 @@
 
 #import "LWMessageQueue.h"
 #include <pthread.h>
-#import "LWNativeLoop.h"
+#import "LWNativeRunLoop.h"
 #import "LWSystemClock.h"
 
 static pthread_key_t mTLSKey;
@@ -19,7 +19,7 @@ static pthread_key_t mTLSKey;
     LWMessage *_preMessages;
     LWMessage *notHitCurrentMsg;
 
-    LWNativeLoop *_nativeRunLoop;
+    LWNativeRunLoop *_nativeRunLoop;
     volatile BOOL _isCurrentLoopBlock;
 }
 
@@ -41,7 +41,7 @@ static pthread_key_t mTLSKey;
 - (instancetype)init
 {
     if (self = [super init]) {
-        _nativeRunLoop = [[LWNativeLoop alloc] init];
+        _nativeRunLoop = [[LWNativeRunLoop alloc] init];
         _allowStop = NO;
         [self addObserver:self forKeyPath:@"queueRunMode" options:NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld context:"modechange"];
     }
