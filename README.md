@@ -1,6 +1,10 @@
 ## [LightWeightRunLoop](https://github.com/wuyunfeng/LightWeightRunLoop.git)
 
-> Using BSD kqueue realize iOS RunLoop and some Runloop-Relative Fundation API such as perform selector(or delay some times) on other thread , Timer, URLConnection, LWStream(LWInputStream、LWOutputStream) etc..
+> Using BSD kqueue realize iOS/Mac RunLoop and some Runloop-Relative Fundation API such as perform selector(or delay some times) on other thread , Timer, URLConnection, LWStream(LWInputStream、LWOutputStream) etc..
+
+>> I believe this project can help you understand iOS/Mas Runloop(usually called Event-Driven-Mode ^o^) clearly and sufficiently, so you can design your project by using runloop correctly and effectively.
+
+>> ^o^   Can this porject impressed you?   ^o^
 
 ## Main Features
 
@@ -13,11 +17,10 @@
 * **LWInputStream** - Realize `File` relative Foundation API*(`correspond to FileOutputStream of Java`)
 
 * **LWOutputStream** - Realize `File` relative Foundation API* (`correspond to FileOutputStream of Java`)*.
+* **LWPort** - Extremely like *NSMachPort*. (on-going)
 
 
 ## Future Features
-
-* **LWPort** - Extremely like *NSMachPort*.
 
 * **Socket Pools** - reuse socket.
 
