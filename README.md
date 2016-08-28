@@ -4,9 +4,9 @@
 
 ## Main Features
 
-* **NSObject** - *postSelector:onThread:withObject:afterDelay:modes* etc.
+* **NSObject** - *postSelector:onThread:withObject:afterDelay:modes* (`equal to NSObject` *performSelector: withObject:afterDelay:inModes:*)etc.
 
-* **LWTimer** - Extremely like *NSTimer*, `nanosecond` precision.
+* **LWTimer** - Extremely like *NSTimer*, but `nanosecond` precision!!!
 
 * **LWURLConnection** - Extremely like *NSURLConnection*.
 
