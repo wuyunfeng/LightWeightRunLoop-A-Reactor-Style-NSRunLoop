@@ -62,13 +62,7 @@ void destructor(void * data)
 #pragma mark run this loop forever
 - (void)run
 {
-    while (true) {
-        LWMessage *msg = [_queue next];
-        @autoreleasepool {
-            [msg performSelectorForTarget];
-            [self necessaryInvocationForThisLoop:msg];
-        }
-    }
+    [self runMode:LWDefaultRunLoop];
 }
 
 #pragma mark run this loop at specific mode
@@ -76,7 +70,7 @@ void destructor(void * data)
 {
     _currentRunLoopMode = mode;
     _queue.queueRunMode = _currentRunLoopMode;
-    while (true) {
+    while (YES) {
         LWMessage *msg = [_queue next:_queue.queueRunMode];
         [msg performSelectorForTarget];
         [self necessaryInvocationForThisLoop:msg];

@@ -109,34 +109,10 @@ void threadDestructor(void *data)
 }
 
 #pragma mark - obtain message
-- (LWMessage *)next
-{
-    NSInteger nextWakeTimeoutMillis = 0;
-    while (YES) {
-        [_nativeRunLoop nativeRunLoopFor:nextWakeTimeoutMillis];
-        @synchronized(self) {
-            NSInteger now = [LWSystemClock uptimeMillions];
-            LWMessage *msg = _messages;
-            if (msg != nil) {
-                if (now < msg.when) {
-                    nextWakeTimeoutMillis = msg.when - now;
-                } else {
-                    _isCurrentLoopBlock = NO;
-                    _messages = msg.next;
-                    msg.next = nil;
-                    return msg;
-                }
-            } else {
-                nextWakeTimeoutMillis = -1;
-            }
-            _isCurrentLoopBlock = YES;
-        }
-    }
-}
-
 - (LWMessage *)next:(NSString *)mode
 {
     NSInteger nextWakeTimeoutMillis = 0;
+    _queueRunMode = mode;
     while (YES) {
         [_nativeRunLoop nativeRunLoopFor:nextWakeTimeoutMillis];
         @synchronized(self) {
@@ -175,6 +151,9 @@ void threadDestructor(void *data)
 
 - (BOOL)isMsgModesHit:(NSArray *)modes
 {
+    if (!modes) {//bug fixed: LWMessage modes = nil
+        modes = @[@"LWDefaultRunLoop"];
+    }
     for (NSString *mode in modes) {
         if ([@"LWRunLoopCommonModes" isEqualToString:mode]) {
             return YES;
@@ -192,4 +171,30 @@ void threadDestructor(void *data)
     NSLog(@"[%@ %@]", [self class], NSStringFromSelector(_cmd));
 }
 
+#pragma mark saved -
+#pragma mark for history
+//- (LWMessage *)next
+//{
+//    NSInteger nextWakeTimeoutMillis = 0;
+//    while (YES) {
+//        [_nativeRunLoop nativeRunLoopFor:nextWakeTimeoutMillis];
+//        @synchronized(self) {
+//            NSInteger now = [LWSystemClock uptimeMillions];
+//            LWMessage *msg = _messages;
+//            if (msg != nil) {
+//                if (now < msg.when) {
+//                    nextWakeTimeoutMillis = msg.when - now;
+//                } else {
+//                    _isCurrentLoopBlock = NO;
+//                    _messages = msg.next;
+//                    msg.next = nil;
+//                    return msg;
+//                }
+//            } else {
+//                nextWakeTimeoutMillis = -1;
+//            }
+//            _isCurrentLoopBlock = YES;
+//        }
+//    }
+//}
 @end

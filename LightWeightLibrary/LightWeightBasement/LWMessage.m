@@ -44,7 +44,7 @@
         [_mTarget performSelector:_mSelector withObject:_mArgument];
 #pragma clang diagnostic pop
     } else {
-        NSLog(@"xxxxx %@", NSStringFromSelector(_mSelector));
+        NSLog(@"Perform %@  failure! Because selector does not exists.", NSStringFromSelector(_mSelector));
     }
 }
 

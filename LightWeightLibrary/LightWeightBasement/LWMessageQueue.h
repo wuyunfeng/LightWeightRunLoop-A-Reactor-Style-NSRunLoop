@@ -33,12 +33,12 @@
  */
 - (BOOL)enqueueMessage:(LWMessage *)msg when:(NSInteger)when;
 
-/**
- *  obtain message @see LWMessage
- *
- *  @return the message to be executed
- */
-- (LWMessage *)next;
+///**
+// *  obtain message @see LWMessage
+// *
+// *  @return the message to be executed
+// */
+//- (LWMessage *)next;
 
 /**
  *
