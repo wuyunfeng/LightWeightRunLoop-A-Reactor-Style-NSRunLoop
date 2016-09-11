@@ -4,7 +4,6 @@
 
 >> I believe this project can help you understand iOS/Mas Runloop(usually called Event-Driven-Mode ^o^) clearly and sufficiently, so you can design your project by using runloop correctly and effectively.
 
->> ^o^   Can this porject impressed you?   ^o^
 ![](http://i2.buimg.com/4851/0601cf62d1e3b438.jpg)
 
 ## Main Features
