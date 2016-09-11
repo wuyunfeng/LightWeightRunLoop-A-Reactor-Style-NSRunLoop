@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "LWMessage.h"
-
+#import "LWPort.h"
 extern NSString * const  LWDefaultRunLoop;
 extern NSString * const  LWRunLoopCommonModes;
 
@@ -65,6 +65,14 @@ extern NSString * const  LWTrackingRunLoopMode;
  *  @param msg LWMessage
  */
 - (void)postMessage:(LWMessage *)msg;
+
+/**
+ *  add LWPort to LWRunLoop
+ *
+ *  @param aPort LWPort instance
+ *  @param mode  LWRunLoop Run Mode
+ */
+- (void)addPort:(LWPort *)aPort forMode:(NSString *)mode;
 
 
 @end

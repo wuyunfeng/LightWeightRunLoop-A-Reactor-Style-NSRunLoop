@@ -11,3 +11,8 @@
 @implementation LWPort
 
 @end
+
+@implementation LWPortMessage
+
+
+@end

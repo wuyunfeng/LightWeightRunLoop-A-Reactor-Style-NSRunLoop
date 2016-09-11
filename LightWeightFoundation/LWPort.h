@@ -11,3 +11,7 @@
 @interface LWPort : NSObject
 
 @end
+
+@interface LWPortMessage : NSObject
+
+@end

@@ -94,6 +94,18 @@ void destructor(void * data)
     }
 }
 
+#pragma mark -
+#pragma mark NSPort Relative API
+- (void)addPort:(LWPort *)aPort forMode:(NSString *)mode
+{
+    
+}
+
+- (void)removePort:(LWPort *)aPort forMode:(NSString *)mode
+{
+    
+}
+
 
 #pragma mark - Private
 - (instancetype)init
