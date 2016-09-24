@@ -11,6 +11,16 @@
 @class LWPortMessage;
 @class LWRunLoop;
 
+typedef NS_OPTIONS(NSUInteger, LWSocketPortRoleType) {
+    LWSocketPortRoleTypeLeader = 0,
+    LWSocketPortRoleTypeFollower = 1
+};
+
+typedef struct LWPortContext {
+    void * _Nullable info;
+    void (* _Nullable LWPortReceiveDataCallBack)(int fd, void * _Nullable info, void * _Nullable data, int length);
+}LWPortContext;
+
 @protocol LWPortDelegate <NSObject>
 
 @optional
@@ -23,6 +33,8 @@
 @interface LWPort : NSObject
 
 @property (nullable, assign, nonatomic) id<LWPortDelegate> delegate;
+
+@property (readonly) LWPortContext context;
 
 + (LWPort * _Nullable)port;
 
@@ -86,6 +98,8 @@
 //int act as NSSocketNativeHandle(typedef int )
 @property (readonly) int socket;
 
+
+@property (readonly) LWSocketPortRoleType roleType;
 
 @end
 

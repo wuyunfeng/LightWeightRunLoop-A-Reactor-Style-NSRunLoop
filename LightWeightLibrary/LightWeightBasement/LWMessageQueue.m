@@ -11,7 +11,7 @@
 #import "LWNativeRunLoop.h"
 #import "LWSystemClock.h"
 
-static pthread_key_t mTLSKey;
+static pthread_key_t mThreadOneInstanceKey;
 
 @implementation LWMessageQueue
 {
@@ -27,13 +27,13 @@ static pthread_key_t mTLSKey;
 {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        pthread_key_create(&mTLSKey, threadDestructor);
+        pthread_key_create(&mThreadOneInstanceKey, threadDestructor);
     });
     
-    LWMessageQueue *queue = (__bridge LWMessageQueue *)(pthread_getspecific(mTLSKey));
+    LWMessageQueue *queue = (__bridge LWMessageQueue *)(pthread_getspecific(mThreadOneInstanceKey));
     if (queue == nil) {
         queue = [[LWMessageQueue alloc] init];
-        pthread_setspecific(mTLSKey, (__bridge const void *)(queue));
+        pthread_setspecific(mThreadOneInstanceKey, (__bridge const void *)(queue));
     }
     return queue;
 }
@@ -77,6 +77,11 @@ void threadDestructor(void *data)
 - (void)destoryRunLoop
 {
     [_nativeRunLoop nativeDestoryKernelFds];
+}
+
+- (LWNativeRunLoop *)nativeRunLoop
+{
+    return _nativeRunLoop;
 }
 
 #pragma mark  - enqueue message

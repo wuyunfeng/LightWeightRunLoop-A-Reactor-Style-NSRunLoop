@@ -93,7 +93,9 @@
     NSData *_address;
     
     //Leader-Follower Flag
-    int _flag;
+    LWSocketPortRoleType _roleType;
+    
+    LWPortContext _context;
 }
 
 - (nullable instancetype)initWithTCPPort:(unsigned short)port
@@ -121,14 +123,16 @@
     if (-1 == bind(_sockFd, (struct sockaddr *)&sockAddr, sizeof(sockAddr))) {
         //socket is already bound to an address and the protocol does not support binding to a new address
         if (EINVAL == errno) {
-            _flag = 1;//follower
+            _roleType = LWSocketPortRoleTypeFollower;//follower
         } else {
             return NO;
         }
     }
-    _flag = 0;//leader
+    _roleType = LWSocketPortRoleTypeLeader;//leader
     
-    if (_flag == 0) {
+    if (_roleType == LWSocketPortRoleTypeLeader) {
+        int option = 1;
+        setsockopt(_sockFd, SOL_SOCKET, SO_REUSEADDR, &option, sizeof(option));
         if (listen(_sockFd, 5) == -1) {
             return NO;
         }
@@ -137,23 +141,23 @@
         if (-1 == connect(_sockFd, (struct sockaddr *)&sockAddr, sizeof(sockAddr))) {
             return NO;
         }
-    }
-    
-    [self makeSocketNonBlocking:_sockFd];
+    }    
+    _context.info = (__bridge void * _Nullable)(self);
+    _context.LWPortReceiveDataCallBack = PortBasedReceiveDataRoutine;
     return YES;
 }
 
-
-- (BOOL)makeSocketNonBlocking:(int)fd
+- (void)notify:(NSData *)data
 {
-    int flags;
-    if ((flags = fcntl(fd, F_GETFL, NULL)) < 0) {
-        return NO;
+    NSLog(@"[%@ %@]", [self class], NSStringFromSelector(_cmd));
+    if ([self.delegate respondsToSelector:@selector(handleMachMessage:)]) {
+        [self.delegate handlePortMessage:nil];
     }
-    if (fcntl(fd, F_SETFL, flags | O_NONBLOCK) == -1) {
-        return NO;
-    }
-    return YES;
+}
+
+- (LWPortContext)context
+{
+    return _context;
 }
 
 - (int)socket
@@ -176,6 +180,12 @@
     return _socketType;
 }
 
+void PortBasedReceiveDataRoutine(int fd, void * _Nullable info, void * _Nullable data, int length)
+{
+    LWSocketPort *port = (__bridge LWSocketPort *)(info);
+    NSData *receiveData = [[NSData alloc] initWithBytes:data length:length];
+    [port notify:receiveData];
+}
 
 @end
 

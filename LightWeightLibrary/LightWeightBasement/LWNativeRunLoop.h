@@ -8,7 +8,18 @@
 
 #import <Foundation/Foundation.h>
 
-typedef int (*LWRunLoop_callbackfunc)(int fd, int events, void* data);
+typedef NS_OPTIONS(NSUInteger, LWNativeRunLoopEventFilter) {
+    LWNativeRunLoopEventFilterRead = 0,
+    LWNativeRunLoopEventFilterWrite = 1
+};
+
+typedef NS_OPTIONS(NSUInteger, LWNativeRunLoopFdType) {
+    LWNativeRunLoopFdSocketServerType = 0,
+    LWNativeRunLoopFdSocketClientType = 1,
+    LWNativeRunLoopFdPlainType = 2
+};
+
+typedef void (*LWNativeRunLoopCallBack)(int fd, void *info, void *data, int length);
 
 @interface LWNativeRunLoop : NSObject
 
@@ -18,6 +29,6 @@ typedef int (*LWRunLoop_callbackfunc)(int fd, int events, void* data);
 
 - (void)nativeDestoryKernelFds;
 
-- (void)addFd:(int)fd filter:(int)filter callback:(LWRunLoop_callbackfunc)callback data:(void *)data;
+- (void)addFd:(int)fd type:(LWNativeRunLoopFdType)type filter:(LWNativeRunLoopEventFilter)filter callback:(LWNativeRunLoopCallBack)callback data:(void *)info;
 
 @end

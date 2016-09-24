@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "LWMessage.h"
-
+@class LWNativeRunLoop;
 @interface LWMessageQueue : NSObject
 
 @property (nonatomic) NSString *queueRunMode;
@@ -51,6 +51,14 @@
  *  @return the message to be executed for specific mode
  */
 - (LWMessage *)next:(NSString *)mode;
+
+
+/**
+ *  Just for `LWRunLoop` use
+ *
+ *  @return LWNativeRunLoop
+ */
+- (LWNativeRunLoop *)nativeRunLoop;
 
 
 @end

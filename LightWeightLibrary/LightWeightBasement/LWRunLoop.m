@@ -13,6 +13,7 @@
 #import "LWMessageQueue.h"
 #import "LWSystemClock.h"
 #import "LWTimer.h"
+#import "LWNativeRunLoop.h"
 static pthread_once_t mTLSKeyOnceToken = PTHREAD_ONCE_INIT;
 static pthread_key_t mTLSKey;
 
@@ -98,7 +99,17 @@ void destructor(void * data)
 #pragma mark NSPort Relative API
 - (void)addPort:(LWPort *)aPort forMode:(NSString *)mode
 {
-    
+    if ([aPort isKindOfClass:[LWSocketPort class]]) {
+        LWSocketPort *socketTypePort = (LWSocketPort *)aPort;
+        int fd = socketTypePort.socket;
+        LWSocketPortRoleType roleType = socketTypePort.roleType;
+        LWPortContext context = socketTypePort.context;
+        if (LWSocketPortRoleTypeLeader == roleType) {
+            [_queue.nativeRunLoop addFd:fd type:LWNativeRunLoopFdSocketServerType filter:LWNativeRunLoopEventFilterRead callback:context.LWPortContextCallBack data:&context];
+        } else {
+            [_queue.nativeRunLoop addFd:fd type:LWNativeRunLoopFdSocketClientType filter:LWNativeRunLoopEventFilterRead callback:context.LWPortContextCallBack data:&context];
+        }
+    }
 }
 
 - (void)removePort:(LWPort *)aPort forMode:(NSString *)mode
