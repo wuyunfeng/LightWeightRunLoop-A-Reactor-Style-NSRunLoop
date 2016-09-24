@@ -17,7 +17,7 @@
 * **LWInputStream** - Realize `File` relative Foundation API*(`correspond to FileOutputStream of Java`)
 
 * **LWOutputStream** - Realize `File` relative Foundation API* (`correspond to FileOutputStream of Java`)*.
-* **LWPort** - Extremely like *NSMachPort*. (`I have no idea to implements LWPort at present`)
+* **LWPort** - Realize `LWSocketPort`(`socket`, `Leader-Follower pattern`)
 
 
 ## Future Features & To-Do
@@ -194,6 +194,29 @@ or
             {
             }
                 break;
+## LWPort & LWSocketPort (Socket Relative)
 
+######Initilize _lwPortRunLoopThread : 
+	_lwPortRunLoopThread = [[NSThread alloc] initWithTarget:self selector:@selector(portThreadEntryPoint:) object:nil];
+    _lwPortRunLoopThread.name = @"lwPortLoopThread";
+    [_lwPortRunLoopThread start];
+    
+###### portThreadEntryPoint : 
+    - (void)portThreadEntryPoint:(id)data
+    {
+	    @autoreleasepool {
+	        LWRunLoop *looper = [LWRunLoop currentLWRunLoop];
+	        leaderPort = [[LWSocketPort alloc] initWithTCPPort:8082];
+	        leaderPort.delegate = self;
+	        [looper addPort:leaderPort forMode:LWDefaultRunLoop];
+	        [looper runMode:LWDefaultRunLoop];
+	    }
+    }
+    
+###### performFollowerToLeader : 
+    -(void)performFollowerToLeader:(UIButton *)button
+   	{
+    	[WorkerClass launchThreadWithPort:leaderPort];
+    }
 
 ##[Links](https://github.com/wuyunfeng/PHPMApi.git)

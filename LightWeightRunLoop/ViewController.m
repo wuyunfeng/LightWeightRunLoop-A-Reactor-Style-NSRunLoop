@@ -514,11 +514,6 @@
 }
 
 #pragma mark - LWPort
--(void)performFollowerToLeader:(UIButton *)button
-{
-    [WorkerClass launchThreadWithPort:leaderPort];
-}
-
 - (void)portThreadEntryPoint:(id)data
 {
     @autoreleasepool {
@@ -529,6 +524,13 @@
         [looper runMode:LWDefaultRunLoop];
     }
 }
+
+-(void)performFollowerToLeader:(UIButton *)button
+{
+    [WorkerClass launchThreadWithPort:leaderPort];
+}
+
+
 
 - (void)handlePortMessage:(NSData * _Nullable )message
 {
