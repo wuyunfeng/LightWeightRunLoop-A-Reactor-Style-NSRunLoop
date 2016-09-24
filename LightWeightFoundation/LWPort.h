@@ -25,7 +25,7 @@ typedef struct LWPortContext {
 
 @optional
 
-- (void)handlePortMessage:( LWPortMessage * _Nullable )message;
+- (void)handlePortMessage:(LWPortMessage * _Nullable )message;
 
 @end
 
@@ -48,11 +48,14 @@ typedef struct LWPortContext {
 
 @end
 
+/**
+ *  Only support LWSocketPort at present
+ */
 @interface LWPortMessage : NSObject
 
 @property (nullable, readonly, copy) NSArray *components;
-@property (nullable, readonly, retain) NSPort *receivePort;
-@property (nullable, readonly, retain) NSPort *sendPort;
+@property (nullable, readonly, retain) LWPort *receivePort;
+@property (nullable, readonly, retain) LWPort *sendPort;
 
 @property uint32_t msgid; //The identifier for the receiver
 

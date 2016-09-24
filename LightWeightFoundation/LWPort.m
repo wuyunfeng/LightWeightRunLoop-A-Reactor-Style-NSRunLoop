@@ -46,8 +46,8 @@
 @implementation LWPortMessage
 {
     NSArray *_components;
-    NSPort *_receivePort;
-    NSPort *_sendPort;
+    LWPort *_receivePort;
+    LWPort *_sendPort;
 }
 
 - (NSArray *)components
@@ -55,12 +55,12 @@
     return _components;
 }
 
-- (NSPort *)receivePort
+- (LWPort *)receivePort
 {
     return _receivePort;
 }
 
-- (NSPort *)sendPort
+- (LWPort *)sendPort
 {
     return _sendPort;
 }
@@ -70,9 +70,20 @@
     return YES;
 }
 
-- (_Nullable instancetype)initWithSendPort:(nullable NSPort *)sendPort receivePort:(nullable NSPort *)replyPort components:(nullable NSArray *)components
+- (void)internalSendBeforDate:(NSInteger)delay
 {
     
+}
+
+//only support LWSocketPort, nil returned for other LWPort
+- (_Nullable instancetype)initWithSendPort:(nullable LWPort *)sendPort receivePort:(nullable LWPort *)replyPort components:(nullable NSArray *)components
+{
+    if ([sendPort isMemberOfClass:[LWSocketPort class]]
+        && [replyPort isMemberOfClass:[LWSocketPort class]]) {
+        _sendPort = sendPort;
+        _receivePort = replyPort;
+        _components = components;
+    }
     return nil;
 }
 
