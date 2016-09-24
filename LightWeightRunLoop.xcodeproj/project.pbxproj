@@ -16,6 +16,7 @@
 		4BB7468D1C1C37C9000D9559 /* LWURLResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BB7468C1C1C37C9000D9559 /* LWURLResponse.m */; };
 		4BD9B1411C12A07E006B3F78 /* NSObject+post.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BD9B1401C12A07E006B3F78 /* NSObject+post.m */; };
 		4BE325D51D96244C0059B589 /* LWPortClientInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BE325D41D96244C0059B589 /* LWPortClientInfo.m */; };
+		4BE325D81D964E7F0059B589 /* lw_nativerunloop_util.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BE325D61D964E7F0059B589 /* lw_nativerunloop_util.c */; };
 		4BE5CE321CA033B000CBB9E3 /* LWMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BE5CE271CA033B000CBB9E3 /* LWMessage.m */; };
 		4BE5CE331CA033B000CBB9E3 /* LWMessageQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BE5CE291CA033B000CBB9E3 /* LWMessageQueue.m */; };
 		4BE5CE341CA033B000CBB9E3 /* LWNativeRunLoop.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BE5CE2B1CA033B000CBB9E3 /* LWNativeRunLoop.m */; };
@@ -84,6 +85,8 @@
 		4BD9B1401C12A07E006B3F78 /* NSObject+post.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+post.m"; sourceTree = "<group>"; };
 		4BE325D31D96244C0059B589 /* LWPortClientInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LWPortClientInfo.h; sourceTree = "<group>"; };
 		4BE325D41D96244C0059B589 /* LWPortClientInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LWPortClientInfo.m; sourceTree = "<group>"; };
+		4BE325D61D964E7F0059B589 /* lw_nativerunloop_util.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lw_nativerunloop_util.c; sourceTree = "<group>"; };
+		4BE325D71D964E7F0059B589 /* lw_nativerunloop_util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lw_nativerunloop_util.h; sourceTree = "<group>"; };
 		4BE5CE251CA033B000CBB9E3 /* LightWeightRunLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LightWeightRunLoop.h; sourceTree = "<group>"; };
 		4BE5CE261CA033B000CBB9E3 /* LWMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LWMessage.h; sourceTree = "<group>"; };
 		4BE5CE271CA033B000CBB9E3 /* LWMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LWMessage.m; sourceTree = "<group>"; };
@@ -189,6 +192,8 @@
 				4BB7468C1C1C37C9000D9559 /* LWURLResponse.m */,
 				4BE325D31D96244C0059B589 /* LWPortClientInfo.h */,
 				4BE325D41D96244C0059B589 /* LWPortClientInfo.m */,
+				4BE325D61D964E7F0059B589 /* lw_nativerunloop_util.c */,
+				4BE325D71D964E7F0059B589 /* lw_nativerunloop_util.h */,
 			);
 			path = LightWeightInternal;
 			sourceTree = "<group>";
@@ -554,6 +559,7 @@
 				4BE325D51D96244C0059B589 /* LWPortClientInfo.m in Sources */,
 				5350CFB01BE30EB5004463EE /* AppDelegate.m in Sources */,
 				4BE5CE341CA033B000CBB9E3 /* LWNativeRunLoop.m in Sources */,
+				4BE325D81D964E7F0059B589 /* lw_nativerunloop_util.c in Sources */,
 				4B91E98C1C15C54700DFFFE2 /* LWURLConnection.m in Sources */,
 				5350CFAD1BE30EB5004463EE /* main.m in Sources */,
 			);

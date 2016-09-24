@@ -22,7 +22,7 @@
 #include <netinet/in.h>
 #define MAX_EVENT_COUNT 16
 #import "LWPortClientInfo.h"
-
+#include "lw_nativerunloop_util.h"
 typedef struct Request {
     int fd;
     LWNativeRunLoopFdType type;
@@ -84,7 +84,7 @@ typedef struct Request {
                 portInfo.port = clientAddr.sin_port;
                 portInfo.fd = client;
                 [_portClients setValue:portInfo forKey:[NSString stringWithFormat:@"%d", clientAddr.sin_port]];
-                [self makeFdNonBlocking:client];
+                lwutil_make_socket_nonblocking(fd);
                 [self kevent:fd filter:EVFILT_READ action:EV_ADD];
             }
         } else { // read for LWPort follower fd, then notify leader
@@ -179,8 +179,7 @@ typedef struct Request {
 #pragma mark -
 - (void)addFd:(int)fd type:(LWNativeRunLoopFdType)type filter:(LWNativeRunLoopEventFilter)filter callback:(LWNativeRunLoopCallBack)callback data:(void *)info
 {
-    [self makeFdNonBlocking:fd];
-    
+    lwutil_make_socket_nonblocking(fd);
     Request request;
     request.fd = fd;
     request.type = type;
@@ -205,18 +204,6 @@ typedef struct Request {
     EV_SET(changes, fd, EVFILT_WRITE, EV_ADD, 0, 0, NULL);
     int ret = kevent(_kq, changes, 1, NULL, 0, NULL);
     return ret;
-}
-
-- (BOOL)makeFdNonBlocking:(int)fd
-{
-    int flags;
-    if ((flags = fcntl(fd, F_GETFL, NULL)) < 0) {
-        return NO;
-    }
-    if (fcntl(fd, F_SETFL, flags | O_NONBLOCK) == -1) {
-        return NO;
-    }
-    return YES;
 }
 
 #pragma mark - initialize the configuration for Event-Drive-Mode
