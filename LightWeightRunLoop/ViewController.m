@@ -15,9 +15,10 @@
 #import "LWURLConnection.h"
 #import "LWURLResponse.h"
 #import "LWStream.h"
-
+#import "LWPort.h"
+#import "WorkerClass.h"
 #define TEST_FILE (@"test.txt")
-@interface ViewController ()<LWURLConnectionDataDelegate, LWStreamDelegate>
+@interface ViewController ()<LWURLConnectionDataDelegate, LWStreamDelegate, LWPortDelegate>
 {
     UIButton *_button1;
     UIButton *_button2;
@@ -28,12 +29,15 @@
     UIButton *_button7;
     UIButton *_button8;
     UIButton *_button9;
-
+    UIButton *_button10;
+    UIButton *_button11;
     
     NSThread *_thread;
     NSThread *_lwRunLoopThread;
     
     NSThread *_lwModeRunLoopThread;
+    
+    NSThread *_lwPortRunLoopThread;
     
     TestTarget1 *_target1;
     TestTarget2 *_target2;
@@ -46,6 +50,7 @@
     LWOutputStream *_lwOutputStream;
     
     NSMutableData *_inputStreamData;
+    LWPort *leaderPort;
 }
 
 @end
@@ -68,6 +73,10 @@
     _lwModeRunLoopThread = [[NSThread alloc] initWithTarget:self selector:@selector(lightWeightRunloopThreadEntryPoint3:) object:nil];
     _lwModeRunLoopThread.name = @"LWRunLoopThread-Mode";
     [_lwModeRunLoopThread start];
+    
+    _lwPortRunLoopThread = [[NSThread alloc] initWithTarget:self selector:@selector(portThreadEntryPoint:) object:nil];
+    _lwPortRunLoopThread.name = @"lwPortLoopThread";
+    [_lwPortRunLoopThread start];
 }
 
 - (void)testInputStream
@@ -221,6 +230,37 @@
     [_button9 setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
     [_button9 addTarget:self action:@selector(prepareLWInputStream:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:_button9];
+    
+    
+    _button10 = [UIButton new];
+    _button10.width = self.view.width - 10;
+    _button10.height = 40;
+    _button10.top = _button9.bottom + 5;
+    _button10.centerX = self.view.centerX;
+    _button10.layer.cornerRadius = 4.0f;
+    _button10.layer.borderColor = [UIColor yellowColor].CGColor;
+    _button10.layer.masksToBounds = YES;
+    _button10.backgroundColor = [UIColor whiteColor];
+    [_button10 setTitle:@"NSPort[follower->leader]" forState:UIControlStateNormal];
+    [_button10 setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [_button10 setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
+    [_button10 addTarget:self action:@selector(performFollowerToLeader:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:_button10];
+//    
+//    _button11 = [UIButton new];
+//    _button11.width = self.view.width - 10;
+//    _button11.height = 40;
+//    _button11.top = _button10.bottom + 5;
+//    _button11.centerX = self.view.centerX;
+//    _button11.layer.cornerRadius = 4.0f;
+//    _button11.layer.borderColor = [UIColor yellowColor].CGColor;
+//    _button11.layer.masksToBounds = YES;
+//    _button11.backgroundColor = [UIColor whiteColor];
+//    [_button11 setTitle:@"NSPort[action]" forState:UIControlStateNormal];
+//    [_button11 setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+//    [_button11 setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
+//    [_button11 addTarget:self action:@selector(performPortRunLoopThreadAction:) forControlEvents:UIControlEventTouchUpInside];
+//    [self.view addSubview:_button11];
 }
 
 #pragma mark - test perform selector on LWRunLoop Thread without delay
@@ -473,4 +513,27 @@
     }
 }
 
+#pragma mark - LWPort
+-(void)performFollowerToLeader:(UIButton *)button
+{
+    [WorkerClass launchThreadWithPort:leaderPort];
+}
+
+- (void)portThreadEntryPoint:(id)data
+{
+    @autoreleasepool {
+        LWRunLoop *looper = [LWRunLoop currentLWRunLoop];
+        leaderPort = [[LWSocketPort alloc] initWithTCPPort:8082];
+        leaderPort.delegate = self;
+        [looper addPort:leaderPort forMode:LWDefaultRunLoop];
+        [looper runMode:LWDefaultRunLoop];
+    }
+}
+
+- (void)handlePortMessage:(NSData * _Nullable )message
+{
+    NSString *content = [[NSString alloc] initWithUTF8String:[message bytes]];
+    NSLog(@"[Thread name = %@][PortMessage = %@]",
+          [NSThread currentThread].name, content);
+}
 @end

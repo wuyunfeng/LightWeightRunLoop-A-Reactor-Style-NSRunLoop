@@ -84,15 +84,15 @@ typedef struct Request {
                 portInfo.port = clientAddr.sin_port;
                 portInfo.fd = client;
                 [_portClients setValue:portInfo forKey:[NSString stringWithFormat:@"%d", clientAddr.sin_port]];
-                lwutil_make_socket_nonblocking(fd);
-                [self kevent:fd filter:EVFILT_READ action:EV_ADD];
+                lwutil_make_socket_nonblocking(client);
+                [self kevent:client filter:EVFILT_READ action:EV_ADD];
             }
         } else { // read for LWPort follower fd, then notify leader
             if (event & EVFILT_READ) {
                 int length = 0;
                 ssize_t nRead;
                 do {
-                    nRead = read(fd, &length, 4);
+                    nRead = read(fd, &length, sizeof(int));
                 } while (nRead == -1 && EINTR == errno);
                 if (nRead == -1) {
                     //The file was marked for non-blocking I/O, and no data were ready to be read.
@@ -105,7 +105,7 @@ typedef struct Request {
                 do {
                     nRead = read(fd, buffer, length);
                 } while (nRead == -1 && EINTR == errno);
-                NSValue *data = [_requests objectForKey:@(fd)];
+                NSValue *data = [_requests objectForKey:@(_leader)];
                 Request request;
                 [data getValue:&request];
                 //notify leader
@@ -162,7 +162,7 @@ typedef struct Request {
     
     if (nWrite != 1) {
         if (errno != EAGAIN) {
-            NSLog(@"Could not write wake signal, errno=%d", errno);
+            NSLog(@"errno=%d", errno);
         }
     }
 }
@@ -185,11 +185,12 @@ typedef struct Request {
     request.type = type;
     request.callback = callback;
     request.info = info;
-    _requests[@(fd)]= [NSValue value:&request withObjCType:@encode(Request)];
     //temporary return
     if ([_requests objectForKey:@(fd)]) {
         return;
     }
+    _requests[@(fd)]= [NSValue value:&request withObjCType:@encode(Request)];
+
     if (LWNativeRunLoopEventFilterRead == filter) {
         _leader = fd;
         [self kevent:fd filter:EVFILT_READ action:EV_ADD];
@@ -201,9 +202,40 @@ typedef struct Request {
 - (int)kevent:(int)fd filter:(int)filter action:(int)action
 {
     struct kevent changes[1];
-    EV_SET(changes, fd, EVFILT_WRITE, EV_ADD, 0, 0, NULL);
+    EV_SET(changes, fd, filter, EV_ADD, 0, 0, NULL);
     int ret = kevent(_kq, changes, 1, NULL, 0, NULL);
     return ret;
+}
+
+- (void)send:(NSData *)data toPort:(ushort)port
+{
+    LWPortClientInfo *info = [_portClients valueForKey:[NSString stringWithFormat:@"%d", port]];
+    ssize_t nWrite;
+    do {
+        nWrite = write(info.fd, [data bytes], [data length]);
+    } while (nWrite == -1 && errno == EINTR);
+    
+    if (nWrite != [data length]) {
+        if (errno != EAGAIN) {
+            NSLog(@"Error Happened in toPort! errno=%d", errno);
+        }
+    }
+    
+    data = nil;
+}
+
+- (void)send:(NSData *)data toFd:(int)fd
+{
+    ssize_t nWrite;
+    do {
+        nWrite = write(fd, [data bytes], [data length]);
+    } while (nWrite == -1 && errno == EINTR);
+    
+    if (nWrite != [data length]) {
+        if (errno != EAGAIN) {
+            NSLog(@"Error Happened in toFd! errno=%d", errno);
+        }
+    }
 }
 
 #pragma mark - initialize the configuration for Event-Drive-Mode

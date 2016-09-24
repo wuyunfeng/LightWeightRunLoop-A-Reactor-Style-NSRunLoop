@@ -2,7 +2,7 @@
 //  LWClientInfo.h
 //  LightWeightRunLoop
 //
-//  Created by 武云峰 on 16/9/24.
+//  Created by wuyunfeng on 16/9/24.
 //  Copyright © 2016年 com.wuyunfeng.open. All rights reserved.
 //
 

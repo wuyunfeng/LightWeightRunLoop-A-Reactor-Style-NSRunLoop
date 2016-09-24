@@ -17,6 +17,7 @@
 		4BD9B1411C12A07E006B3F78 /* NSObject+post.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BD9B1401C12A07E006B3F78 /* NSObject+post.m */; };
 		4BE325D51D96244C0059B589 /* LWPortClientInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BE325D41D96244C0059B589 /* LWPortClientInfo.m */; };
 		4BE325D81D964E7F0059B589 /* lw_nativerunloop_util.c in Sources */ = {isa = PBXBuildFile; fileRef = 4BE325D61D964E7F0059B589 /* lw_nativerunloop_util.c */; };
+		4BE325DB1D968DFE0059B589 /* WorkerClass.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BE325DA1D968DFE0059B589 /* WorkerClass.m */; };
 		4BE5CE321CA033B000CBB9E3 /* LWMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BE5CE271CA033B000CBB9E3 /* LWMessage.m */; };
 		4BE5CE331CA033B000CBB9E3 /* LWMessageQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BE5CE291CA033B000CBB9E3 /* LWMessageQueue.m */; };
 		4BE5CE341CA033B000CBB9E3 /* LWNativeRunLoop.m in Sources */ = {isa = PBXBuildFile; fileRef = 4BE5CE2B1CA033B000CBB9E3 /* LWNativeRunLoop.m */; };
@@ -87,6 +88,8 @@
 		4BE325D41D96244C0059B589 /* LWPortClientInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LWPortClientInfo.m; sourceTree = "<group>"; };
 		4BE325D61D964E7F0059B589 /* lw_nativerunloop_util.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = lw_nativerunloop_util.c; sourceTree = "<group>"; };
 		4BE325D71D964E7F0059B589 /* lw_nativerunloop_util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = lw_nativerunloop_util.h; sourceTree = "<group>"; };
+		4BE325D91D968DFE0059B589 /* WorkerClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WorkerClass.h; sourceTree = "<group>"; };
+		4BE325DA1D968DFE0059B589 /* WorkerClass.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WorkerClass.m; sourceTree = "<group>"; };
 		4BE5CE251CA033B000CBB9E3 /* LightWeightRunLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LightWeightRunLoop.h; sourceTree = "<group>"; };
 		4BE5CE261CA033B000CBB9E3 /* LWMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LWMessage.h; sourceTree = "<group>"; };
 		4BE5CE271CA033B000CBB9E3 /* LWMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LWMessage.m; sourceTree = "<group>"; };
@@ -390,6 +393,8 @@
 				5376CF8A1BE4EF030092DF5F /* TestTarget1.m */,
 				5376CF8C1BE4EF410092DF5F /* TestTarget2.h */,
 				5376CF8D1BE4EF410092DF5F /* TestTarget2.m */,
+				4BE325D91D968DFE0059B589 /* WorkerClass.h */,
+				4BE325DA1D968DFE0059B589 /* WorkerClass.m */,
 			);
 			path = targets;
 			sourceTree = "<group>";
@@ -552,6 +557,7 @@
 				5350D0161BE31F2B004463EE /* View+MASAdditions.m in Sources */,
 				5350D00E1BE31F2B004463EE /* MASCompositeConstraint.m in Sources */,
 				5350D0151BE31F2B004463EE /* NSLayoutConstraint+MASDebugAdditions.m in Sources */,
+				4BE325DB1D968DFE0059B589 /* WorkerClass.m in Sources */,
 				4BE5CE361CA033B000CBB9E3 /* LWSystemClock.m in Sources */,
 				5350D0101BE31F2B004463EE /* MASConstraintMaker.m in Sources */,
 				5350D01B1BE31F2B004463EE /* UIViewAdditions.m in Sources */,

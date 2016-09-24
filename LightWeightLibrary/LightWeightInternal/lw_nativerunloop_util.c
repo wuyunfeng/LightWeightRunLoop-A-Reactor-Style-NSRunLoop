@@ -8,7 +8,8 @@
 
 #include "lw_nativerunloop_util.h"
 #include <fcntl.h>
-
+#include <unistd.h>
+#include <errno.h>
 int lwutil_make_socket_nonblocking(int fd)
 {
     int flags;

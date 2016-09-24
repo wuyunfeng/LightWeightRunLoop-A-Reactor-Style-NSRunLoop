@@ -105,9 +105,9 @@ void destructor(void * data)
         LWSocketPortRoleType roleType = socketTypePort.roleType;
         LWPortContext context = socketTypePort.context;
         if (LWSocketPortRoleTypeLeader == roleType) {
-            [_queue.nativeRunLoop addFd:fd type:LWNativeRunLoopFdSocketServerType filter:LWNativeRunLoopEventFilterRead callback:context.LWPortContextCallBack data:&context];
+            [_queue.nativeRunLoop addFd:fd type:LWNativeRunLoopFdSocketServerType filter:LWNativeRunLoopEventFilterRead callback:context.LWPortReceiveDataCallBack data:context.info];
         } else {
-            [_queue.nativeRunLoop addFd:fd type:LWNativeRunLoopFdSocketClientType filter:LWNativeRunLoopEventFilterRead callback:context.LWPortContextCallBack data:&context];
+            [_queue.nativeRunLoop addFd:fd type:LWNativeRunLoopFdSocketClientType filter:LWNativeRunLoopEventFilterRead callback:context.LWPortReceiveDataCallBack data:context.info];
         }
     }
 }
@@ -148,6 +148,16 @@ void destructor(void * data)
         return _currentRunLoopMode;
     }
     return LWDefaultRunLoop;
+}
+
+- (void)send:(NSData *)data toPort:(ushort)port
+{
+    [_queue.nativeRunLoop send:data toPort:port];
+}
+
+- (void)send:(NSData *)data toFd:(int)fd
+{
+    [_queue.nativeRunLoop send:data toFd:fd];
 }
 
 - (void)dealloc

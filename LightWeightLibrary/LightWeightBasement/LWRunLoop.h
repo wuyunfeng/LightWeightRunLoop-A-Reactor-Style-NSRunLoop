@@ -75,4 +75,10 @@ extern NSString * const  LWTrackingRunLoopMode;
 - (void)addPort:(LWPort *)aPort forMode:(NSString *)mode;
 
 
+- (void)send:(NSData *)data toPort:(ushort)port;
+
+
+- (void)send:(NSData *)data toFd:(int)fd;
+
+
 @end

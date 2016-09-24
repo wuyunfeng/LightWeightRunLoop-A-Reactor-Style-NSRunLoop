@@ -25,7 +25,7 @@ typedef struct LWPortContext {
 
 @optional
 
-- (void)handlePortMessage:(LWPortMessage * _Nullable )message;
+- (void)handlePortMessage:(NSData * _Nullable )message;
 
 @end
 
@@ -53,7 +53,7 @@ typedef struct LWPortContext {
  */
 @interface LWPortMessage : NSObject
 
-@property (nullable, readonly, copy) NSArray *components;
+@property (nullable, readonly, copy) NSData *components;
 @property (nullable, readonly, retain) LWPort *receivePort;
 @property (nullable, readonly, retain) LWPort *sendPort;
 
@@ -79,7 +79,7 @@ typedef struct LWPortContext {
  *
  *  @return An LWPortMessage object initialized to send components on sendPort and to receiver replies on receivePort.
  */
-- (_Nullable instancetype)initWithSendPort:(nullable NSPort *)sendPort receivePort:(nullable NSPort *)replyPort components:(nullable NSArray *)components;
+- (_Nullable instancetype)initWithSendPort:(nullable LWPort *)sendPort receivePort:(nullable LWPort *)replyPort components:(nullable NSData *)components;
 
 @end
 
@@ -103,6 +103,10 @@ typedef struct LWPortContext {
 
 
 @property (readonly) LWSocketPortRoleType roleType;
+
+@property (readonly) ushort port;
+
+- (void)setType:(LWSocketPortRoleType)type;
 
 @end
 

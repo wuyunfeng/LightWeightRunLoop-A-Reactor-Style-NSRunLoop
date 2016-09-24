@@ -9,6 +9,7 @@
 #import "LWPort.h"
 #import <sys/socket.h>
 #import <netinet/in.h>
+#import "NSThread+Looper.h"
 
 @implementation LWPort
 {
@@ -45,12 +46,12 @@
 
 @implementation LWPortMessage
 {
-    NSArray *_components;
+    NSData *_components;
     LWPort *_receivePort;
     LWPort *_sendPort;
 }
 
-- (NSArray *)components
+- (NSData *)components
 {
     return _components;
 }
@@ -67,16 +68,27 @@
 
 - (BOOL)sendBeforeDate:(NSInteger)delay
 {
+    [self internalSendBeforDate:delay];
     return YES;
 }
 
 - (void)internalSendBeforDate:(NSInteger)delay
 {
-    
+    LWSocketPort *_sendSocketPort = (LWSocketPort *)_sendPort;
+    LWSocketPort *_receiveSocketPort = (LWSocketPort *)_receivePort;
+    LWRunLoop *runloop = [LWRunLoop currentLWRunLoop];
+    //send `data` from `leader` to `follower`
+    if (_sendSocketPort.roleType == LWSocketPortRoleTypeLeader) {
+        short port = _receiveSocketPort.port;
+        [runloop send:_components toPort:port];
+    } else {//send `data` from `follower` to `leader`
+        int fd = _sendSocketPort.socket;
+        [runloop send:_components toFd:fd];
+    }
 }
 
 //only support LWSocketPort, nil returned for other LWPort
-- (_Nullable instancetype)initWithSendPort:(nullable LWPort *)sendPort receivePort:(nullable LWPort *)replyPort components:(nullable NSArray *)components
+- (instancetype)initWithSendPort:(LWPort *)sendPort receivePort:(LWPort *)replyPort components:(NSData *)components
 {
     if ([sendPort isMemberOfClass:[LWSocketPort class]]
         && [replyPort isMemberOfClass:[LWSocketPort class]]) {
@@ -84,7 +96,7 @@
         _receivePort = replyPort;
         _components = components;
     }
-    return nil;
+    return self;
 }
 
 @end
@@ -120,49 +132,52 @@
     return self;
 }
 
+- (ushort)port
+{
+    return _port;
+}
+
+
 - (BOOL)initInternal
 {
     if ((_sockFd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
         return NO;
     }
-    
+    _context.info = (__bridge void *)(self);
+    _context.LWPortReceiveDataCallBack = PortBasedReceiveDataRoutine;
     struct sockaddr_in sockAddr;
     memset(&sockAddr, 0, sizeof(sockAddr));
     sockAddr.sin_family = AF_INET;
     sockAddr.sin_addr.s_addr = htonl(INADDR_ANY);
     sockAddr.sin_port = htons(_port);
-    if (-1 == bind(_sockFd, (struct sockaddr *)&sockAddr, sizeof(sockAddr))) {
-        //socket is already bound to an address and the protocol does not support binding to a new address
-        if (EINVAL == errno) {
-            _roleType = LWSocketPortRoleTypeFollower;//follower
-        } else {
-            return NO;
-        }
-    }
     _roleType = LWSocketPortRoleTypeLeader;//leader
+    int option = 1;
+    setsockopt(_sockFd, SOL_SOCKET, SO_REUSEADDR, &option, sizeof(option));
+    if (-1 == bind(_sockFd, (struct sockaddr *)&sockAddr, sizeof(sockAddr))) {
+        _roleType = LWSocketPortRoleTypeFollower;//follower
+    }
     
     if (_roleType == LWSocketPortRoleTypeLeader) {
-        int option = 1;
-        setsockopt(_sockFd, SOL_SOCKET, SO_REUSEADDR, &option, sizeof(option));
         if (listen(_sockFd, 5) == -1) {
             return NO;
         }
     } else {
         //we can ignore the `connect` delay for the local TCP connect
-        if (-1 == connect(_sockFd, (struct sockaddr *)&sockAddr, sizeof(sockAddr))) {
+        int flag = connect(_sockFd, (struct sockaddr *)&sockAddr, sizeof(sockAddr));
+        if (-1 == flag) {
             return NO;
         }
-    }    
-    _context.info = (__bridge void * _Nullable)(self);
-    _context.LWPortReceiveDataCallBack = PortBasedReceiveDataRoutine;
+        struct sockaddr_in name;
+        socklen_t namelen = sizeof(name);
+        getsockname(_sockFd, (struct sockaddr *)&name, &namelen);
+    }
     return YES;
 }
 
 - (void)notify:(NSData *)data
 {
-    NSLog(@"[%@ %@]", [self class], NSStringFromSelector(_cmd));
-    if ([self.delegate respondsToSelector:@selector(handleMachMessage:)]) {
-        [self.delegate handlePortMessage:nil];
+    if ([self.delegate respondsToSelector:@selector(handlePortMessage:)]) {
+        [self.delegate handlePortMessage:data];
     }
 }
 
@@ -190,6 +205,17 @@
 {
     return _socketType;
 }
+
+- (void)setType:(LWSocketPortRoleType)type
+{
+    _roleType = type;
+}
+
+- (void)dealloc
+{
+//    close(_sockFd);
+}
+
 
 void PortBasedReceiveDataRoutine(int fd, void * _Nullable info, void * _Nullable data, int length)
 {
