@@ -11,6 +11,13 @@
 #import <netinet/in.h>
 #import "NSThread+Looper.h"
 
+
+@interface LWPort()
+
+
+@end
+
+
 @implementation LWPort
 {
     BOOL _isValid;
@@ -40,6 +47,11 @@
 - (void)removeFromRunLoop:(LWRunLoop * _Nonnull)runLoop forMode:(LWRunLoop * _Nonnull)mode
 {
     NSAssert(false, @"Must be implemented in subclass");
+}
+
+- (void)setValid:(BOOL)valid
+{
+    _isValid = valid;
 }
 
 @end
@@ -152,6 +164,8 @@
     _roleType = LWSocketPortRoleTypeLeader;//leader
     int option = 1;
     setsockopt(_sockFd, SOL_SOCKET, SO_REUSEADDR, &option, sizeof(option));
+    
+    //if bind failure, the _sockFd become follower, othrewise leader
     if (-1 == bind(_sockFd, (struct sockaddr *)&sockAddr, sizeof(sockAddr))) {
         _roleType = LWSocketPortRoleTypeFollower;//follower
     }
@@ -160,6 +174,7 @@
         if (listen(_sockFd, 5) == -1) {
             return NO;
         }
+        [self setValid:YES];
         _port = port;
     } else {
         //we can ignore the `connect` delay for the local TCP connect
@@ -171,6 +186,7 @@
         socklen_t namelen = sizeof(name);
         getsockname(_sockFd, (struct sockaddr *)&name, &namelen);
         _port = name.sin_port;
+        [self setValid:YES];
     }
     return YES;
 }
@@ -215,9 +231,27 @@
 - (void)dealloc
 {
     close(_sockFd);
+    [self setValid:NO];
 }
 
+- (NSString *)host
+{
+    return @"127.0.0.1";
+}
 
+// not implented at present
+- (void)scheduleInRunLoop:(LWRunLoop * _Nonnull)runLoop forMode:(LWRunLoop * _Nonnull)mode
+{
+    
+}
+
+// not implented at present
+- (void)removeFromRunLoop:(LWRunLoop * _Nonnull)runLoop forMode:(LWRunLoop * _Nonnull)mode
+{
+    
+}
+
+// ignore `fd` at present, but .... ^o^
 void PortBasedReceiveDataRoutine(int fd, void * _Nullable info, void * _Nullable data, int length)
 {
     LWSocketPort *port = (__bridge LWSocketPort *)(info);

@@ -57,6 +57,7 @@ typedef struct LWPortContext {
 @property (nullable, readonly, retain) LWPort *receivePort;
 @property (nullable, readonly, retain) LWPort *sendPort;
 
+//not used at present,but not in future
 @property uint32_t msgid; //The identifier for the receiver
 
 /**
@@ -100,6 +101,9 @@ typedef struct LWPortContext {
 
 //int act as NSSocketNativeHandle(typedef int )
 @property (readonly) int socket;
+
+//return 127.0.0.1 at present, will be extended in future such as `Unix Local Socket`
+@property (nonnull, readonly) NSString *host;
 
 
 @property (readonly) LWSocketPortRoleType roleType;
