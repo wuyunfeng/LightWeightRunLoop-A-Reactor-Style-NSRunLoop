@@ -195,28 +195,75 @@ or
             }
                 break;
 ## LWPort & LWSocketPort (Socket Relative)
-
+###### current the message should be :
+	[data length] + [data]
+for example(the data `hello` length is `5`):
+    
+    5hello
+ 
 ######Initilize _lwPortRunLoopThread : 
 	_lwPortRunLoopThread = [[NSThread alloc] initWithTarget:self selector:@selector(portThreadEntryPoint:) object:nil];
     _lwPortRunLoopThread.name = @"lwPortLoopThread";
     [_lwPortRunLoopThread start];
     
-###### portThreadEntryPoint : 
+###### provide `portThreadEntryPoint`: 
     - (void)portThreadEntryPoint:(id)data
     {
 	    @autoreleasepool {
 	        LWRunLoop *looper = [LWRunLoop currentLWRunLoop];
-	        leaderPort = [[LWSocketPort alloc] initWithTCPPort:8082];
-	        leaderPort.delegate = self;
-	        [looper addPort:leaderPort forMode:LWDefaultRunLoop];
+	        _leaderPort = [[LWSocketPort alloc] initWithTCPPort:8082];
+	        _leaderPort.delegate = self;
+	        _worker = [[WorkerClass alloc] init];
+	        [looper addPort:_leaderPort forMode:LWDefaultRunLoop];
 	        [looper runMode:LWDefaultRunLoop];
 	    }
     }
     
-###### performFollowerToLeader : 
-    -(void)performFollowerToLeader:(UIButton *)button
-   	{
-    	[WorkerClass launchThreadWithPort:leaderPort];
-    }
+###### Send message from leader to followers : 
+		-(void)performFollowerToLeader:(UIButton *)button
+		{
+		    [NSThread detachNewThreadSelector:@selector(launchThreadWithPort:) toTarget:_worker withObject:_leaderPort];
+		}
+##### send message from followers to leader:
+		- (void)performLeaderToFollower:(UIButton *)buttton
+		{
+		    // wake up _lwPortRunLoopThread and send data from leader to follower
+		    [self postSelector:@selector(actualPerfomLeaderToFolloer) onThread:_lwPortRunLoopThread withObject:nil];
+		}
+		- (void)actualPerfomLeaderToFolloer
+		{
+		    NSString *content = @"This_Is_A_Leader_To_Follower_Message_Data";
+		    int length = (int)[content length];
+		    NSMutableData *data = [[NSMutableData alloc] init];
+		    [data appendBytes:&length length:sizeof(int)];
+		    [data appendData:[content dataUsingEncoding:NSUTF8StringEncoding]];
+		    LWPortMessage *messge = [[LWPortMessage alloc] initWithSendPort:_leaderPort receivePort:_worker.localPort components:data];
+		    [messge sendBeforeDate:0];
+		}
+##### the worker should like:
+		- (void)launchThreadWithPort:(LWPort *)port
+		{
+		    @autoreleasepool {
+		        [self send:port];
+		    }
+		}
+		- (void)send:(LWPort *)port
+		{
+			    [NSThread currentThread].name = @"workerPortLoopThread";
+			    _distantPort = (LWSocketPort *)port;
+			    _localPort = [[LWSocketPort alloc] initWithTCPPort:8082];
+			    _localPort.delegate = self;
+			    [_localPort setType:LWSocketPortRoleTypeFollower];
+			    NSString *content = @"This_Is_A_Follower_To_Leader_Message_Data";
+			    int length = (int)[content length];
+			    NSMutableData *data = [[NSMutableData alloc] init];
+			    [data appendBytes:&length length:sizeof(int)];
+			    [data appendData:[content dataUsingEncoding:NSUTF8StringEncoding]];
+			    LWPortMessage *messge = [[LWPortMessage alloc] initWithSendPort:_localPort receivePort:_distantPort components:data];
+			    [messge sendBeforeDate:0];
+			    LWRunLoop *_currentRunLoop = [[NSThread currentThread] looper];
+			    [_currentRunLoop addPort:_localPort forMode:LWDefaultRunLoop];
+			    [_currentRunLoop runMode:LWDefaultRunLoop];
+		}
 
 ##[Links](https://github.com/wuyunfeng/PHPMApi.git)

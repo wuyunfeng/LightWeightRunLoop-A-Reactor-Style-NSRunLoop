@@ -22,8 +22,6 @@
 - (void)launchThreadWithPort:(LWPort *)port
 {
     @autoreleasepool {
-//        WorkerClass *obj = [[WorkerClass alloc] init];
-//        [obj send:port];
         [self send:port];
     }
 }
