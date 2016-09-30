@@ -23,7 +23,7 @@
 ## Future Features & To-Do
 
 * **Socket Pools**
-* **Must Refactor project later**
+* **Must Refactor project later** (I can not spare more time to refactor $o$)
 
 ## Get Started
 Each NSThread object, `excluding the application’s main thread`, can own an `LWRunLoop` object. You can get the current thread’s  `LWRunLoop`, through the class method *`currentLWRunLoop`*. Subsequently code snippet shows how configure LWRunLoop for NSThread and make the NSThread `_lwRunLoopThread` entering into `Event-Driver-Mode:`
