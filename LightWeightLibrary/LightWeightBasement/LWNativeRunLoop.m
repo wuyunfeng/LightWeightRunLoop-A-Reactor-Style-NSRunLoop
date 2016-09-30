@@ -39,6 +39,7 @@ typedef struct Request {
     NSMutableDictionary *_requests;
     NSMutableDictionary *_portClients;
     int _leader;
+    int _follower;
 }
 
 - (instancetype)init
@@ -87,7 +88,34 @@ typedef struct Request {
                 lwutil_make_socket_nonblocking(client);
                 [self kevent:client filter:EVFILT_READ action:EV_ADD];
             }
-        } else { // read for LWPort follower fd, then notify leader
+        } else if (_follower == fd) {// leader -> follower
+            if (event & EVFILT_READ) {
+                int length = 0;
+                ssize_t nRead;
+                do {
+                    nRead = read(fd, &length, sizeof(int));
+                } while (nRead == -1 && EINTR == errno);
+                if (nRead == -1) {
+                    //The file was marked for non-blocking I/O, and no data were ready to be read.
+                    if (EAGAIN == errno) {
+                        continue;
+                    }
+                }
+                //buffer `follower` LWPort send `buffer` to `leader` LWPort
+                char *buffer = malloc(length);
+                do {
+                    nRead = read(fd, buffer, length);
+                } while (nRead == -1 && EINTR == errno);
+                NSValue *data = [_requests objectForKey:@(_follower)];
+                Request request;
+                [data getValue:&request];
+                //! notify follower,actually in `follower` thread just one follower
+                if (request.callback) {
+                    request.callback(fd, request.info, buffer, length);
+                }
+                free(buffer);
+            }
+        }else { // follower -> leader read for LWPort follower fd, then notify leader
             if (event & EVFILT_READ) {
                 int length = 0;
                 ssize_t nRead;
@@ -109,7 +137,9 @@ typedef struct Request {
                 Request request;
                 [data getValue:&request];
                 //notify leader
-                request.callback(fd, request.info, buffer, length);
+                if (request.callback) {
+                    request.callback(fd, request.info, buffer, length);
+                }
                 //remember release malloc memory
                 free(buffer);
                 struct sockaddr_in sockaddr;
@@ -190,9 +220,13 @@ typedef struct Request {
         return;
     }
     _requests[@(fd)]= [NSValue value:&request withObjCType:@encode(Request)];
+    if (LWNativeRunLoopFdSocketServerType == type) {
+        _leader = fd;
+    } else {
+        _follower = fd;
+    }
 
     if (LWNativeRunLoopEventFilterRead == filter) {
-        _leader = fd;
         [self kevent:fd filter:EVFILT_READ action:EV_ADD];
     } else if (LWNativeRunLoopEventFilterWrite == filter) {
         [self kevent:fd filter:EVFILT_WRITE action:EV_ADD];

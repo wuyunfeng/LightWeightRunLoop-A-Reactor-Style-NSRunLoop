@@ -11,8 +11,9 @@
 
 @interface WorkerClass : NSObject
 
-+ (void)launchThreadWithPort:(LWPort *)port;
+- (void)launchThreadWithPort:(LWPort *)port;
 
+- (LWPort *)localPort;
 
 
 @end

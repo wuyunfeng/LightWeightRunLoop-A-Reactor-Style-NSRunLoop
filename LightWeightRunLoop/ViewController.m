@@ -50,7 +50,8 @@
     LWOutputStream *_lwOutputStream;
     
     NSMutableData *_inputStreamData;
-    LWPort *leaderPort;
+    LWPort *_leaderPort;
+    WorkerClass *_worker;
 }
 
 @end
@@ -246,21 +247,21 @@
     [_button10 setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
     [_button10 addTarget:self action:@selector(performFollowerToLeader:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:_button10];
-//    
-//    _button11 = [UIButton new];
-//    _button11.width = self.view.width - 10;
-//    _button11.height = 40;
-//    _button11.top = _button10.bottom + 5;
-//    _button11.centerX = self.view.centerX;
-//    _button11.layer.cornerRadius = 4.0f;
-//    _button11.layer.borderColor = [UIColor yellowColor].CGColor;
-//    _button11.layer.masksToBounds = YES;
-//    _button11.backgroundColor = [UIColor whiteColor];
-//    [_button11 setTitle:@"NSPort[action]" forState:UIControlStateNormal];
-//    [_button11 setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-//    [_button11 setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
-//    [_button11 addTarget:self action:@selector(performPortRunLoopThreadAction:) forControlEvents:UIControlEventTouchUpInside];
-//    [self.view addSubview:_button11];
+    
+    _button11 = [UIButton new];
+    _button11.width = self.view.width - 10;
+    _button11.height = 40;
+    _button11.top = _button10.bottom + 5;
+    _button11.centerX = self.view.centerX;
+    _button11.layer.cornerRadius = 4.0f;
+    _button11.layer.borderColor = [UIColor yellowColor].CGColor;
+    _button11.layer.masksToBounds = YES;
+    _button11.backgroundColor = [UIColor whiteColor];
+    [_button11 setTitle:@"NSPort[leader->follower]" forState:UIControlStateNormal];
+    [_button11 setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [_button11 setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
+    [_button11 addTarget:self action:@selector(performLeaderToFollower:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:_button11];
 }
 
 #pragma mark - test perform selector on LWRunLoop Thread without delay
@@ -518,18 +519,37 @@
 {
     @autoreleasepool {
         LWRunLoop *looper = [LWRunLoop currentLWRunLoop];
-        leaderPort = [[LWSocketPort alloc] initWithTCPPort:8082];
-        leaderPort.delegate = self;
-        [looper addPort:leaderPort forMode:LWDefaultRunLoop];
+        _leaderPort = [[LWSocketPort alloc] initWithTCPPort:8082];
+        _leaderPort.delegate = self;
+        _worker = [[WorkerClass alloc] init];
+        [looper addPort:_leaderPort forMode:LWDefaultRunLoop];
         [looper runMode:LWDefaultRunLoop];
     }
 }
 
 -(void)performFollowerToLeader:(UIButton *)button
 {
-    [WorkerClass launchThreadWithPort:leaderPort];
+//    [WorkerClass launchThreadWithPort:leaderPort];
+//    [_worker launchThreadWithPort:_leaderPort];
+    [NSThread detachNewThreadSelector:@selector(launchThreadWithPort:) toTarget:_worker withObject:_leaderPort];
 }
 
+- (void)performLeaderToFollower:(UIButton *)buttton
+{
+    // wake up _lwPortRunLoopThread and send data from leader to follower
+    [self postSelector:@selector(actualPerfomLeaderToFolloer) onThread:_lwPortRunLoopThread withObject:nil];
+}
+
+- (void)actualPerfomLeaderToFolloer
+{
+    NSString *content = @"This_Is_A_Leader_To_Follower_Message_Data";
+    int length = (int)[content length];
+    NSMutableData *data = [[NSMutableData alloc] init];
+    [data appendBytes:&length length:sizeof(int)];
+    [data appendData:[content dataUsingEncoding:NSUTF8StringEncoding]];
+    LWPortMessage *messge = [[LWPortMessage alloc] initWithSendPort:_leaderPort receivePort:_worker.localPort components:data];
+    [messge sendBeforeDate:0];
+}
 
 
 - (void)handlePortMessage:(NSData * _Nullable )message

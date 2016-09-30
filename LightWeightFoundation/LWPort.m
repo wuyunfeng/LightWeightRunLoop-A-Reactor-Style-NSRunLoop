@@ -124,8 +124,7 @@
 - (nullable instancetype)initWithTCPPort:(unsigned short)port
 {
     if (self = [super init]) {
-        _port = port;
-        if (![self initInternal]) {
+        if (![self initInternalWithTCPPort:port]) {
             return nil;
         }
     }
@@ -138,7 +137,7 @@
 }
 
 
-- (BOOL)initInternal
+- (BOOL)initInternalWithTCPPort:(unsigned short)port
 {
     if ((_sockFd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
         return NO;
@@ -149,7 +148,7 @@
     memset(&sockAddr, 0, sizeof(sockAddr));
     sockAddr.sin_family = AF_INET;
     sockAddr.sin_addr.s_addr = htonl(INADDR_ANY);
-    sockAddr.sin_port = htons(_port);
+    sockAddr.sin_port = htons(port);
     _roleType = LWSocketPortRoleTypeLeader;//leader
     int option = 1;
     setsockopt(_sockFd, SOL_SOCKET, SO_REUSEADDR, &option, sizeof(option));
@@ -161,6 +160,7 @@
         if (listen(_sockFd, 5) == -1) {
             return NO;
         }
+        _port = port;
     } else {
         //we can ignore the `connect` delay for the local TCP connect
         int flag = connect(_sockFd, (struct sockaddr *)&sockAddr, sizeof(sockAddr));
@@ -170,6 +170,7 @@
         struct sockaddr_in name;
         socklen_t namelen = sizeof(name);
         getsockname(_sockFd, (struct sockaddr *)&name, &namelen);
+        _port = name.sin_port;
     }
     return YES;
 }

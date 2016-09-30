@@ -7,7 +7,8 @@
 //
 
 #import "WorkerClass.h"
-
+#import "LWRunLoop.h"
+#import "NSThread+Looper.h"
 @interface WorkerClass()<LWPortDelegate>
 
 @end
@@ -18,33 +19,44 @@
     LWSocketPort *_localPort;
 }
 
-+ (void)launchThreadWithPort:(LWPort *)port
+- (void)launchThreadWithPort:(LWPort *)port
 {
     @autoreleasepool {
-        WorkerClass *obj = [[WorkerClass alloc] init];
-        [obj send:port];
-        
+//        WorkerClass *obj = [[WorkerClass alloc] init];
+//        [obj send:port];
+        [self send:port];
     }
 }
 
 - (void)send:(LWPort *)port
 {
+    [NSThread currentThread].name = @"Worker_RunLoop_Thread";
     _distantPort = (LWSocketPort *)port;
     _localPort = [[LWSocketPort alloc] initWithTCPPort:8082];
     _localPort.delegate = self;
     [_localPort setType:LWSocketPortRoleTypeFollower];
-    NSString *content = @"This_Is_A_Port_Message_Data";
+    NSString *content = @"This_Is_A_Follower_To_Leader_Message_Data";
     int length = (int)[content length];
     NSMutableData *data = [[NSMutableData alloc] init];
     [data appendBytes:&length length:sizeof(int)];
     [data appendData:[content dataUsingEncoding:NSUTF8StringEncoding]];
     LWPortMessage *messge = [[LWPortMessage alloc] initWithSendPort:_localPort receivePort:_distantPort components:data];
     [messge sendBeforeDate:0];
+    LWRunLoop *_currentRunLoop = [[NSThread currentThread] looper];
+    [_currentRunLoop addPort:_localPort forMode:LWDefaultRunLoop];
+    [_currentRunLoop runMode:LWDefaultRunLoop];
 }
 
+- (LWPort *)localPort
+{
+    return _localPort;
+}
+
+#pragma mark - LWPortDelegate
 - (void)handlePortMessage:(NSData * _Nullable )message
 {
-    
+    NSString *msg = [[NSString alloc] initWithData:message encoding:NSUTF8StringEncoding];
+    NSLog(@"** Receive message from leader : %@ **", msg);
 }
 
 @end
