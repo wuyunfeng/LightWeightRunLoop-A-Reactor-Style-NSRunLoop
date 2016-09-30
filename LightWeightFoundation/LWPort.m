@@ -214,7 +214,7 @@
 
 - (void)dealloc
 {
-//    close(_sockFd);
+    close(_sockFd);
 }
 
 

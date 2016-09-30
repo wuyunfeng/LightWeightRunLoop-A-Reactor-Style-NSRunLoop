@@ -20,15 +20,15 @@
 #include <sys/errno.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#define MAX_EVENT_COUNT 16
+#define MAX_EVENT_COUNT 32
 #import "LWPortClientInfo.h"
 #include "lw_nativerunloop_util.h"
-typedef struct Request {
+typedef struct PortWrapper {
     int fd;
     LWNativeRunLoopFdType type;
     LWNativeRunLoopCallBack callback;
     void *info;
-}Request;
+}PortWrapper;
 
 @implementation LWNativeRunLoop
 {
@@ -107,7 +107,7 @@ typedef struct Request {
                     nRead = read(fd, buffer, length);
                 } while (nRead == -1 && EINTR == errno);
                 NSValue *data = [_requests objectForKey:@(_follower)];
-                Request request;
+                PortWrapper request;
                 [data getValue:&request];
                 //! notify follower,actually in `follower` thread just one follower
                 if (request.callback) {
@@ -134,7 +134,7 @@ typedef struct Request {
                     nRead = read(fd, buffer, length);
                 } while (nRead == -1 && EINTR == errno);
                 NSValue *data = [_requests objectForKey:@(_leader)];
-                Request request;
+                PortWrapper request;
                 [data getValue:&request];
                 //notify leader
                 if (request.callback) {
@@ -206,11 +206,11 @@ typedef struct Request {
     } while ((nRead == -1 && errno == EINTR) || nRead == sizeof(buffer));
 }
 
-#pragma mark -
+#pragma mark -provide interface for LWRunLoop
 - (void)addFd:(int)fd type:(LWNativeRunLoopFdType)type filter:(LWNativeRunLoopEventFilter)filter callback:(LWNativeRunLoopCallBack)callback data:(void *)info
 {
     lwutil_make_socket_nonblocking(fd);
-    Request request;
+    PortWrapper request;
     request.fd = fd;
     request.type = type;
     request.callback = callback;
@@ -219,7 +219,7 @@ typedef struct Request {
     if ([_requests objectForKey:@(fd)]) {
         return;
     }
-    _requests[@(fd)]= [NSValue value:&request withObjCType:@encode(Request)];
+    _requests[@(fd)]= [NSValue value:&request withObjCType:@encode(PortWrapper)];
     if (LWNativeRunLoopFdSocketServerType == type) {
         _leader = fd;
     } else {
@@ -233,6 +233,7 @@ typedef struct Request {
     }
 }
 
+#pragma mark - convience method to operate `fd`
 - (int)kevent:(int)fd filter:(int)filter action:(int)action
 {
     struct kevent changes[1];
@@ -241,6 +242,7 @@ typedef struct Request {
     return ret;
 }
 
+#pragma mark -
 - (void)send:(NSData *)data toPort:(ushort)port
 {
     LWPortClientInfo *info = [_portClients valueForKey:[NSString stringWithFormat:@"%d", port]];

@@ -529,8 +529,6 @@
 
 -(void)performFollowerToLeader:(UIButton *)button
 {
-//    [WorkerClass launchThreadWithPort:leaderPort];
-//    [_worker launchThreadWithPort:_leaderPort];
     [NSThread detachNewThreadSelector:@selector(launchThreadWithPort:) toTarget:_worker withObject:_leaderPort];
 }
 
@@ -555,7 +553,7 @@
 - (void)handlePortMessage:(NSData * _Nullable )message
 {
     NSString *content = [[NSString alloc] initWithUTF8String:[message bytes]];
-    NSLog(@"[Thread name = %@][PortMessage = %@]",
-          [NSThread currentThread].name, content);
+    NSLog(@"**[NSThread name = %@] [follower -> leader : %@] **", [NSThread currentThread].name, content);
+
 }
 @end

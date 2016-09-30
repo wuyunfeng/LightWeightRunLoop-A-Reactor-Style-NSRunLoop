@@ -30,7 +30,7 @@
 
 - (void)send:(LWPort *)port
 {
-    [NSThread currentThread].name = @"Worker_RunLoop_Thread";
+    [NSThread currentThread].name = @"workerPortLoopThread";
     _distantPort = (LWSocketPort *)port;
     _localPort = [[LWSocketPort alloc] initWithTCPPort:8082];
     _localPort.delegate = self;
@@ -56,7 +56,7 @@
 - (void)handlePortMessage:(NSData * _Nullable )message
 {
     NSString *msg = [[NSString alloc] initWithData:message encoding:NSUTF8StringEncoding];
-    NSLog(@"** Receive message from leader : %@ **", msg);
+    NSLog(@"**[NSThread name = %@] [leader -> follower : %@] **", [NSThread currentThread].name, msg);
 }
 
 @end
