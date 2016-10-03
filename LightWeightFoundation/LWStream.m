@@ -14,16 +14,15 @@
 
 
 @implementation LWStream
-{
-}
+
 - (void)open
 {
-    
+    NSAssert(false, @"Must be implemented in subclass");
 }
 
 - (void)close
 {
-    
+    NSAssert(false, @"Must be implemented in subclass");
 }
 
 //implemented in subclass

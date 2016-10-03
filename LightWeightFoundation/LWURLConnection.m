@@ -28,6 +28,7 @@
         _internal.delegate = self;
         _startImmediately = startImmediately;
         _delegate = delegate;
+        //not used at present
         if (_startImmediately) {
             //....
         }
