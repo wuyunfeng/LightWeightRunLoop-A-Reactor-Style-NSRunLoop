@@ -50,7 +50,7 @@ typedef struct PortWrapper {
     return self;
 }
 
-#pragma mark - Run loop
+#pragma mark - Main Runloop
 - (void)nativeRunLoopFor:(NSInteger)timeoutMillis
 {
     struct kevent events[MAX_EVENT_COUNT];
@@ -78,108 +78,132 @@ typedef struct PortWrapper {
             }
         } else if (_leader == fd){//for LWPort leader fd
             if (event & EVFILT_READ) {
-                struct sockaddr_in clientAddr;
-                socklen_t len = sizeof(struct sockaddr);
-                int client = accept(fd, (struct sockaddr *)&clientAddr, &len);
-                LWPortClientInfo *portInfo = [LWPortClientInfo new];
-                portInfo.port = clientAddr.sin_port;
-                portInfo.fd = client;
-                [_portClients setValue:portInfo forKey:[NSString stringWithFormat:@"%d", clientAddr.sin_port]];
-                lwutil_make_socket_nonblocking(client);
-                [self kevent:client filter:EVFILT_READ action:EV_ADD];
+                [self handleAccept:fd];
             }
         } else if (_follower == fd) {// leader -> follower
-            if (event & EVFILT_READ) {
-                int length = 0;
-                ssize_t nRead;
-                do {
-                    nRead = read(fd, &length, sizeof(int));
-                } while (nRead == -1 && EINTR == errno);
-                if (nRead == -1) {
-                    //The file was marked for non-blocking I/O, and no data were ready to be read.
-                    if (EAGAIN == errno) {
-                        continue;
-                    }
-                }
-                //buffer `follower` LWPort send `buffer` to `leader` LWPort
-                char *buffer = malloc(length);
-                do {
-                    nRead = read(fd, buffer, length);
-                } while (nRead == -1 && EINTR == errno);
-                NSValue *data = [_requests objectForKey:@(_follower)];
-                PortWrapper request;
-                [data getValue:&request];
-                //! notify follower,actually in `follower` thread just one follower
-                if (request.callback) {
-                    request.callback(fd, request.info, buffer, length);
-                }
-                free(buffer);
+            if (![self handleLeaderToFollower:fd]) {
+                continue;
             }
-        }else { // follower -> leader read for LWPort follower fd, then notify leader
-            if (event & EVFILT_READ) {
-                int length = 0;
-                ssize_t nRead;
-                do {
-                    nRead = read(fd, &length, sizeof(int));
-                } while (nRead == -1 && EINTR == errno);
-                if (nRead == -1) {
-                    //The file was marked for non-blocking I/O, and no data were ready to be read.
-                    if (EAGAIN == errno) {
-                        continue;
-                    }
-                }
-                //buffer `follower` LWPort send `buffer` to `leader` LWPort
-                char *buffer = malloc(length);
-                do {
-                    nRead = read(fd, buffer, length);
-                } while (nRead == -1 && EINTR == errno);
-                NSValue *data = [_requests objectForKey:@(_leader)];
-                PortWrapper request;
-                [data getValue:&request];
-                //notify leader
-                if (request.callback) {
-                    request.callback(fd, request.info, buffer, length);
-                }
-                //remember release malloc memory
-                free(buffer);
-                struct sockaddr_in sockaddr;
-                socklen_t len;
-                int ret = getpeername(fd, (struct sockaddr *)&sockaddr, &len);
-                if (ret < 0) {
-                    continue;
-                }
-                LWPortClientInfo *info = [_portClients valueForKey:[NSString stringWithFormat:@"%d", sockaddr.sin_port]];
-                if (info.cacheSend && info.cacheSend.length > 0) {
-                    //write cached on next event
-                    [self kevent:fd filter:EVFILT_WRITE action:EV_ADD];
-                }
-            } else if (event & EVFILT_WRITE) {
-                struct sockaddr_in sockaddr;
-                socklen_t len;
-                int ret = getpeername(fd, (struct sockaddr *)&sockaddr, &len);
-                if (ret < 0) {
-                    continue;
-                }
-                LWPortClientInfo *info = [_portClients valueForKey:[NSString stringWithFormat:@"%d", sockaddr.sin_port]];
-                if (info.cacheSend && info.cacheSend.length > 0) {
-                    ssize_t nWrite;
-                    do {
-                        nWrite = write(fd, [info.cacheSend bytes], info.cacheSend.length);
-                    } while (nWrite == -1 && errno == EINTR);
-                    
-                    if (nWrite != 1) {
-                        if (errno != EAGAIN) {
-                            continue;
-                        }
-                    }
-                    //clean the sending cache
-                    info.cacheSend = nil;
-                } else {
-                    continue;
-                }
+        } else { // follower -> leader read for LWPort follower fd, then notify leader
+            if (![self handleFollowerToLeader:event fd:fd]) {
+                continue;
             }
         }
     }
+}
+
+
+#pragma mark - Hanler Routine For LWPort
+//for LWPort leader fd `accept`
+- (void)handleAccept:(int)fd
+{
+    struct sockaddr_in clientAddr;
+    socklen_t len = sizeof(struct sockaddr);
+    int client = accept(fd, (struct sockaddr *)&clientAddr, &len);
+    LWPortClientInfo *portInfo = [LWPortClientInfo new];
+    portInfo.port = clientAddr.sin_port;
+    portInfo.fd = client;
+    [_portClients setValue:portInfo forKey:[NSString stringWithFormat:@"%d", clientAddr.sin_port]];
+    lwutil_make_socket_nonblocking(client);
+    [self kevent:client filter:EVFILT_READ action:EV_ADD];
+}
+
+// leader -> follower
+- (BOOL)handleLeaderToFollower:(int)fd
+{
+    int length = 0;
+    ssize_t nRead;
+    do {
+        nRead = read(fd, &length, sizeof(int));
+    } while (nRead == -1 && EINTR == errno);
+    if (nRead == -1) {
+        //The file was marked for non-blocking I/O, and no data were ready to be read.
+        if (EAGAIN == errno) {
+            return false;
+        }
+    }
+    //buffer `follower` LWPort send `buffer` to `leader` LWPort
+    char *buffer = malloc(length);
+    do {
+        nRead = read(fd, buffer, length);
+    } while (nRead == -1 && EINTR == errno);
+    NSValue *data = [_requests objectForKey:@(_follower)];
+    PortWrapper request;
+    [data getValue:&request];
+    //! notify follower,actually in `follower` thread just one follower
+    if (request.callback) {
+        request.callback(fd, request.info, buffer, length);
+    }
+    free(buffer);
+    return true;
+}
+
+// follower -> leader read for LWPort follower fd, then notify leader
+- (BOOL)handleFollowerToLeader:(int)event fd:(int)fd
+{
+    if (event & EVFILT_READ) {
+        int length = 0;
+        ssize_t nRead;
+        do {
+            nRead = read(fd, &length, sizeof(int));
+        } while (nRead == -1 && EINTR == errno);
+        if (nRead == -1) {
+            //The file was marked for non-blocking I/O, and no data were ready to be read.
+            if (EAGAIN == errno) {
+                return false;
+            }
+        }
+        //buffer `follower` LWPort send `buffer` to `leader` LWPort
+        char *buffer = malloc(length);
+        do {
+            nRead = read(fd, buffer, length);
+        } while (nRead == -1 && EINTR == errno);
+        NSValue *data = [_requests objectForKey:@(_leader)];
+        PortWrapper request;
+        [data getValue:&request];
+        //notify leader
+        if (request.callback) {
+            request.callback(fd, request.info, buffer, length);
+        }
+        //remember release malloc memory
+        free(buffer);
+        struct sockaddr_in sockaddr;
+        socklen_t len;
+        int ret = getpeername(fd, (struct sockaddr *)&sockaddr, &len);
+        if (ret < 0) {
+            return false;
+        }
+        LWPortClientInfo *info = [_portClients valueForKey:[NSString stringWithFormat:@"%d", sockaddr.sin_port]];
+        if (info.cacheSend && info.cacheSend.length > 0) {
+            //write cached on next event
+            [self kevent:fd filter:EVFILT_WRITE action:EV_ADD];
+        }
+    } else if (event & EVFILT_WRITE) {
+        struct sockaddr_in sockaddr;
+        socklen_t len;
+        int ret = getpeername(fd, (struct sockaddr *)&sockaddr, &len);
+        if (ret < 0) {
+            return false;
+        }
+        LWPortClientInfo *info = [_portClients valueForKey:[NSString stringWithFormat:@"%d", sockaddr.sin_port]];
+        if (info.cacheSend && info.cacheSend.length > 0) {
+            ssize_t nWrite;
+            do {
+                nWrite = write(fd, [info.cacheSend bytes], info.cacheSend.length);
+            } while (nWrite == -1 && errno == EINTR);
+            
+            if (nWrite != 1) {
+                if (errno != EAGAIN) {
+                    return false;
+                }
+            }
+            //clean the sending cache
+            info.cacheSend = nil;
+        } else {
+            return false;
+        }
+    }
+    return true;
 }
 
 #pragma mark - Process two fds generated by pipe()
@@ -225,7 +249,7 @@ typedef struct PortWrapper {
     } else {
         _follower = fd;
     }
-
+    
     if (LWNativeRunLoopEventFilterRead == filter) {
         [self kevent:fd filter:EVFILT_READ action:EV_ADD];
     } else if (LWNativeRunLoopEventFilterWrite == filter) {
@@ -310,7 +334,7 @@ typedef struct PortWrapper {
     int ret = kevent(_kq, changes, 1, NULL, 0, NULL);
     NSAssert(ret != -1, @"Failure in kevent().  errno=%d", errno);
 #pragma clang diagnostic pop
-
+    
     _fds = [[NSMutableArray alloc] init];
     _requests = [[NSMutableDictionary alloc] init];
     _portClients = [[NSMutableDictionary alloc] init];
