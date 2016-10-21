@@ -2,9 +2,9 @@
 
 > Implement iOS/Mac NSRunLoop and some Runloop-Relative Fundation API such as perform selector(or delay some times) on other thread , Timer, URLConnection, LWStream(LWInputStream、LWOutputStream), LWPort(LWSocketPort)etc..
 
->> Hope this project can help you understand iOS/Mas Runloop(usually called Event-Driven-Mode ^o^) clearly and sufficiently, so you can design your project by using runloop correctly and effectively.
-
 ![](http://i2.buimg.com/4851/0601cf62d1e3b438.jpg)
+
+> Hope this project can help you understand iOS/Mas Runloop clearly and sufficiently, so you can design your project by using runloop correctly and effectively
 
 ## Main Features
 
@@ -12,18 +12,18 @@
 
 * **LWTimer** - Extremely like *NSTimer*, but `nanosecond` precision!!!
 
-* **LWURLConnection** - Extremely like *NSURLConnection* simply
+* **LWURLConnection** - Extremely like *NSURLConnection* 
 
-* **LWInputStream** - Realize `File` relative Foundation API(`correspond to FileOutputStream of Java`) simply, like Prototype
+* **LWInputStream** - Realize `File` relative Foundation API(`correspond to FileOutputStream of Java`) 
 
-* **LWOutputStream** - Realize `File` relative Foundation API (`correspond to FileOutputStream of Java`) simply, like Prototype
-* **LWPort** - Realize `LWSocketPort`(`socket`, `Leader-Follower pattern`) simply, like Prototype
+* **LWOutputStream** - Realize `File` relative Foundation API (`correspond to FileOutputStream of Java`) 
+* **LWPort** - Realize `LWSocketPort`(`socket`, `Leader-Follower pattern`)
 
 
 ## Future Features & To-Do
 
 * **Socket Pools**
-* **Must Refactor project later** (I can not spare more time to refactor $o$)
+* **Must Refactor project later**
 
 ## Get Started
 Each NSThread object, `excluding the application’s main thread`, can own an `LWRunLoop` object. You can get the current thread’s  `LWRunLoop`, through the class method *`currentLWRunLoop`*. Subsequently code snippet shows how configure LWRunLoop for NSThread and make the NSThread `_lwRunLoopThread` entering into `Event-Driver-Mode:`

@@ -522,6 +522,7 @@
         _leaderPort = [[LWSocketPort alloc] initWithTCPPort:8082];
         _leaderPort.delegate = self;
         _worker = [[WorkerClass alloc] init];
+        [NSThread detachNewThreadSelector:@selector(launchThreadWithPort:) toTarget:_worker withObject:_leaderPort];
         [looper addPort:_leaderPort forMode:LWDefaultRunLoop];
         [looper runMode:LWDefaultRunLoop];
     }
@@ -529,7 +530,8 @@
 
 -(void)performFollowerToLeader:(UIButton *)button
 {
-    [NSThread detachNewThreadSelector:@selector(launchThreadWithPort:) toTarget:_worker withObject:_leaderPort];
+    NSString *content = @"This_Is_A_Follower_To_Leader_Message_Data";
+    [_worker sendContent:content];
 }
 
 - (void)performLeaderToFollower:(UIButton *)buttton

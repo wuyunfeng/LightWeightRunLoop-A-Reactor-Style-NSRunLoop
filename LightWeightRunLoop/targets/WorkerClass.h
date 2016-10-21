@@ -15,5 +15,7 @@
 
 - (LWPort *)localPort;
 
+- (void)sendContent:(NSString *)content;
+
 
 @end
