@@ -1,10 +1,9 @@
-//
-//  LWRunLoop.m
-//  lwrunloop
-//
-//  Created by wuyunfeng on 15/10/27.
-//  Copyright © 2015年 wuyunfeng open source. All rights reserved.
-//
+/********************************************************************
+ * (C) wuyunfeng 2015-2016
+ *
+ * The project is available from https://github.com/wuyunfeng/LightWeightRunLoop-A-Reactor-Style-NSRunLoop
+ *
+ ********************************************************************/
 
 #import "LWRunLoop.h"
 #include <sys/unistd.h>

@@ -1,10 +1,9 @@
-//
-//  NSThread+Looper.m
-//  lwrunloop
-//
-//  Created by wuyunfeng on 15/10/29.
-//  Copyright © 2015年 wuyunfeng open source. All rights reserved.
-//
+/********************************************************************
+ * (C) wuyunfeng 2015-2016
+ *
+ * The project is available from https://github.com/wuyunfeng/LightWeightRunLoop-A-Reactor-Style-NSRunLoop
+ *
+ ********************************************************************/
 
 #import "NSThread+Looper.h"
 #import <objc/runtime.h>

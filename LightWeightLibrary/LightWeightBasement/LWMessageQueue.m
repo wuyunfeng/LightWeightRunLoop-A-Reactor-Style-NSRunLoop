@@ -1,10 +1,9 @@
-//
-//  LWMessageQueue.m
-//  LightWeightRunLoop
-//
-//  Created by wuyunfeng on 15/10/31.
-//  Copyright © 2015年 com.wuyunfeng.open. All rights reserved.
-//
+/********************************************************************
+ * (C) wuyunfeng 2015-2016
+ *
+ * The project is available from https://github.com/wuyunfeng/LightWeightRunLoop-A-Reactor-Style-NSRunLoop
+ *
+ ********************************************************************/
 
 #import "LWMessageQueue.h"
 #include <pthread.h>

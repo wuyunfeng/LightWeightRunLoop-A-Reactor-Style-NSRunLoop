@@ -1,11 +1,9 @@
-//
-//  LWSystemClock.h
-//  LightWeightRunLoop
-//
-//  Created by 武云峰 on 15/11/29.
-//  Copyright © 2015年 com.wuyunfeng.open. All rights reserved.
-//
-
+/********************************************************************
+ * (C) wuyunfeng 2015-2016
+ *
+ * The project is available from https://github.com/wuyunfeng/LightWeightRunLoop-A-Reactor-Style-NSRunLoop
+ *
+ ********************************************************************/
 #import <Foundation/Foundation.h>
 
 @interface LWSystemClock : NSObject

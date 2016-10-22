@@ -1,10 +1,13 @@
-//
-//  AppDelegate.h
-//  LightWeightRunLoop
-//
-//  Created by wuyunfeng on 15/10/30.
-//  Copyright © 2015年 com.wuyunfeng.open. All rights reserved.
-//
+/********************************************************************
+ * (C) wuyunfeng 2015-2016
+ *
+ * The project is available from https://github.com/wuyunfeng/LightWeightRunLoop-A-Reactor-Style-NSRunLoop
+ *
+ * The code is intended as a illustration of the NSRunLoopp Foundation at work and
+ * is not suitable for use in production code (some error handling has been strongly
+ * simplified).
+ *
+ ********************************************************************/
 
 #import <UIKit/UIKit.h>
 
