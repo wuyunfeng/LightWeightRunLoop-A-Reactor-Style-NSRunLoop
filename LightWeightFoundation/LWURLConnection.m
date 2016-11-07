@@ -13,6 +13,7 @@
 #import "LWConnectionInternal.h"
 #import "LWMessage.h"
 #import "LWRunLoop.h"
+
 @interface LWURLConnection()<LWConnectionInternalDelegate>
 {
     LWConnectionInternal *_internal;

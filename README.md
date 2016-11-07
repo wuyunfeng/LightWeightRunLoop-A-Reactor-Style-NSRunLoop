@@ -10,14 +10,14 @@
 
 * **NSObject** - *postSelector:onThread:withObject:afterDelay:modes* (`equal to NSObject` *performSelector: withObject:afterDelay:inModes:*)etc.
 
-* **LWTimer** - Extremely like *NSTimer*, but `nanosecond` precision!!!
+* **LWTimer** - *NSTimer*, but `nanosecond` precision!!!
 
-* **LWURLConnection** - Extremely like *NSURLConnection* 
+* **LWURLConnection** - *NSURLConnection* 
 
-* **LWInputStream** - Realize `File` relative Foundation API(`correspond to FileOutputStream of Java`) 
+* **LWInputStream** - `File` relative Foundation API(`correspond to FileOutputStream of Java`) 
 
-* **LWOutputStream** - Realize `File` relative Foundation API (`correspond to FileOutputStream of Java`) 
-* **LWPort** - Realize `LWSocketPort`(`socket`, `Leader-Follower pattern`)
+* **LWOutputStream** - `File` relative Foundation API (`correspond to FileOutputStream of Java`) 
+* **LWPort** - `LWSocketPort`(`socket`, `Leader-Follower pattern`)
 
 
 ## Future Features & To-Do

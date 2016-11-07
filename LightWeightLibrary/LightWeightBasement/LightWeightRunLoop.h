@@ -11,5 +11,5 @@
 #import "LWRunLoop.h"
 #import "NSthread+Looper.h"
 #import "NSObject+post.h"
-
+#import "LWNativeRunLoop.h"
 #endif /* LightWeightRunLoop_h */
