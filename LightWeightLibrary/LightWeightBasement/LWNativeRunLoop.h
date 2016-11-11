@@ -30,6 +30,9 @@ typedef void (*LWNativeRunLoopCallBack)(int fd, void *info, void *data, int leng
 
 - (void)addFd:(int)fd type:(LWNativeRunLoopFdType)type filter:(LWNativeRunLoopEventFilter)filter callback:(LWNativeRunLoopCallBack)callback data:(void *)info;
 
+- (void)removeFd:(int)fd filter:(LWNativeRunLoopEventFilter)filter;
+
+
 - (void)send:(NSData *)data toPort:(ushort)port;
 
 - (void)send:(NSData *)data toFd:(int)fd;

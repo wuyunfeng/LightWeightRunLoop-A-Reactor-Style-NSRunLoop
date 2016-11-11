@@ -255,6 +255,14 @@ typedef struct PortWrapper {
     }
 }
 
+
+- (void)removeFd:(int)fd filter:(LWNativeRunLoopEventFilter)filter
+{
+    struct kevent changes[1];
+    EV_SET(changes, fd, filter, EV_DELETE, 0, 0, NULL);
+    kevent(_kq, changes, 1, NULL, 0, NULL);
+}
+
 #pragma mark - convience method to operate `fd`
 - (int)kevent:(int)fd filter:(int)filter action:(int)action
 {

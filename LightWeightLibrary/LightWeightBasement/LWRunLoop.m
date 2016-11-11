@@ -27,6 +27,7 @@ NSString * const  LWTrackingRunLoopMode = @"LWTrackingRunLoopMode";
 {
     LWMessageQueue *_queue;
     NSString *_currentRunLoopMode;
+    NSMutableArray *_allPorts;
 }
 
 void initTLSKey(void)
@@ -98,6 +99,10 @@ void destructor(void * data)
 #pragma mark NSPort Relative API
 - (void)addPort:(LWPort *)aPort forMode:(NSString *)mode
 {
+    if (_allPorts) {
+        _allPorts = [[NSMutableArray alloc] init];
+    }
+    [_allPorts addObject:aPort];
     if ([aPort isKindOfClass:[LWSocketPort class]]) {
         LWSocketPort *socketTypePort = (LWSocketPort *)aPort;
         int fd = socketTypePort.socket;
@@ -113,7 +118,12 @@ void destructor(void * data)
 
 - (void)removePort:(LWPort *)aPort forMode:(NSString *)mode
 {
-    
+    [_allPorts removeObject:aPort];
+    if ([aPort isKindOfClass:[LWSocketPort class]]) {
+        LWSocketPort *socketTypePort = (LWSocketPort *)aPort;
+        int fd = socketTypePort.socket;
+        [_queue.nativeRunLoop removeFd:fd filter:LWNativeRunLoopEventFilterRead];
+    }
 }
 
 
