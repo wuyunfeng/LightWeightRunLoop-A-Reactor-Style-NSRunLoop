@@ -4,7 +4,6 @@
 
 ![](http://i2.buimg.com/4851/0601cf62d1e3b438.jpg)
 
-> Hope this project can help you understand iOS/Mas Runloop clearly and sufficiently, so you can design your project by using runloop correctly and effectively
 
 ## Main Features
 
