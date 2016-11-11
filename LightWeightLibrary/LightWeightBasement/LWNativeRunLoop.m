@@ -19,15 +19,17 @@
 #include <sys/errno.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#define MAX_EVENT_COUNT 32
 #import "LWPortClientInfo.h"
 #include "lw_nativerunloop_util.h"
+
 typedef struct PortWrapper {
     int fd;
     LWNativeRunLoopFdType type;
     LWNativeRunLoopCallBack callback;
     void *info;
 }PortWrapper;
+
+#define MAX_EVENT_COUNT 32
 
 @implementation LWNativeRunLoop
 {
@@ -44,7 +46,7 @@ typedef struct PortWrapper {
 - (instancetype)init
 {
     if (self = [super init]) {
-        [self prepareRunLoopInit];
+        [self prepareLWRunLoop];
     }
     return self;
 }
@@ -291,22 +293,21 @@ typedef struct PortWrapper {
 }
 
 #pragma mark - initialize the configuration for Event-Drive-Mode
-- (void)prepareRunLoopInit
+- (void)prepareLWRunLoop
 {
-    int wakeFds[2];
+    int fds[2];
     
-    int result = pipe(wakeFds);
-    NSAssert(result == 0, @"Failure in pipe().  errno=%d", errno);
+    int result = pipe(fds);
     
-    _mReadPipeFd = wakeFds[0];
-    _mWritePipeFd = wakeFds[1];
+    _mReadPipeFd = fds[0];
+    _mWritePipeFd = fds[1];
+    
     int rflags;
     if ((rflags = fcntl(_mReadPipeFd, F_GETFL, 0)) < 0) {
         NSLog(@"Failure in fcntl F_GETFL");
     };
     rflags |= O_NONBLOCK;
     result = fcntl(_mReadPipeFd, F_SETFL, rflags);
-    NSAssert(result == 0, @"Failure in fcntl() for read wake fd.  errno=%d", errno);
     
     int wflags;
     if ((wflags = fcntl(_mWritePipeFd, F_GETFL, 0)) < 0) {
@@ -314,10 +315,8 @@ typedef struct PortWrapper {
     };
     wflags |= O_NONBLOCK;
     result = fcntl(_mWritePipeFd, F_SETFL, wflags);
-    NSAssert(result == 0, @"Failure in fcntl() for write wake fd.  errno=%d", errno);
     
     _kq = kqueue();
-    NSAssert(_kq != -1, @"Failure in kqueue().  errno=%d", errno);
     
     struct kevent changes[1];
     EV_SET(changes, _mReadPipeFd, EVFILT_READ, EV_ADD, 0, 0, NULL);
