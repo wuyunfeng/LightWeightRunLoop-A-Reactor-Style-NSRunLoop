@@ -95,38 +95,6 @@ void destructor(void * data)
     }
 }
 
-#pragma mark -
-#pragma mark NSPort Relative API
-- (void)addPort:(LWPort *)aPort forMode:(NSString *)mode
-{
-    if (_allPorts) {
-        _allPorts = [[NSMutableArray alloc] init];
-    }
-    [_allPorts addObject:aPort];
-    if ([aPort isKindOfClass:[LWSocketPort class]]) {
-        LWSocketPort *socketTypePort = (LWSocketPort *)aPort;
-        int fd = socketTypePort.socket;
-        LWSocketPortRoleType roleType = socketTypePort.roleType;
-        LWPortContext context = socketTypePort.context;
-        if (LWSocketPortRoleTypeLeader == roleType) {
-            [_queue.nativeRunLoop addFd:fd type:LWNativeRunLoopFdSocketServerType filter:LWNativeRunLoopEventFilterRead callback:context.LWPortReceiveDataCallBack data:context.info];
-        } else {
-            [_queue.nativeRunLoop addFd:fd type:LWNativeRunLoopFdSocketClientType filter:LWNativeRunLoopEventFilterRead callback:context.LWPortReceiveDataCallBack data:context.info];
-        }
-    }
-}
-
-- (void)removePort:(LWPort *)aPort forMode:(NSString *)mode
-{
-    [_allPorts removeObject:aPort];
-    if ([aPort isKindOfClass:[LWSocketPort class]]) {
-        LWSocketPort *socketTypePort = (LWSocketPort *)aPort;
-        int fd = socketTypePort.socket;
-        [_queue.nativeRunLoop removeFd:fd filter:LWNativeRunLoopEventFilterRead];
-    }
-}
-
-
 #pragma mark - Private
 - (instancetype)init
 {
@@ -159,6 +127,8 @@ void destructor(void * data)
     return LWDefaultRunLoop;
 }
 
+#pragma mark -
+#pragma mark fd IO Relative API
 - (void)send:(NSData *)data toPort:(ushort)port
 {
     [_queue.nativeRunLoop send:data toPort:port];
@@ -169,9 +139,36 @@ void destructor(void * data)
     [_queue.nativeRunLoop send:data toFd:fd];
 }
 
-- (void)dealloc
+#pragma mark -
+#pragma mark NSPort Relative API
+- (void)addPort:(LWPort *)aPort forMode:(NSString *)mode
 {
-
+    if (_allPorts) {
+        _allPorts = [[NSMutableArray alloc] init];
+    }
+    [_allPorts addObject:aPort];
+    if ([aPort isKindOfClass:[LWSocketPort class]]) {
+        LWSocketPort *socketTypePort = (LWSocketPort *)aPort;
+        int fd = socketTypePort.socket;
+        LWSocketPortRoleType roleType = socketTypePort.roleType;
+        LWPortContext context = socketTypePort.context;
+        if (LWSocketPortRoleTypeLeader == roleType) {
+            [_queue.nativeRunLoop addFd:fd type:LWNativeRunLoopFdSocketServerType filter:LWNativeRunLoopEventFilterRead callback:context.LWPortReceiveDataCallBack data:context.info];
+        } else {
+            [_queue.nativeRunLoop addFd:fd type:LWNativeRunLoopFdSocketClientType filter:LWNativeRunLoopEventFilterRead callback:context.LWPortReceiveDataCallBack data:context.info];
+        }
+    }
 }
+
+- (void)removePort:(LWPort *)aPort forMode:(NSString *)mode
+{
+    [_allPorts removeObject:aPort];
+    if ([aPort isKindOfClass:[LWSocketPort class]]) {
+        LWSocketPort *socketTypePort = (LWSocketPort *)aPort;
+        int fd = socketTypePort.socket;
+        [_queue.nativeRunLoop removeFd:fd filter:LWNativeRunLoopEventFilterRead];
+    }
+}
+
 
 @end
