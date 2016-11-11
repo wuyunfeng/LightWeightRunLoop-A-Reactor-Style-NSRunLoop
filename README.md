@@ -10,20 +10,19 @@
 
 * **NSObject** - *postSelector:onThread:withObject:afterDelay:modes* (`equal to NSObject` *performSelector: withObject:afterDelay:inModes:*)etc.
 
-* **LWTimer** - *NSTimer*, but `nanosecond` precision!!!
+* **LWTimer** - *NSTimer*, `nanosecond`
 
 * **LWURLConnection** - *NSURLConnection* 
 
-* **LWInputStream** - `File` relative Foundation API(`correspond to FileOutputStream of Java`) 
+* **LWInputStream** - `File` relative `Stream`
 
-* **LWOutputStream** - `File` relative Foundation API (`correspond to FileOutputStream of Java`) 
-* **LWPort** - `LWSocketPort`(`socket`, `Leader-Follower pattern`)
+* **LWOutputStream** - `File` relative `Stream`
+* **LWPort** - `LWSocketPort`(`Leader-Follower pattern` socket)
 
 
 ## Future Features & To-Do
 
-* **Socket Pools**
-* **Must Refactor project later**
+* **Refactor project**
 
 ## Get Started
 Each NSThread object, `excluding the application’s main thread`, can own an `LWRunLoop` object. You can get the current thread’s  `LWRunLoop`, through the class method *`currentLWRunLoop`*. Subsequently code snippet shows how configure LWRunLoop for NSThread and make the NSThread `_lwRunLoopThread` entering into `Event-Driver-Mode:`
