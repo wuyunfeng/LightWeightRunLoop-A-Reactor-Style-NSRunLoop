@@ -45,9 +45,9 @@ typedef struct LWPortContext {
 
 @property (readonly, getter=isValid) BOOL valid;
 
-- (void)scheduleInRunLoop:(LWRunLoop * _Nonnull)runLoop forMode:(LWRunLoop * _Nonnull)mode;
+- (void)scheduleInRunLoop:(LWRunLoop * _Nonnull)runLoop forMode:(NSString * _Nonnull)mode;
 
-- (void)removeFromRunLoop:(LWRunLoop * _Nonnull)runLoop forMode:(LWRunLoop * _Nonnull)mode;
+- (void)removeFromRunLoop:(LWRunLoop * _Nonnull)runLoop forMode:(NSString * _Nonnull)mode;
 
 @end
 

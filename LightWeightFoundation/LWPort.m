@@ -134,6 +134,8 @@
     LWSocketPortRoleType _roleType;
     
     LWPortContext _context;
+    LWRunLoop *_runloop;
+    NSString *_currentMode;
 }
 
 - (nullable instancetype)initWithTCPPort:(unsigned short)port
@@ -243,15 +245,17 @@
 }
 
 // not implented at present
-- (void)scheduleInRunLoop:(LWRunLoop * _Nonnull)runLoop forMode:(LWRunLoop * _Nonnull)mode
+- (void)scheduleInRunLoop:(LWRunLoop * _Nonnull)runLoop forMode:(NSString * _Nonnull)mode
 {
-    
+    _runloop = runLoop;
+    _currentMode = mode;
 }
 
 // not implented at present
-- (void)removeFromRunLoop:(LWRunLoop * _Nonnull)runLoop forMode:(LWRunLoop * _Nonnull)mode
+- (void)removeFromRunLoop:(LWRunLoop * _Nonnull)runLoop forMode:(NSString * _Nonnull)mode
 {
-    
+    _runloop = nil;
+    _currentMode = nil;
 }
 
 // ignore `fd` at present, but .... ^o^
