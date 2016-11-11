@@ -92,7 +92,7 @@ typedef struct PortWrapper {
 }
 
 
-//for LWPort leader fd `accept`
+//for LWPort leader fd `accept` ->  ('port','fd') -> (8080, 20)
 - (void)handleAccept:(int)fd
 {
     struct sockaddr_in clientAddr;
@@ -114,11 +114,9 @@ typedef struct PortWrapper {
     do {
         nRead = read(fd, &length, sizeof(int));
     } while (nRead == -1 && EINTR == errno);
-    if (nRead == -1) {
+    if (nRead == -1 && EAGAIN == errno) {
         //The file was marked for non-blocking I/O, and no data were ready to be read.
-        if (EAGAIN == errno) {
-            return false;
-        }
+        return false;
     }
     //buffer `follower` LWPort send `buffer` to `leader` LWPort
     char *buffer = malloc(length);
@@ -133,6 +131,7 @@ typedef struct PortWrapper {
         request.callback(fd, request.info, buffer, length);
     }
     free(buffer);
+    buffer = NULL;
     return true;
 }
 
@@ -145,11 +144,9 @@ typedef struct PortWrapper {
         do {
             nRead = read(fd, &length, sizeof(int));
         } while (nRead == -1 && EINTR == errno);
-        if (nRead == -1) {
+        if (nRead == -1 && EAGAIN == errno) {
             //The file was marked for non-blocking I/O, and no data were ready to be read.
-            if (EAGAIN == errno) {
-                return false;
-            }
+            return false;
         }
         //buffer `follower` LWPort send `buffer` to `leader` LWPort
         char *buffer = malloc(length);
@@ -165,6 +162,7 @@ typedef struct PortWrapper {
         }
         //remember release malloc memory
         free(buffer);
+        buffer = NULL;
         struct sockaddr_in sockaddr;
         socklen_t len;
         int ret = getpeername(fd, (struct sockaddr *)&sockaddr, &len);
@@ -190,10 +188,8 @@ typedef struct PortWrapper {
                 nWrite = write(fd, [info.cacheSend bytes], info.cacheSend.length);
             } while (nWrite == -1 && errno == EINTR);
             
-            if (nWrite != 1) {
-                if (errno != EAGAIN) {
+            if (nWrite != 1 && errno != EAGAIN) {
                     return false;
-                }
             }
             //clean the sending cache
             info.cacheSend = nil;
@@ -211,12 +207,6 @@ typedef struct PortWrapper {
     do {
         nWrite = write(_mWritePipeFd, "w", 1);
     } while (nWrite == -1 && errno == EINTR);
-    
-    if (nWrite != 1) {
-        if (errno != EAGAIN) {
-            NSLog(@"errno=%d", errno);
-        }
-    }
 }
 
 - (void)nativePollRunLoop
@@ -281,10 +271,8 @@ typedef struct PortWrapper {
         nWrite = write(info.fd, [data bytes], [data length]);
     } while (nWrite == -1 && errno == EINTR);
     
-    if (nWrite != [data length]) {
-        if (errno != EAGAIN) {
-            NSLog(@"Error Happened in toPort! errno=%d", errno);
-        }
+    if (nWrite != [data length] && errno != EAGAIN) {
+        NSLog(@"Error Happened in toPort! errno=%d", errno);
     }
     
     data = nil;
@@ -297,10 +285,8 @@ typedef struct PortWrapper {
         nWrite = write(fd, [data bytes], [data length]);
     } while (nWrite == -1 && errno == EINTR);
     
-    if (nWrite != [data length]) {
-        if (errno != EAGAIN) {
-            NSLog(@"Error Happened in toFd! errno=%d", errno);
-        }
+    if (nWrite != [data length] && errno != EAGAIN) {
+        NSLog(@"Error Happened in toFd! errno=%d", errno);
     }
 }
 
