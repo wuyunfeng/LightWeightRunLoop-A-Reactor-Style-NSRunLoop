@@ -3,8 +3,8 @@
 > Implement iOS/Mac NSRunLoop and some Runloop-Relative Fundation API such as perform selector(or delay some times) on other thread , Timer, URLConnection, LWStream(LWInputStream、LWOutputStream), LWPort(LWSocketPort)etc..
 
 ![](http://i2.buimg.com/4851/0601cf62d1e3b438.jpg)
-
-
+>IO Event-Driver-Model
+![](http://i1.piimg.com/567571/ce84f67570a034e6.jpg)
 ## Main Features
 
 * **NSObject** - *postSelector:onThread:withObject:afterDelay:modes* (`equal to NSObject` *performSelector: withObject:afterDelay:inModes:*)etc.
