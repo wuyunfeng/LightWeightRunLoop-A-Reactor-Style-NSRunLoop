@@ -2,7 +2,7 @@
 
 > Implement iOS/Mac NSRunLoop and some Runloop-Relative Fundation API such as perform selector(or delay some times) on other thread , Timer, URLConnection, LWStream(LWInputStream、LWOutputStream), LWPort(LWSocketPort)etc..
 
-![](http://i2.buimg.com/4851/0601cf62d1e3b438.jpg)
+![](http://i2.muimg.com/567571/bb97b31775333b13.jpg)
 >IO Event-Driver-Model
 
 
