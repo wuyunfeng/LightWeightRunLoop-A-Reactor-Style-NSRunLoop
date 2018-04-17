@@ -6,7 +6,7 @@
 >IO Event-Driver-Model
 
 
-![](http://i1.piimg.com/567571/ce84f67570a034e6.jpg)
+![](https://raw.githubusercontent.com/wuyunfeng/LightWeightRunLoop-A-Reactor-Style-NSRunLoop/master/Image/event_model.jpg)
 ## Main Features
 
 * **NSObject** - *postSelector:onThread:withObject:afterDelay:modes* (`equal to NSObject` *performSelector: withObject:afterDelay:inModes:*)etc.
