@@ -40,7 +40,7 @@ Each NSThread object, `excluding the application’s main thread`, can own an `L
         }
     }
        
-##To enqueue a selector to be performed on a different thread than your own &&  schedule a selector to be executed at some point in the future
+## To enqueue a selector to be performed on a different thread than your own &&  schedule a selector to be executed at some point in the future
 you can use the category of NSObject(post)
 
 * -(void)postSelector:(SEL)aSelector onThread:(NSThread *)thread withObject:(id)arg;
@@ -72,7 +72,7 @@ you can use the category of NSObject(post):
       
 
 
-##You use the LWTimer class to create timer objects or, more simply, timers. 
+## You use the LWTimer class to create timer objects or, more simply, timers. 
 A timer waits until a certain time interval has elapsed and then fires, sending a specified message to a target object. 
 
 
@@ -83,7 +83,7 @@ A timer waits until a certain time interval has elapsed and then fires, sending 
 
 fire the LWTimer using `- (void)fire` and invalidate the LWTimer using `- (void)invalidate`
 
-#####For example:
+##### For example:
 
 run the `- (void)genernateLWTimer` on `_lwRunLoopThread`:
 
@@ -107,7 +107,7 @@ the selector for `LWTimer` to be executed:
             [timer invalidate];
         }
     }   
-##An LWURLConnection object lets you load the contents of a URL by providing a URL request object.
+## An LWURLConnection object lets you load the contents of a URL by providing a URL request object.
 Step1: Perform `LWURLConnection` on `_lwRunLoopThread`:
 
 	- (void)executeURLConnection:(UIButton *)button
@@ -141,7 +141,7 @@ Step4: You can use `LWURLResponse` to format Http response
    
     LWURLResponse *response = [[LWURLResponse alloc] initWithData:_responseData];
 ## LWInputStream & LWOutputStream (File Relative)
-######Initilize LWInputStream or LWOutputStream : 
+###### Initilize LWInputStream or LWOutputStream : 
 		
 		  _lwInputStream = [LWInputStream inputStreamWithFileAtPath:filePath];
 		  _lwInputStream.delegate = self;
@@ -154,7 +154,7 @@ or
           [_lwOutputStream scheduleInRunLoop:[_thread looper] forMode:LWDefaultRunLoop];
           [_lwOutputStream open];
           
-######Then read or write data on the selector of delegate,such as:
+###### Then read or write data on the selector of delegate,such as:
 
           
 	 switch (eventCode) {
@@ -201,7 +201,7 @@ for example(the data `hello` length is `5`):
     
     5hello
  
-######Initilize _lwPortRunLoopThread : 
+###### Initilize _lwPortRunLoopThread : 
 	_lwPortRunLoopThread = [[NSThread alloc] initWithTarget:self selector:@selector(portThreadEntryPoint:) object:nil];
     _lwPortRunLoopThread.name = @"lwPortLoopThread";
     [_lwPortRunLoopThread start];
@@ -266,4 +266,4 @@ for example(the data `hello` length is `5`):
 			    [_currentRunLoop runMode:LWDefaultRunLoop];
 		}
 
-##[Links](https://github.com/wuyunfeng/PHPMApi.git)
+## [Links](https://github.com/wuyunfeng/PHPMApi.git)
